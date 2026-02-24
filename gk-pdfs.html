@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -10,6 +11,7 @@
   <link rel="stylesheet" href="./styles.css">
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
+
 <body>
   <div id="app">
     <header class="app-bar">
@@ -77,42 +79,43 @@
           </div>
           <div class="alert-content">
             <h3>Regular Updates</h3>
-            <p>This material will be updated regularly to ensure candidates stay aligned with the latest exam trends.</p>
+            <p>This material will be updated regularly to ensure candidates stay aligned with the latest exam trends.
+            </p>
           </div>
         </div>
 
         <div class="section-header">
-          <h2>Available Downloads</h2>
+          <h2>Available PDFs</h2>
         </div>
 
         <div class="menu-list">
-          <a href="#" class="menu-item" onclick="alert('Download feature coming soon!'); return false;">
+          <a href="./pdf-viewer.html?name=Static+GK+Complete+Notes&url=" class="menu-item" id="pdf-item-1">
             <div class="menu-icon">
               <i data-lucide="file-text"></i>
             </div>
-            <span>Static GK Complete Notes.pdf</span>
-            <i data-lucide="download" width="20" height="20"></i>
+            <span>Static GK Complete Notes</span>
+            <i data-lucide="eye" width="20" height="20"></i>
           </a>
-          <a href="#" class="menu-item" onclick="alert('Download feature coming soon!'); return false;">
+          <a href="./pdf-viewer.html?name=Current+Affairs+Monthly&url=" class="menu-item" id="pdf-item-2">
             <div class="menu-icon">
               <i data-lucide="file-text"></i>
             </div>
-            <span>Current Affairs Monthly.pdf</span>
-            <i data-lucide="download" width="20" height="20"></i>
+            <span>Current Affairs Monthly</span>
+            <i data-lucide="eye" width="20" height="20"></i>
           </a>
-          <a href="#" class="menu-item" onclick="alert('Download feature coming soon!'); return false;">
+          <a href="./pdf-viewer.html?name=Quick+Revision+Sheet&url=" class="menu-item" id="pdf-item-3">
             <div class="menu-icon">
               <i data-lucide="file-text"></i>
             </div>
-            <span>Quick Revision Sheet.pdf</span>
-            <i data-lucide="download" width="20" height="20"></i>
+            <span>Quick Revision Sheet</span>
+            <i data-lucide="eye" width="20" height="20"></i>
           </a>
-          <a href="#" class="menu-item" onclick="alert('Download feature coming soon!'); return false;">
+          <a href="./pdf-viewer.html?name=Important+Facts+Compilation&url=" class="menu-item" id="pdf-item-4">
             <div class="menu-icon">
               <i data-lucide="file-text"></i>
             </div>
-            <span>Important Facts Compilation.pdf</span>
-            <i data-lucide="download" width="20" height="20"></i>
+            <span>Important Facts Compilation</span>
+            <i data-lucide="eye" width="20" height="20"></i>
           </a>
         </div>
       </div>
@@ -124,4 +127,5 @@
     lucide.createIcons();
   </script>
 </body>
+
 </html>

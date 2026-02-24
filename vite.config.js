@@ -33,6 +33,7 @@ export default defineConfig({
         'copyright-warning': 'copyright-warning.html',
         'admin-login': 'admin-login.html',
         'login': 'login.html',
+        'pdf-viewer': 'pdf-viewer.html',
         'admin-dashboard': 'admin-dashboard.html',
         'admin-courses': 'admin-courses.html',
         'admin-pdfs': 'admin-pdfs.html',
