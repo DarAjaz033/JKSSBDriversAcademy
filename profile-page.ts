@@ -1,4 +1,4 @@
-import { onAuthChange, getCurrentUser, signOut, clearSessionToken, validateSessionToken } from './auth-service';
+import { onAuthChange, getCurrentUser, signOut, clearSessionToken } from './auth-service';
 import { db } from './firebase-config';
 import { doc, getDoc } from 'firebase/firestore';
 
@@ -11,22 +11,14 @@ class ProfilePage {
   private checkAuth(): void {
     let resolved = false;
 
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
-      (window.navigator as any).standalone === true;
-
+    // Listen for Firebase Auth state — this fires reliably because
+    // firebase-config sets browserLocalPersistence
     const unsubscribe = onAuthChange(async (user) => {
       if (resolved) return;
       resolved = true;
       if (typeof unsubscribe === 'function') unsubscribe();
 
       if (user) {
-        const valid = await validateSessionToken(user.uid);
-        if (!valid) {
-          await signOut();
-          this.showGuest();
-          return;
-        }
         await this.loadProfile(user);
       } else {
         this.showGuest();
@@ -34,7 +26,8 @@ class ProfilePage {
       this.refreshIcons();
     });
 
-    // Fallback — if Firebase auth hasn't fired after timeout, check synchronously
+    // Fallback timeout: if onAuthChange never fires, check synchronously
+    // (can happen in some offline / cached scenarios)
     setTimeout(() => {
       if (!resolved) {
         resolved = true;
@@ -46,7 +39,7 @@ class ProfilePage {
           this.refreshIcons();
         }
       }
-    }, (isMobile && isStandalone) ? 2500 : 1500);
+    }, 2000);
   }
 
   private showGuest(): void {
@@ -64,7 +57,7 @@ class ProfilePage {
 
     const email = user.email || user.phoneNumber || '';
 
-    // Quick initial render from Firebase Auth object
+    // Immediate render from Firebase Auth object
     this.setText('profile-name', user.displayName || 'User');
     this.setText('profile-email', email);
 
@@ -74,7 +67,7 @@ class ProfilePage {
       this.setInitial(user.displayName || email || 'U');
     }
 
-    // Load richer data from Firestore
+    // Load richer data from Firestore (name, provider, createdAt)
     try {
       const snap = await getDoc(doc(db, 'users', user.uid));
       const data = snap.exists() ? (snap.data() as any) : {};
@@ -101,7 +94,7 @@ class ProfilePage {
         this.setInitial(name || email || 'U');
       }
 
-      // Badge
+      // Login badge
       const badge = document.getElementById('login-badge');
       if (badge) {
         badge.className = `login-badge ${isGoogle ? 'google' : 'email'}`;
@@ -117,23 +110,20 @@ class ProfilePage {
              </svg> Email`;
       }
     } catch (err) {
-      console.warn('[Profile] Firestore fetch failed, using Auth data:', err);
+      console.warn('[Profile] Firestore load failed, using Auth data:', err);
     }
   }
 
-  /** Show Google photo inside the avatar ring */
   private setPhoto(url: string): void {
     const inner = document.getElementById('avatar-inner');
     if (!inner) return;
-    inner.innerHTML = `<img src="${url}" alt="Profile" onerror="this.style.display='none'">`;
+    inner.innerHTML = `<img src="${url}" alt="Profile" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.style.display='none'">`;
   }
 
-  /** Show initial letter inside the avatar ring */
   private setInitial(name: string): void {
     const inner = document.getElementById('avatar-inner');
     if (!inner) return;
-    const letter = name.trim().charAt(0).toUpperCase();
-    inner.innerHTML = `<span>${letter}</span>`;
+    inner.innerHTML = `<span>${name.trim().charAt(0).toUpperCase()}</span>`;
   }
 
   private show(id: string): void {
@@ -155,11 +145,17 @@ class ProfilePage {
   private setupSignOut(): void {
     const btn = document.getElementById('sign-out-btn');
     if (!btn) return;
+
     btn.addEventListener('click', async () => {
       (btn as HTMLButtonElement).disabled = true;
       btn.textContent = 'Signing out...';
+
       const user = getCurrentUser();
-      if (user) { try { await clearSessionToken(user.uid); } catch { } }
+      if (user) {
+        try { await clearSessionToken(user.uid); } catch { }
+      }
+
+      // Clear Firebase Auth session
       await signOut();
       localStorage.removeItem('jkssb_session_token');
       window.location.href = './login.html';

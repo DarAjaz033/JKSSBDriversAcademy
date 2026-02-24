@@ -9,7 +9,10 @@ import {
     onAuthChange
 } from './auth-service';
 
-// ─── Toast ──────────────────────────────────────────────────────────────────
+// ─── Flag: login is in progress (prevent onAuthChange race) ──────────────────
+let loginInProgress = false;
+
+// ─── Toast ────────────────────────────────────────────────────────────────────
 
 function showToast(message: string, type: 'success' | 'error' | 'info' = 'info') {
     const container = document.getElementById('toast-container')!;
@@ -23,7 +26,7 @@ function showToast(message: string, type: 'success' | 'error' | 'info' = 'info')
     }, 4000);
 }
 
-// ─── Tab Switching ───────────────────────────────────────────────────────────
+// ─── Tab Switching ────────────────────────────────────────────────────────────
 
 function switchTab(tab: 'signin' | 'signup') {
     document.getElementById('panel-signin')!.classList.toggle('active', tab === 'signin');
@@ -63,19 +66,26 @@ function showFieldError(id: string, message: string) {
     if (el) { el.textContent = message; el.classList.add('show'); }
 }
 
-// ─── After-login redirect ────────────────────────────────────────────────────
-// IMPORTANT: We wait for token save before redirecting so session is valid
+// ─── After-login: save data then redirect ────────────────────────────────────
 
 async function afterAuth(user: any, name?: string) {
-    // Save to Firestore first
-    await saveUserToFirestore(user, name ? { name } : undefined);
-    // Then generate session token (Firestore token must be saved BEFORE redirect)
-    await generateAndSaveSessionToken(user.uid);
-    // Only now redirect
-    window.location.href = './profile.html';
+    loginInProgress = true;
+    try {
+        await saveUserToFirestore(user, name ? { name } : undefined);
+        await generateAndSaveSessionToken(user.uid);
+    } catch (e) {
+        console.warn('[Auth] Post-login Firestore save failed:', e);
+    }
+    // Set success toast for home page to display
+    try {
+        sessionStorage.setItem('app_toast_msg', 'Welcome back! You are successfully signed in 👋');
+        sessionStorage.setItem('app_toast_type', 'success');
+    } catch { }
+    // Redirect to HOME page
+    window.location.href = './index.html';
 }
 
-// ─── Sign In ─────────────────────────────────────────────────────────────────
+// ─── Sign In ──────────────────────────────────────────────────────────────────
 
 async function handleSignIn() {
     clearErrors();
@@ -106,7 +116,7 @@ async function handleSignIn() {
     await afterAuth(result.user);
 }
 
-// ─── Sign Up ─────────────────────────────────────────────────────────────────
+// ─── Sign Up ──────────────────────────────────────────────────────────────────
 
 async function handleSignUp() {
     clearErrors();
@@ -147,7 +157,7 @@ async function handleSignUp() {
 async function handleGoogle() {
     const siBtn = document.getElementById('si-google-btn') as HTMLButtonElement;
     const suBtn = document.getElementById('su-google-btn') as HTMLButtonElement;
-    [siBtn, suBtn].forEach(b => { if (b) { b.disabled = true; } });
+    [siBtn, suBtn].forEach(b => { if (b) b.disabled = true; });
 
     const result = await signInWithGoogle();
 
@@ -208,10 +218,12 @@ async function handleForgotPassword() {
 (window as any).handleGoogle = handleGoogle;
 (window as any).handleForgotPassword = handleForgotPassword;
 
-// ─── Redirect if already logged in ───────────────────────────────────────────
+// ─── Redirect already-logged-in users ────────────────────────────────────────
+// Only redirect if we are NOT in the middle of a new login (prevents race condition)
 
 onAuthChange((user) => {
-    if (user) {
+    if (user && !loginInProgress) {
+        // User is already logged in from a previous session — go straight to profile
         window.location.href = './profile.html';
     }
 });
