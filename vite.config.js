@@ -32,6 +32,7 @@ export default defineConfig({
         'refund-policy': 'refund-policy.html',
         'copyright-warning': 'copyright-warning.html',
         'admin-login': 'admin-login.html',
+        'login': 'login.html',
         'admin-dashboard': 'admin-dashboard.html',
         'admin-courses': 'admin-courses.html',
         'admin-pdfs': 'admin-pdfs.html',

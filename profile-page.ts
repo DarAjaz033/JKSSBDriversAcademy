@@ -1,107 +1,174 @@
-import { getCurrentUser, signOut, onAuthChange } from './auth-service';
+import { onAuthChange, getCurrentUser, signOut, clearSessionToken, validateSessionToken } from './auth-service';
+import { db } from './firebase-config';
+import { doc, getDoc } from 'firebase/firestore';
 
 class ProfilePage {
   constructor() {
-    this.init();
-  }
-
-  private init(): void {
-    this.checkAuth();
     this.setupSignOut();
+    this.checkAuth();
   }
 
   private checkAuth(): void {
-    let authChecked = false;
-    let redirectScheduled = false;
+    let resolved = false;
 
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
-                        (window.navigator as any).standalone === true;
+      (window.navigator as any).standalone === true;
 
-    const timeout = (isMobile && isStandalone) ? 2000 : 1000;
+    const unsubscribe = onAuthChange(async (user) => {
+      if (resolved) return;
+      resolved = true;
+      if (typeof unsubscribe === 'function') unsubscribe();
 
-    const unsubscribe = onAuthChange((user) => {
-      if (authChecked) {
-        return;
-      }
-
-      authChecked = true;
-
-      if (!user) {
-        if (!redirectScheduled) {
-          redirectScheduled = true;
-          setTimeout(() => {
-            window.location.href = './index.html';
-          }, 100);
+      if (user) {
+        const valid = await validateSessionToken(user.uid);
+        if (!valid) {
+          await signOut();
+          this.showGuest();
+          return;
         }
+        await this.loadProfile(user);
       } else {
-        this.displayUserInfo(user);
+        this.showGuest();
       }
+      this.refreshIcons();
     });
 
+    // Fallback — if Firebase auth hasn't fired after timeout, check synchronously
     setTimeout(() => {
-      if (!authChecked) {
+      if (!resolved) {
+        resolved = true;
         const user = getCurrentUser();
-        authChecked = true;
-
-        if (!user) {
-          if (!redirectScheduled) {
-            redirectScheduled = true;
-            setTimeout(() => {
-              window.location.href = './index.html';
-            }, 100);
-          }
+        if (user) {
+          this.loadProfile(user).then(() => this.refreshIcons());
         } else {
-          this.displayUserInfo(user);
+          this.showGuest();
+          this.refreshIcons();
         }
       }
-    }, timeout);
+    }, (isMobile && isStandalone) ? 2500 : 1500);
   }
 
-  private displayUserInfo(user: any): void {
-    const userEmailEl = document.getElementById('user-email');
-    const userEmailDetailEl = document.getElementById('user-email-detail');
-    const userPhoneEl = document.getElementById('user-phone');
-    const userIdEl = document.getElementById('user-id');
+  private showGuest(): void {
+    this.show('guest-section');
+    this.hide('profile-header');
+    this.hide('account-section');
+    this.hide('signout-section');
+  }
 
-    if (userEmailEl && user.email) {
-      userEmailEl.textContent = user.email;
+  private async loadProfile(user: any): Promise<void> {
+    this.hide('guest-section');
+    this.show('profile-header');
+    this.show('account-section');
+    this.show('signout-section');
+
+    const email = user.email || user.phoneNumber || '';
+
+    // Quick initial render from Firebase Auth object
+    this.setText('profile-name', user.displayName || 'User');
+    this.setText('profile-email', email);
+
+    if (user.photoURL) {
+      this.setPhoto(user.photoURL);
+    } else {
+      this.setInitial(user.displayName || email || 'U');
     }
 
-    if (userEmailDetailEl && user.email) {
-      userEmailDetailEl.textContent = user.email;
-    } else if (userEmailDetailEl && user.phoneNumber) {
-      userEmailDetailEl.textContent = 'Signed in with phone';
-    }
+    // Load richer data from Firestore
+    try {
+      const snap = await getDoc(doc(db, 'users', user.uid));
+      const data = snap.exists() ? (snap.data() as any) : {};
 
-    if (userPhoneEl && user.phoneNumber) {
-      userPhoneEl.textContent = user.phoneNumber;
-    } else if (userPhoneEl && !user.phoneNumber) {
-      userPhoneEl.textContent = 'Not provided';
-    }
+      const name = data.name || user.displayName || 'User';
+      const photo = data.photoURL || user.photoURL || '';
+      const provider = data.provider || user.providerData?.[0]?.providerId || 'email';
+      const isGoogle = provider === 'google.com';
+      const since = data.createdAt?.toDate?.()
+        ? data.createdAt.toDate().toLocaleDateString('en-IN', { year: 'numeric', month: 'long' })
+        : 'Recently joined';
 
-    if (userIdEl) {
-      userIdEl.textContent = user.uid.substring(0, 8) + '...';
+      this.setText('profile-name', name);
+      this.setText('profile-email', email);
+      this.setText('ic-name', name || '—');
+      this.setText('ic-email', email || '—');
+      this.setText('ic-since', since);
+      this.setText('ic-provider', isGoogle ? '🌐 Google' : '✉️ Email & Password');
+
+      // Avatar
+      if (photo) {
+        this.setPhoto(photo);
+      } else {
+        this.setInitial(name || email || 'U');
+      }
+
+      // Badge
+      const badge = document.getElementById('login-badge');
+      if (badge) {
+        badge.className = `login-badge ${isGoogle ? 'google' : 'email'}`;
+        badge.innerHTML = isGoogle
+          ? `<svg width="11" height="11" viewBox="0 0 24 24">
+               <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+               <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+               <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+               <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+             </svg> Google`
+          : `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+               <rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+             </svg> Email`;
+      }
+    } catch (err) {
+      console.warn('[Profile] Firestore fetch failed, using Auth data:', err);
     }
+  }
+
+  /** Show Google photo inside the avatar ring */
+  private setPhoto(url: string): void {
+    const inner = document.getElementById('avatar-inner');
+    if (!inner) return;
+    inner.innerHTML = `<img src="${url}" alt="Profile" onerror="this.style.display='none'">`;
+  }
+
+  /** Show initial letter inside the avatar ring */
+  private setInitial(name: string): void {
+    const inner = document.getElementById('avatar-inner');
+    if (!inner) return;
+    const letter = name.trim().charAt(0).toUpperCase();
+    inner.innerHTML = `<span>${letter}</span>`;
+  }
+
+  private show(id: string): void {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'block';
+  }
+  private hide(id: string): void {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  }
+  private setText(id: string, val: string): void {
+    const el = document.getElementById(id);
+    if (el && val) el.textContent = val;
+  }
+  private refreshIcons(): void {
+    setTimeout(() => { if ((window as any).lucide) (window as any).lucide.createIcons(); }, 60);
   }
 
   private setupSignOut(): void {
-    const signOutBtn = document.getElementById('sign-out-btn');
-    if (signOutBtn) {
-      signOutBtn.addEventListener('click', async () => {
-        const result = await signOut();
-        if (result.success) {
-          window.location.href = './index.html';
-        }
-      });
-    }
+    const btn = document.getElementById('sign-out-btn');
+    if (!btn) return;
+    btn.addEventListener('click', async () => {
+      (btn as HTMLButtonElement).disabled = true;
+      btn.textContent = 'Signing out...';
+      const user = getCurrentUser();
+      if (user) { try { await clearSessionToken(user.uid); } catch { } }
+      await signOut();
+      localStorage.removeItem('jkssb_session_token');
+      window.location.href = './login.html';
+    });
   }
 }
 
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
-    new ProfilePage();
-  });
+  document.addEventListener('DOMContentLoaded', () => new ProfilePage());
 } else {
   new ProfilePage();
 }

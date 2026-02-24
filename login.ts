@@ -1,0 +1,217 @@
+import {
+    signInWithEmail,
+    signUpWithEmail,
+    signInWithGoogle,
+    saveUserToFirestore,
+    generateAndSaveSessionToken,
+    checkEmailRegistered,
+    resetPassword,
+    onAuthChange
+} from './auth-service';
+
+// ─── Toast ──────────────────────────────────────────────────────────────────
+
+function showToast(message: string, type: 'success' | 'error' | 'info' = 'info') {
+    const container = document.getElementById('toast-container')!;
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.textContent = message;
+    container.appendChild(toast);
+    setTimeout(() => {
+        toast.style.animation = 'fadeOut 0.3s ease forwards';
+        setTimeout(() => toast.remove(), 300);
+    }, 4000);
+}
+
+// ─── Tab Switching ───────────────────────────────────────────────────────────
+
+function switchTab(tab: 'signin' | 'signup') {
+    document.getElementById('panel-signin')!.classList.toggle('active', tab === 'signin');
+    document.getElementById('panel-signup')!.classList.toggle('active', tab === 'signup');
+    document.getElementById('tab-signin')!.classList.toggle('active', tab === 'signin');
+    document.getElementById('tab-signup')!.classList.toggle('active', tab === 'signup');
+    document.getElementById('auth-tabs')!.style.display = 'flex';
+    document.getElementById('forgot-section')!.classList.remove('active');
+    clearErrors();
+}
+
+function showForgot() {
+    document.getElementById('panel-signin')!.classList.remove('active');
+    document.getElementById('auth-tabs')!.style.display = 'none';
+    document.getElementById('forgot-section')!.classList.add('active');
+    (document.getElementById('fp-email') as HTMLInputElement).focus();
+}
+
+function hideForgot() {
+    document.getElementById('forgot-section')!.classList.remove('active');
+    document.getElementById('auth-tabs')!.style.display = 'flex';
+    document.getElementById('panel-signin')!.classList.add('active');
+    const cta = document.getElementById('fp-signup-cta');
+    if (cta) cta.style.display = 'none';
+    clearErrors();
+}
+
+function clearErrors() {
+    document.querySelectorAll<HTMLElement>('.field-error').forEach(el => {
+        el.textContent = '';
+        el.classList.remove('show');
+    });
+}
+
+function showFieldError(id: string, message: string) {
+    const el = document.getElementById(id);
+    if (el) { el.textContent = message; el.classList.add('show'); }
+}
+
+// ─── After-login redirect ────────────────────────────────────────────────────
+// IMPORTANT: We wait for token save before redirecting so session is valid
+
+async function afterAuth(user: any, name?: string) {
+    // Save to Firestore first
+    await saveUserToFirestore(user, name ? { name } : undefined);
+    // Then generate session token (Firestore token must be saved BEFORE redirect)
+    await generateAndSaveSessionToken(user.uid);
+    // Only now redirect
+    window.location.href = './profile.html';
+}
+
+// ─── Sign In ─────────────────────────────────────────────────────────────────
+
+async function handleSignIn() {
+    clearErrors();
+    const email = (document.getElementById('si-email') as HTMLInputElement).value.trim();
+    const password = (document.getElementById('si-password') as HTMLInputElement).value;
+
+    if (!email) return showFieldError('si-email-error', 'Please enter your email');
+    if (!password) return showFieldError('si-pass-error', 'Please enter your password');
+
+    const btn = document.getElementById('si-btn') as HTMLButtonElement;
+    btn.disabled = true;
+    btn.textContent = 'Signing in...';
+
+    const result = await signInWithEmail(email, password);
+
+    if (!result.success || !result.user) {
+        btn.disabled = false;
+        btn.textContent = 'Sign In';
+        const msg = result.error?.includes('invalid-credential') || result.error?.includes('wrong-password')
+            ? 'Incorrect email or password.'
+            : result.error?.includes('user-not-found')
+                ? 'No account found with this email.'
+                : result.error || 'Sign in failed.';
+        return showFieldError('si-pass-error', msg);
+    }
+
+    btn.textContent = 'Redirecting...';
+    await afterAuth(result.user);
+}
+
+// ─── Sign Up ─────────────────────────────────────────────────────────────────
+
+async function handleSignUp() {
+    clearErrors();
+    const name = (document.getElementById('su-name') as HTMLInputElement).value.trim();
+    const email = (document.getElementById('su-email') as HTMLInputElement).value.trim();
+    const password = (document.getElementById('su-password') as HTMLInputElement).value;
+    const confirm = (document.getElementById('su-confirm') as HTMLInputElement).value;
+
+    let valid = true;
+    if (!name) { showFieldError('su-name-error', 'Please enter your full name'); valid = false; }
+    if (!email) { showFieldError('su-email-error', 'Please enter your email'); valid = false; }
+    if (!password) { showFieldError('su-pass-error', 'Please enter a password'); valid = false; }
+    else if (password.length < 6) { showFieldError('su-pass-error', 'Password must be at least 6 characters'); valid = false; }
+    if (password !== confirm) { showFieldError('su-confirm-error', 'Passwords do not match'); valid = false; }
+    if (!valid) return;
+
+    const btn = document.getElementById('su-btn') as HTMLButtonElement;
+    btn.disabled = true;
+    btn.textContent = 'Creating account...';
+
+    const result = await signUpWithEmail(email, password);
+
+    if (!result.success || !result.user) {
+        btn.disabled = false;
+        btn.textContent = 'Create Account';
+        const msg = result.error?.includes('email-already-in-use')
+            ? 'An account with this email already exists.'
+            : result.error || 'Sign up failed.';
+        return showFieldError('su-email-error', msg);
+    }
+
+    btn.textContent = 'Setting up...';
+    await afterAuth(result.user, name);
+}
+
+// ─── Google Auth ──────────────────────────────────────────────────────────────
+
+async function handleGoogle() {
+    const siBtn = document.getElementById('si-google-btn') as HTMLButtonElement;
+    const suBtn = document.getElementById('su-google-btn') as HTMLButtonElement;
+    [siBtn, suBtn].forEach(b => { if (b) { b.disabled = true; } });
+
+    const result = await signInWithGoogle();
+
+    if (!result.success || !result.user) {
+        [siBtn, suBtn].forEach(b => { if (b) b.disabled = false; });
+        const msg = result.error?.includes('popup-closed-by-user')
+            ? 'Sign-in cancelled.'
+            : result.error || 'Google sign-in failed.';
+        return showToast(msg, 'error');
+    }
+
+    showToast('Signed in! Setting up...', 'info');
+    await afterAuth(result.user);
+}
+
+// ─── Forgot Password ──────────────────────────────────────────────────────────
+
+async function handleForgotPassword() {
+    clearErrors();
+    const email = (document.getElementById('fp-email') as HTMLInputElement).value.trim();
+    if (!email) return showFieldError('fp-error', 'Please enter your email address');
+
+    const btn = document.getElementById('fp-btn') as HTMLButtonElement;
+    btn.disabled = true;
+    btn.textContent = 'Checking...';
+
+    const isRegistered = await checkEmailRegistered(email);
+
+    if (!isRegistered) {
+        btn.disabled = false;
+        btn.textContent = 'Send Reset Link';
+        showFieldError('fp-error', 'No account found with this email. Please sign up first.');
+        const cta = document.getElementById('fp-signup-cta');
+        if (cta) cta.style.display = 'block';
+        return;
+    }
+
+    btn.textContent = 'Sending...';
+    const result = await resetPassword(email);
+    btn.disabled = false;
+    btn.textContent = 'Send Reset Link';
+
+    if (result.success) {
+        showToast('Reset link sent! Check your inbox.', 'success');
+        setTimeout(() => hideForgot(), 1600);
+    } else {
+        showFieldError('fp-error', result.error || 'Failed to send reset link.');
+    }
+}
+
+// ─── Expose to window ─────────────────────────────────────────────────────────
+
+(window as any).switchTab = switchTab;
+(window as any).showForgot = showForgot;
+(window as any).hideForgot = hideForgot;
+(window as any).handleSignIn = handleSignIn;
+(window as any).handleSignUp = handleSignUp;
+(window as any).handleGoogle = handleGoogle;
+(window as any).handleForgotPassword = handleForgotPassword;
+
+// ─── Redirect if already logged in ───────────────────────────────────────────
+
+onAuthChange((user) => {
+    if (user) {
+        window.location.href = './profile.html';
+    }
+});
