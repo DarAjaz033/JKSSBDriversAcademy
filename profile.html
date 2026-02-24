@@ -575,11 +575,8 @@
   </div>
 
   <script type="module" src="./profile-page.ts"></script>
-  <script>
-    function initIcons() { if (typeof lucide !== 'undefined') lucide.createIcons(); }
-    document.addEventListener('DOMContentLoaded', initIcons);
-    window.addEventListener('load', initIcons);
-  </script>
+  <script>if (window.lucide) lucide.createIcons();</script>
+  <script src="./nav.js"></script>
 </body>
 
 </html>

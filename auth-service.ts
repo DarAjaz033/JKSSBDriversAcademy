@@ -13,7 +13,7 @@ import {
   fetchSignInMethodsForEmail as fetchSignInMethods
 } from 'firebase/auth';
 import { auth, db } from './firebase-config';
-import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, setDoc, getDoc, serverTimestamp, onSnapshot } from 'firebase/firestore';
 
 let recaptchaVerifier: RecaptchaVerifier | null = null;
 let confirmationResult: ConfirmationResult | null = null;
@@ -199,4 +199,36 @@ export const checkEmailRegistered = async (email: string): Promise<boolean> => {
   } catch {
     return false;
   }
+};
+
+// ── Single-session watcher ────────────────────────────────────────────────────
+// Call this once after login. If Firestore token changes (new device logged in),
+// automatically signs out the current session and redirects to login.
+
+let _sessionUnsubscribe: (() => void) | null = null;
+
+export const startSessionWatcher = (uid: string): void => {
+  if (_sessionUnsubscribe) _sessionUnsubscribe();
+
+  _sessionUnsubscribe = onSnapshot(
+    doc(db, 'users', uid),
+    (snap) => {
+      if (!snap.exists()) return;
+      const firestoreToken = snap.data()?.sessionToken;
+      const localToken = localStorage.getItem(SESSION_TOKEN_KEY);
+      // If both tokens exist but don't match — new session on another device
+      if (firestoreToken && localToken && firestoreToken !== localToken) {
+        console.warn('[SessionWatcher] Session invalidated by another device.');
+        localStorage.removeItem(SESSION_TOKEN_KEY);
+        firebaseSignOut(auth).then(() => {
+          window.location.href = './login.html';
+        });
+      }
+    },
+    () => { /* Ignore snapshot errors (network etc) */ }
+  );
+};
+
+export const stopSessionWatcher = (): void => {
+  if (_sessionUnsubscribe) { _sessionUnsubscribe(); _sessionUnsubscribe = null; }
 };

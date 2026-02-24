@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -17,18 +18,21 @@
       margin-top: var(--spacing-lg);
       margin-bottom: var(--spacing-sm);
     }
+
     .policy-content p {
       font-size: 15px;
       color: var(--text-secondary);
       line-height: 1.6;
       margin-bottom: var(--spacing-md);
     }
+
     .policy-content strong {
       color: var(--text-primary);
       font-weight: 600;
     }
   </style>
 </head>
+
 <body>
   <div id="app">
     <header class="app-bar">
@@ -101,9 +105,9 @@
   <script type="module" src="./app.ts"></script>
   <script>
     lucide.createIcons();
-
-    // Update copyright year dynamically
     document.getElementById('copyright-year').textContent = new Date().getFullYear();
   </script>
+  <script src="./nav.js"></script>
 </body>
+
 </html>
