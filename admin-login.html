@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#B45309">
+  <title>Admin Login | JKSSB Drivers Academy</title>
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+  <link rel="stylesheet" href="./styles.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: radial-gradient(circle at top left, #FEF3C7, #F3F4F6);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .admin-login-wrapper {
+      width: 100%;
+      max-width: 420px;
+      padding: 16px;
+    }
+    .admin-login-card {
+      background: white;
+      border-radius: 16px;
+      padding: 24px 24px 20px;
+      box-shadow: 0 15px 35px rgba(15, 23, 42, 0.15);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+    .admin-login-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .admin-login-badge {
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 0%, #FED7AA, #B45309);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      box-shadow: 0 10px 25px rgba(180, 83, 9, 0.45);
+    }
+    .admin-login-title {
+      display: flex;
+      flex-direction: column;
+    }
+    .admin-login-title h1 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .admin-login-title p {
+      margin: 2px 0 0;
+      font-size: 13px;
+      color: #6B7280;
+    }
+    .admin-login-form {
+      margin-top: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .form-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #374151;
+    }
+    .form-input {
+      padding: 9px 11px;
+      border-radius: 10px;
+      border: 1px solid #E5E7EB;
+      font-size: 14px;
+      outline: none;
+      background: #F9FAFB;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+    .form-input:focus {
+      border-color: #B45309;
+      background: white;
+      box-shadow: 0 0 0 1px rgba(180, 83, 9, 0.15);
+    }
+    .admin-login-footer {
+      margin-top: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: #6B7280;
+    }
+    .back-link {
+      color: #B45309;
+      text-decoration: none;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .back-link:hover {
+      text-decoration: underline;
+    }
+    #submit-btn {
+      margin-top: 4px;
+      width: 100%;
+      border-radius: 999px;
+      padding: 10px 14px;
+    }
+    #error-message {
+      display: none;
+      margin-top: 6px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: #FEF2F2;
+      color: #B91C1C;
+      font-size: 12px;
+      border: 1px solid #FECACA;
+    }
+    #error-message.show {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-login-wrapper">
+    <div class="admin-login-card">
+      <div class="admin-login-header">
+        <div class="admin-login-badge">
+          <i data-lucide="shield-check" width="22" height="22"></i>
+        </div>
+        <div class="admin-login-title">
+          <h1>Admin Panel Login</h1>
+          <p>Restricted access for JKSSB Academy admins</p>
+        </div>
+      </div>
+
+      <form id="admin-login-form" class="admin-login-form">
+        <div class="form-group">
+          <label for="email" class="form-label">Admin email</label>
+          <input
+            type="email"
+            id="email"
+            class="form-input"
+            placeholder="admin@jkssb.com"
+            autocomplete="email"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="password" class="form-label">Password</label>
+          <input
+            type="password"
+            id="password"
+            class="form-input"
+            placeholder="••••••••"
+            autocomplete="current-password"
+            required
+          />
+        </div>
+
+        <div id="error-message"></div>
+
+        <button type="submit" id="submit-btn" class="btn-primary">
+          Sign In
+        </button>
+      </form>
+
+      <div class="admin-login-footer">
+        <span>Only authorized admins can log in.</span>
+        <a href="./index.html" class="back-link">
+          <i data-lucide="arrow-left" width="14" height="14"></i>
+          Back to site
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./admin-login.ts"></script>
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>

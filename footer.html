@@ -1,0 +1,54 @@
+<footer>
+  <div style="margin: 0 auto; padding: 12px 16px;">
+    <p style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">JKSSB Drivers Academy</p>
+    <p style="margin-bottom: 12px; font-size: 14px;">Your trusted partner for JKSSB Driver exam preparation</p>
+
+    <div style="display: flex; flex-wrap: nowrap; gap: 6px 12px; justify-content: center; margin-bottom: 12px; font-size: 13px;">
+      <a href="contact.html" style="display: flex; align-items: center; gap: 4px;">
+        <i data-lucide="mail" style="width: 14px; height: 14px;"></i>
+        <span class="footer-text-full">Contact Us</span>
+        <span class="footer-text-short" style="display: none;">Contact</span>
+      </a>
+      <span style="opacity: 0.3;">|</span>
+      <a href="privacy-policy.html" style="display: flex; align-items: center; gap: 4px;">
+        <i data-lucide="shield" style="width: 14px; height: 14px;"></i>
+        <span class="footer-text-full">Privacy Policy</span>
+        <span class="footer-text-short" style="display: none;">Privacy</span>
+      </a>
+      <span style="opacity: 0.3;">|</span>
+      <a href="terms-and-conditions.html" style="display: flex; align-items: center; gap: 4px;">
+        <i data-lucide="file-text" style="width: 14px; height: 14px;"></i>
+        <span class="footer-text-full">Terms & Conditions</span>
+        <span class="footer-text-short" style="display: none;">T&C</span>
+      </a>
+      <span style="opacity: 0.3;">|</span>
+      <a href="refund-policy.html" style="display: flex; align-items: center; gap: 4px;">
+        <i data-lucide="rotate-ccw" style="width: 14px; height: 14px;"></i>
+        <span class="footer-text-full">Refund Policy</span>
+        <span class="footer-text-short" style="display: none;">Refund</span>
+      </a>
+    </div>
+
+    <p style="font-size: 13px; opacity: 0.7; margin: 0;">
+      &copy; <span id="copyright-year">2024</span> JKSSB Drivers Academy. All rights reserved.
+    </p>
+  </div>
+  <script>
+    document.getElementById('copyright-year').textContent = new Date().getFullYear();
+  </script>
+  <style>
+    @media (max-width: 640px) {
+      .footer-text-full {
+        display: none !important;
+      }
+      .footer-text-short {
+        display: inline !important;
+      }
+    }
+    @media (min-width: 768px) {
+      footer > div {
+        padding: 0 64px !important;
+      }
+    }
+  </style>
+</footer>

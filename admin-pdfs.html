@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#B45309">
+  <title>Manage PDFs | Admin Panel</title>
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+  <link rel="stylesheet" href="./styles.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    .admin-container {
+      display: flex;
+      min-height: 100vh;
+      background: #F9FAFB;
+    }
+    .admin-sidebar {
+      width: 260px;
+      background: white;
+      border-right: 1px solid var(--border-color);
+      padding: var(--spacing-md);
+      position: fixed;
+      height: 100vh;
+      overflow-y: auto;
+    }
+    .admin-brand {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--primary);
+      padding: var(--spacing-md);
+      margin-bottom: var(--spacing-lg);
+    }
+    .admin-nav-item {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      padding: var(--spacing-sm) var(--spacing-md);
+      border-radius: var(--radius-md);
+      color: var(--text-secondary);
+      text-decoration: none;
+      margin-bottom: var(--spacing-xs);
+      transition: all 0.2s ease;
+    }
+    .admin-nav-item:hover,
+    .admin-nav-item.active {
+      background: #FEF3C7;
+      color: var(--primary);
+    }
+    .admin-main {
+      flex: 1;
+      margin-left: 260px;
+      padding: var(--spacing-lg);
+    }
+    .admin-header {
+      background: white;
+      padding: var(--spacing-md) var(--spacing-lg);
+      border-radius: var(--radius-lg);
+      margin-bottom: var(--spacing-lg);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    .admin-header h1 {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .upload-section {
+      background: white;
+      padding: var(--spacing-lg);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      margin-bottom: var(--spacing-lg);
+    }
+    .upload-area {
+      border: 2px dashed var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-xl);
+      text-align: center;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .upload-area.dragover {
+      border-color: var(--primary);
+      background: #FEF3C7;
+    }
+    .upload-icon {
+      margin-bottom: var(--spacing-md);
+      color: var(--text-tertiary);
+    }
+    .upload-text {
+      font-size: 16px;
+      color: var(--text-primary);
+      margin-bottom: var(--spacing-xs);
+    }
+    .upload-hint {
+      font-size: 14px;
+      color: var(--text-tertiary);
+    }
+    #file-input {
+      display: none;
+    }
+    .link-section {
+      background: white;
+      padding: var(--spacing-lg);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      margin-bottom: var(--spacing-lg);
+    }
+    .link-form {
+      display: grid;
+      grid-template-columns: 1fr 1fr auto;
+      gap: var(--spacing-md);
+      align-items: end;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-xs);
+    }
+    .form-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .form-select {
+      padding: var(--spacing-sm);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      font-size: 14px;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      border: none;
+      padding: var(--spacing-sm) var(--spacing-lg);
+      border-radius: var(--radius-md);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(180, 83, 9, 0.3);
+    }
+    .pdfs-list {
+      background: white;
+      padding: var(--spacing-lg);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    .pdfs-list h2 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: var(--spacing-md);
+    }
+    .pdf-item {
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: var(--spacing-md);
+      margin-bottom: var(--spacing-md);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .pdf-info {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+      flex: 1;
+    }
+    .pdf-icon {
+      width: 40px;
+      height: 40px;
+      background: #FEF3C7;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+    }
+    .pdf-details {
+      flex: 1;
+    }
+    .pdf-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .pdf-size {
+      font-size: 12px;
+      color: var(--text-tertiary);
+    }
+    .pdf-actions {
+      display: flex;
+      gap: var(--spacing-xs);
+    }
+    .btn-icon {
+      background: none;
+      border: none;
+      padding: var(--spacing-xs);
+      cursor: pointer;
+      border-radius: var(--radius-sm);
+      transition: all 0.2s ease;
+    }
+    .btn-icon:hover {
+      background: #F3F4F6;
+    }
+    .btn-icon.delete:hover {
+      background: #FEE2E2;
+      color: #DC2626;
+    }
+    .progress-bar {
+      width: 100%;
+      height: 4px;
+      background: #E5E7EB;
+      border-radius: 2px;
+      overflow: hidden;
+      margin-top: var(--spacing-md);
+      display: none;
+    }
+    .progress-bar.show {
+      display: block;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      transition: width 0.3s ease;
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-container">
+    <aside class="admin-sidebar">
+      <div class="admin-brand">Admin Panel</div>
+      <nav>
+        <a href="./admin-dashboard.html" class="admin-nav-item">
+          <i data-lucide="layout-dashboard" width="20" height="20"></i>
+          Dashboard
+        </a>
+        <a href="./admin-courses.html" class="admin-nav-item">
+          <i data-lucide="book-open" width="20" height="20"></i>
+          Courses
+        </a>
+        <a href="./admin-pdfs.html" class="admin-nav-item active">
+          <i data-lucide="file-text" width="20" height="20"></i>
+          PDFs
+        </a>
+        <a href="./admin-tests.html" class="admin-nav-item">
+          <i data-lucide="clipboard-list" width="20" height="20"></i>
+          Practice Tests
+        </a>
+        <a href="./admin-purchases.html" class="admin-nav-item">
+          <i data-lucide="shopping-cart" width="20" height="20"></i>
+          Purchases
+        </a>
+        <a href="./index.html" class="admin-nav-item">
+          <i data-lucide="home" width="20" height="20"></i>
+          Back to Site
+        </a>
+      </nav>
+    </aside>
+
+    <main class="admin-main">
+      <header class="admin-header">
+        <h1>Manage PDFs</h1>
+      </header>
+
+      <div class="upload-section">
+        <h2 style="margin-bottom: var(--spacing-md);">Upload PDF</h2>
+        <div class="upload-area" id="upload-area">
+          <div class="upload-icon">
+            <i data-lucide="upload-cloud" width="48" height="48"></i>
+          </div>
+          <div class="upload-text">Click to upload or drag and drop</div>
+          <div class="upload-hint">PDF files only (Max 50MB)</div>
+          <input type="file" id="file-input" accept=".pdf" />
+        </div>
+        <div class="progress-bar" id="progress-bar">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+      </div>
+
+      <div class="link-section">
+        <h2 style="margin-bottom: var(--spacing-md);">Link PDF to Course</h2>
+        <div class="link-form">
+          <div class="form-group">
+            <label class="form-label">Select PDF</label>
+            <select id="pdf-select" class="form-select">
+              <option value="">Select a PDF</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Select Course</label>
+            <select id="course-select" class="form-select">
+              <option value="">Select a course</option>
+            </select>
+          </div>
+          <button class="btn-primary" id="link-btn">Link to Course</button>
+        </div>
+      </div>
+
+      <div class="pdfs-list">
+        <h2>All PDFs</h2>
+        <div id="pdfs-container"></div>
+      </div>
+    </main>
+  </div>
+
+  <script type="module" src="./admin-pdfs.ts"></script>
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>

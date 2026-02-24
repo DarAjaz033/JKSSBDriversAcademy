@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#B45309">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Mock Tests | JKSSB Drivers Academy</title>
+  <link rel="stylesheet" href="./styles.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <div id="app">
+    <header class="app-bar">
+      <div class="app-bar-content">
+        <button class="icon-btn" onclick="window.history.back()">
+          <i data-lucide="arrow-left" width="24" height="24"></i>
+        </button>
+        <div class="app-bar-title">
+          <span>Mock Tests</span>
+        </div>
+        <div style="width: 40px;"></div>
+      </div>
+    </header>
+
+    <main class="page-container">
+      <div class="page-content">
+        <div class="info-card">
+          <div class="info-icon">
+            <i data-lucide="clipboard-check" width="48" height="48"></i>
+          </div>
+          <h1 class="info-title">Practice Exams</h1>
+          <p class="info-description">
+            Practice tests designed specifically for JKSSB Driver and
+            other competitive driver recruitment examinations.
+          </p>
+        </div>
+
+        <div class="section-header">
+          <h2>Test Features</h2>
+        </div>
+
+        <div class="feature-list">
+          <div class="feature-item">
+            <div class="feature-icon success">
+              <i data-lucide="check-circle"></i>
+            </div>
+            <div class="feature-content">
+              <h3>Topic-wise MCQ Practice</h3>
+              <p>Practice tests for specific topics</p>
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon success">
+              <i data-lucide="check-circle"></i>
+            </div>
+            <div class="feature-content">
+              <h3>Full-length Mock Tests</h3>
+              <p>Based on actual exam pattern</p>
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon success">
+              <i data-lucide="check-circle"></i>
+            </div>
+            <div class="feature-content">
+              <h3>Previous Year Questions</h3>
+              <p>Practice with real exam questions</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="alert-card info">
+          <div class="alert-icon">
+            <i data-lucide="info"></i>
+          </div>
+          <div class="alert-content">
+            <h3>Online Testing Platform</h3>
+            <p>Tests are conducted through online quiz platforms and forms, allowing candidates to practice anytime, anywhere.</p>
+          </div>
+        </div>
+
+        <div class="section-header">
+          <h2>Available Tests</h2>
+        </div>
+
+        <div class="menu-list">
+          <a href="#" class="menu-item" onclick="alert('Test coming soon!'); return false;">
+            <div class="menu-icon">
+              <i data-lucide="clipboard-check"></i>
+            </div>
+            <span>Part I - Traffic Rules Test</span>
+            <i data-lucide="chevron-right" width="20" height="20"></i>
+          </a>
+          <a href="#" class="menu-item" onclick="alert('Test coming soon!'); return false;">
+            <div class="menu-icon">
+              <i data-lucide="clipboard-check"></i>
+            </div>
+            <span>Part II - MV Act Test</span>
+            <i data-lucide="chevron-right" width="20" height="20"></i>
+          </a>
+          <a href="#" class="menu-item" onclick="alert('Test coming soon!'); return false;">
+            <div class="menu-icon">
+              <i data-lucide="clipboard-check"></i>
+            </div>
+            <span>Part III - Mechanical Test</span>
+            <i data-lucide="chevron-right" width="20" height="20"></i>
+          </a>
+          <a href="#" class="menu-item" onclick="alert('Test coming soon!'); return false;">
+            <div class="menu-icon">
+              <i data-lucide="clipboard-check"></i>
+            </div>
+            <span>Full Mock Test - All Parts</span>
+            <i data-lucide="chevron-right" width="20" height="20"></i>
+          </a>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script type="module" src="./app.ts"></script>
+  <script type="module" src="./mock-tests.ts"></script>
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#B45309">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Profile | JKSSB Drivers Academy</title>
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+  <link rel="stylesheet" href="./styles.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    .profile-header {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      padding: var(--spacing-xl);
+      margin: calc(var(--spacing-md) * -1);
+      margin-bottom: var(--spacing-lg);
+      border-radius: var(--radius-lg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--spacing-md);
+    }
+    .profile-avatar {
+      width: 80px;
+      height: 80px;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+    }
+    .profile-avatar i {
+      color: white;
+    }
+    .profile-info {
+      text-align: center;
+      color: white;
+    }
+    .profile-name {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: var(--spacing-xs);
+    }
+    .profile-email {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+    .section-divider {
+      height: 1px;
+      background: var(--border-color);
+      margin: var(--spacing-lg) 0;
+    }
+    .menu-section {
+      margin-bottom: var(--spacing-lg);
+    }
+    .menu-section-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: var(--spacing-sm);
+      padding: 0 var(--spacing-xs);
+    }
+    .logout-btn {
+      background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+      color: white;
+      border: none;
+      padding: var(--spacing-md);
+      border-radius: var(--radius-md);
+      font-size: 16px;
+      font-weight: 600;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--spacing-sm);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-top: var(--spacing-lg);
+    }
+    .logout-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+    }
+    .logout-btn:active {
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <header class="app-bar">
+      <div class="app-bar-content">
+        <button class="icon-btn" onclick="window.history.back()">
+          <i data-lucide="arrow-left" width="24" height="24"></i>
+        </button>
+        <div class="app-bar-title">
+          <span>Profile</span>
+        </div>
+        <div style="width: 40px;"></div>
+      </div>
+    </header>
+
+    <main class="page-container">
+      <div class="page-content">
+        <div class="profile-header">
+          <div class="profile-avatar">
+            <i data-lucide="user" width="40" height="40"></i>
+          </div>
+          <div class="profile-info">
+            <div class="profile-name">Welcome!</div>
+            <div class="profile-email" id="user-email">Loading...</div>
+          </div>
+        </div>
+
+        <div class="info-section">
+          <div class="info-card">
+            <h3>Account Information</h3>
+            <div class="info-details">
+              <div class="info-row">
+                <span class="info-label">Email:</span>
+                <span class="info-value" id="user-email-detail">Loading...</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Phone:</span>
+                <span class="info-value" id="user-phone">Loading...</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">User ID:</span>
+                <span class="info-value" id="user-id">Loading...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="menu-section">
+          <div class="menu-section-title">Account</div>
+          <div class="menu-list">
+            <a href="./my-courses.html" class="menu-item">
+              <div class="menu-icon">
+                <i data-lucide="book-open"></i>
+              </div>
+              <span>My Courses</span>
+              <i data-lucide="chevron-right" width="20" height="20"></i>
+            </a>
+            <a href="#" class="menu-item" onclick="alert('Purchase history coming soon!'); return false;">
+              <div class="menu-icon">
+                <i data-lucide="shopping-bag"></i>
+              </div>
+              <span>Purchase History</span>
+              <i data-lucide="chevron-right" width="20" height="20"></i>
+            </a>
+          </div>
+        </div>
+
+        <div class="menu-section">
+          <div class="menu-section-title">Preferences</div>
+          <div class="menu-list">
+            <a href="#" class="menu-item" onclick="alert('Notifications settings coming soon!'); return false;">
+              <div class="menu-icon">
+                <i data-lucide="bell"></i>
+              </div>
+              <span>Notifications</span>
+              <i data-lucide="chevron-right" width="20" height="20"></i>
+            </a>
+            <a href="#" class="menu-item" onclick="alert('Language settings coming soon!'); return false;">
+              <div class="menu-icon">
+                <i data-lucide="globe"></i>
+              </div>
+              <span>Language</span>
+              <i data-lucide="chevron-right" width="20" height="20"></i>
+            </a>
+            <a href="#" class="menu-item" onclick="alert('Theme settings coming soon!'); return false;">
+              <div class="menu-icon">
+                <i data-lucide="palette"></i>
+              </div>
+              <span>Appearance</span>
+              <i data-lucide="chevron-right" width="20" height="20"></i>
+            </a>
+          </div>
+        </div>
+
+        <div class="menu-section">
+          <div class="menu-section-title">Support</div>
+          <div class="menu-list">
+            <a href="./contact.html" class="menu-item">
+              <div class="menu-icon">
+                <i data-lucide="headphones"></i>
+              </div>
+              <span>Contact Support</span>
+              <i data-lucide="chevron-right" width="20" height="20"></i>
+            </a>
+            <a href="./feedback.html" class="menu-item">
+              <div class="menu-icon">
+                <i data-lucide="message-square"></i>
+              </div>
+              <span>Send Feedback</span>
+              <i data-lucide="chevron-right" width="20" height="20"></i>
+            </a>
+            <a href="#" class="menu-item" onclick="alert('FAQ coming soon!'); return false;">
+              <div class="menu-icon">
+                <i data-lucide="help-circle"></i>
+              </div>
+              <span>FAQ</span>
+              <i data-lucide="chevron-right" width="20" height="20"></i>
+            </a>
+          </div>
+        </div>
+
+        <div class="menu-section">
+          <div class="menu-section-title">Legal</div>
+          <div class="menu-list">
+            <a href="./privacy-policy.html" class="menu-item">
+              <div class="menu-icon">
+                <i data-lucide="shield"></i>
+              </div>
+              <span>Privacy Policy</span>
+              <i data-lucide="chevron-right" width="20" height="20"></i>
+            </a>
+            <a href="./terms-and-conditions.html" class="menu-item">
+              <div class="menu-icon">
+                <i data-lucide="file-text"></i>
+              </div>
+              <span>Terms & Conditions</span>
+              <i data-lucide="chevron-right" width="20" height="20"></i>
+            </a>
+            <a href="./refund-policy.html" class="menu-item">
+              <div class="menu-icon">
+                <i data-lucide="repeat"></i>
+              </div>
+              <span>Refund Policy</span>
+              <i data-lucide="chevron-right" width="20" height="20"></i>
+            </a>
+            <a href="./copyright-warning.html" class="menu-item">
+              <div class="menu-icon">
+                <i data-lucide="copyright"></i>
+              </div>
+              <span>Copyright Warning</span>
+              <i data-lucide="chevron-right" width="20" height="20"></i>
+            </a>
+          </div>
+        </div>
+
+        <div class="menu-section">
+          <div class="menu-section-title">About</div>
+          <div class="menu-list">
+            <a href="#" class="menu-item" onclick="alert('App version: 1.0.0'); return false;">
+              <div class="menu-icon">
+                <i data-lucide="info"></i>
+              </div>
+              <span>App Version</span>
+              <div style="font-size: 14px; color: var(--text-tertiary);">1.0.0</div>
+            </a>
+          </div>
+        </div>
+
+        <button class="logout-btn" id="sign-out-btn">
+          <i data-lucide="log-out" width="20" height="20"></i>
+          <span>Sign Out</span>
+        </button>
+      </div>
+    </main>
+  </div>
+
+  <script type="module" src="./profile-page.ts"></script>
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>

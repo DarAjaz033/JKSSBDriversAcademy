@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Home | JKSSB Drivers Academy</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- GLOBAL CSS SYSTEM -->
+ <link rel="stylesheet" href="base.css">
+<link rel="stylesheet" href="desktop.css" media="(min-width:769px)">
+<link rel="stylesheet" href="mobile.css" media="(max-width:768px)">
+</head>
+<body data-page="index">
+
+<!-- NAVBAR -->
+<div id="navbar-placeholder"></div>
+
+<!-- PAGE CONTENT -->
+<main class="content">
+  <!-- HERO SECTION -->
+  <section class="hero">
+    <h1>JKSSB Drivers Academy</h1>
+    <p class="hero-subtitle">
+      Your dedicated platform for JKSSB Driver exam preparation.<br>
+      Comprehensive courses, mock tests, and study materials designed for success.
+    </p>
+    <div class="hero-actions">
+      <a href="course-details.html" class="btn btn-primary btn-lg">Explore Courses</a>
+      <a href="demo-pdfs.html" class="btn btn-outline btn-lg">Free Demo PDFs</a>
+    </div>
+  </section>
+
+  <!-- FEATURES SECTION -->
+  <section class="feature-grid">
+    <div class="feature-card">
+      <div class="feature-icon">📚</div>
+      <h3 class="feature-title">Complete Course Coverage</h3>
+      <p class="feature-description">
+        Full syllabus coverage with Part I, II, and III. Includes traffic rules, MV Act, and mechanical knowledge with detailed notes and video lectures.
+      </p>
+      <a href="course-details.html" class="btn btn-primary btn-sm mt-md">View Courses</a>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">📝</div>
+      <h3 class="feature-title">Mock Tests & MCQs</h3>
+      <p class="feature-description">
+        2500+ practice questions with detailed explanations. Test your knowledge and track your progress with our comprehensive MCQ books.
+      </p>
+      <a href="mock-tests.html" class="btn btn-primary btn-sm mt-md">Practice Now</a>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">📄</div>
+      <h3 class="feature-title">Free Study Materials</h3>
+      <p class="feature-description">
+        Access topic-wise PDFs covering traffic signs, GK, and mechanical concepts. Download demo materials and previous year papers.
+      </p>
+      <a href="demo-pdfs.html" class="btn btn-primary btn-sm mt-md">Download PDFs</a>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">🔔</div>
+      <h3 class="feature-title">JKSSB Updates</h3>
+      <p class="feature-description">
+        Stay updated with latest JKSSB notifications, exam dates, and recruitment announcements. Never miss important updates.
+      </p>
+      <a href="jkssb-updates.html" class="btn btn-primary btn-sm mt-md">View Updates</a>
+    </div>
+  </section>
+
+  <!-- STATS SECTION -->
+  <div class="glass-card mt-xl">
+    <h2 class="text-center">Why Choose Us</h2>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-number">2500+</div>
+        <div class="stat-label">Practice Questions</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">100%</div>
+        <div class="stat-label">Syllabus Coverage</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">3</div>
+        <div class="stat-label">Complete Parts</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">24/7</div>
+        <div class="stat-label">Access Anytime</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA SECTION -->
+  <div class="glass-card mt-xl text-center">
+    <h2>Ready to Start Your Preparation?</h2>
+    <p>Join thousands of successful candidates who chose JKSSB Drivers Academy</p>
+    <div class="hero-actions mt-lg">
+      <a href="course-details.html" class="btn btn-secondary btn-lg">Get Started Today</a>
+      <a href="contact.html" class="btn btn-outline btn-lg">Contact Us</a>
+    </div>
+  </div>
+</main>
+
+<!-- FOOTER -->
+<div id="footer-placeholder"></div>
+<!-- MASTER SCRIPT (ONLY SCRIPT ALLOWED) -->
+<script src="./app.js"></script>
+</body>
+</html>

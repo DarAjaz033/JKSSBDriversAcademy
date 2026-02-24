@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#B45309">
+  <title>Admin Dashboard | JKSSB Drivers Academy</title>
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+  <link rel="stylesheet" href="./styles.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    .admin-container {
+      display: flex;
+      min-height: 100vh;
+      background: #F9FAFB;
+    }
+    .admin-sidebar {
+      width: 260px;
+      background: white;
+      border-right: 1px solid var(--border-color);
+      padding: var(--spacing-md);
+      position: fixed;
+      height: 100vh;
+      overflow-y: auto;
+    }
+    .admin-brand {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--primary);
+      padding: var(--spacing-md);
+      margin-bottom: var(--spacing-lg);
+    }
+    .admin-nav-item {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      padding: var(--spacing-sm) var(--spacing-md);
+      border-radius: var(--radius-md);
+      color: var(--text-secondary);
+      text-decoration: none;
+      margin-bottom: var(--spacing-xs);
+      transition: all 0.2s ease;
+    }
+    .admin-nav-item:hover,
+    .admin-nav-item.active {
+      background: #FEF3C7;
+      color: var(--primary);
+    }
+    .admin-main {
+      flex: 1;
+      margin-left: 260px;
+      padding: var(--spacing-lg);
+    }
+    .admin-header {
+      background: white;
+      padding: var(--spacing-md) var(--spacing-lg);
+      border-radius: var(--radius-lg);
+      margin-bottom: var(--spacing-lg);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    .admin-header h1 {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .admin-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: var(--spacing-md);
+      margin-bottom: var(--spacing-lg);
+    }
+    .stat-card {
+      background: white;
+      padding: var(--spacing-lg);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    .stat-card-header {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      margin-bottom: var(--spacing-md);
+    }
+    .stat-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .stat-icon.primary {
+      background: #FEF3C7;
+      color: var(--primary);
+    }
+    .stat-icon.success {
+      background: #DCFCE7;
+      color: #16A34A;
+    }
+    .stat-icon.info {
+      background: #DBEAFE;
+      color: #2563EB;
+    }
+    .stat-icon.warning {
+      background: #FEF3C7;
+      color: #CA8A04;
+    }
+    .stat-value {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .stat-label {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+    .quick-actions {
+      background: white;
+      padding: var(--spacing-lg);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    .quick-actions h2 {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: var(--spacing-md);
+    }
+    .action-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--spacing-md);
+    }
+    .action-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--spacing-sm);
+      padding: var(--spacing-lg);
+      border: 2px dashed var(--border-color);
+      border-radius: var(--radius-lg);
+      background: #F9FAFB;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      color: var(--text-primary);
+    }
+    .action-btn:hover {
+      border-color: var(--primary);
+      background: #FEF3C7;
+    }
+    @media (max-width: 768px) {
+      .admin-sidebar {
+        display: none;
+      }
+      .admin-main {
+        margin-left: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-container">
+    <aside class="admin-sidebar">
+      <div class="admin-brand">Admin Panel</div>
+      <nav>
+        <a href="./admin-dashboard.html" class="admin-nav-item active">
+          <i data-lucide="layout-dashboard" width="20" height="20"></i>
+          Dashboard
+        </a>
+        <a href="./admin-courses.html" class="admin-nav-item">
+          <i data-lucide="book-open" width="20" height="20"></i>
+          Courses
+        </a>
+        <a href="./admin-pdfs.html" class="admin-nav-item">
+          <i data-lucide="file-text" width="20" height="20"></i>
+          PDFs
+        </a>
+        <a href="./admin-tests.html" class="admin-nav-item">
+          <i data-lucide="clipboard-list" width="20" height="20"></i>
+          Practice Tests
+        </a>
+        <a href="./admin-purchases.html" class="admin-nav-item">
+          <i data-lucide="shopping-cart" width="20" height="20"></i>
+          Purchases
+        </a>
+        <a href="./index.html" class="admin-nav-item">
+          <i data-lucide="home" width="20" height="20"></i>
+          Back to Site
+        </a>
+      </nav>
+    </aside>
+
+    <main class="admin-main">
+      <header class="admin-header">
+        <h1>Dashboard</h1>
+        <div>Welcome, Admin</div>
+      </header>
+
+      <div class="admin-stats">
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <div class="stat-icon primary">
+              <i data-lucide="book-open" width="24" height="24"></i>
+            </div>
+          </div>
+          <div class="stat-value" id="total-courses">0</div>
+          <div class="stat-label">Total Courses</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <div class="stat-icon info">
+              <i data-lucide="file-text" width="24" height="24"></i>
+            </div>
+          </div>
+          <div class="stat-value" id="total-pdfs">0</div>
+          <div class="stat-label">PDFs Uploaded</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <div class="stat-icon warning">
+              <i data-lucide="clipboard-list" width="24" height="24"></i>
+            </div>
+          </div>
+          <div class="stat-value" id="total-tests">0</div>
+          <div class="stat-label">Practice Tests</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <div class="stat-icon success">
+              <i data-lucide="shopping-cart" width="24" height="24"></i>
+            </div>
+          </div>
+          <div class="stat-value" id="total-purchases">0</div>
+          <div class="stat-label">Total Purchases</div>
+        </div>
+      </div>
+
+      <div class="quick-actions">
+        <h2>Quick Actions</h2>
+        <div class="action-grid">
+          <a href="./admin-courses.html" class="action-btn">
+            <i data-lucide="plus-circle" width="32" height="32"></i>
+            <span>Create Course</span>
+          </a>
+          <a href="./admin-pdfs.html" class="action-btn">
+            <i data-lucide="upload" width="32" height="32"></i>
+            <span>Upload PDF</span>
+          </a>
+          <a href="./admin-tests.html" class="action-btn">
+            <i data-lucide="clipboard-plus" width="32" height="32"></i>
+            <span>Create Test</span>
+          </a>
+          <a href="./admin-purchases.html" class="action-btn">
+            <i data-lucide="list" width="32" height="32"></i>
+            <span>View Purchases</span>
+          </a>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script type="module" src="./admin-dashboard.ts"></script>
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>

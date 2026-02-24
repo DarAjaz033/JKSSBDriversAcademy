@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#B45309">
+  <title>Manage Practice Tests | Admin Panel</title>
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+  <link rel="stylesheet" href="./styles.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    .admin-container {
+      display: flex;
+      min-height: 100vh;
+      background: #F9FAFB;
+    }
+    .admin-sidebar {
+      width: 260px;
+      background: white;
+      border-right: 1px solid var(--border-color);
+      padding: var(--spacing-md);
+      position: fixed;
+      height: 100vh;
+      overflow-y: auto;
+    }
+    .admin-brand {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--primary);
+      padding: var(--spacing-md);
+      margin-bottom: var(--spacing-lg);
+    }
+    .admin-nav-item {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      padding: var(--spacing-sm) var(--spacing-md);
+      border-radius: var(--radius-md);
+      color: var(--text-secondary);
+      text-decoration: none;
+      margin-bottom: var(--spacing-xs);
+      transition: all 0.2s ease;
+    }
+    .admin-nav-item:hover,
+    .admin-nav-item.active {
+      background: #FEF3C7;
+      color: var(--primary);
+    }
+    .admin-main {
+      flex: 1;
+      margin-left: 260px;
+      padding: var(--spacing-lg);
+    }
+    .admin-header {
+      background: white;
+      padding: var(--spacing-md) var(--spacing-lg);
+      border-radius: var(--radius-lg);
+      margin-bottom: var(--spacing-lg);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    .admin-header h1 {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .upload-section {
+      background: white;
+      padding: var(--spacing-lg);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      margin-bottom: var(--spacing-lg);
+    }
+    .upload-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--spacing-md);
+    }
+    .btn-secondary {
+      background: #6B7280;
+      color: white;
+      border: none;
+      padding: var(--spacing-xs) var(--spacing-md);
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .btn-secondary:hover {
+      background: #4B5563;
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: var(--spacing-md);
+      margin-bottom: var(--spacing-md);
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-xs);
+    }
+    .form-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .form-input,
+    .form-textarea,
+    .form-select {
+      padding: var(--spacing-sm);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      font-size: 14px;
+    }
+    .form-textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+    .form-input:focus,
+    .form-textarea:focus,
+    .form-select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(180, 83, 9, 0.1);
+    }
+    .upload-area {
+      border: 2px dashed var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-xl);
+      text-align: center;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      margin-bottom: var(--spacing-md);
+    }
+    .upload-area.dragover {
+      border-color: var(--primary);
+      background: #FEF3C7;
+    }
+    #excel-input {
+      display: none;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      border: none;
+      padding: var(--spacing-sm) var(--spacing-lg);
+      border-radius: var(--radius-md);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(180, 83, 9, 0.3);
+    }
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    .tests-list {
+      background: white;
+      padding: var(--spacing-lg);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    .test-item {
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: var(--spacing-md);
+      margin-bottom: var(--spacing-md);
+    }
+    .test-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: var(--spacing-sm);
+    }
+    .test-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .test-meta {
+      display: flex;
+      gap: var(--spacing-md);
+      font-size: 13px;
+      color: var(--text-tertiary);
+    }
+    .btn-icon {
+      background: none;
+      border: none;
+      padding: var(--spacing-xs);
+      cursor: pointer;
+      border-radius: var(--radius-sm);
+      transition: all 0.2s ease;
+    }
+    .btn-icon.delete:hover {
+      background: #FEE2E2;
+      color: #DC2626;
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-container">
+    <aside class="admin-sidebar">
+      <div class="admin-brand">Admin Panel</div>
+      <nav>
+        <a href="./admin-dashboard.html" class="admin-nav-item">
+          <i data-lucide="layout-dashboard" width="20" height="20"></i>
+          Dashboard
+        </a>
+        <a href="./admin-courses.html" class="admin-nav-item">
+          <i data-lucide="book-open" width="20" height="20"></i>
+          Courses
+        </a>
+        <a href="./admin-pdfs.html" class="admin-nav-item">
+          <i data-lucide="file-text" width="20" height="20"></i>
+          PDFs
+        </a>
+        <a href="./admin-tests.html" class="admin-nav-item active">
+          <i data-lucide="clipboard-list" width="20" height="20"></i>
+          Practice Tests
+        </a>
+        <a href="./admin-purchases.html" class="admin-nav-item">
+          <i data-lucide="shopping-cart" width="20" height="20"></i>
+          Purchases
+        </a>
+        <a href="./index.html" class="admin-nav-item">
+          <i data-lucide="home" width="20" height="20"></i>
+          Back to Site
+        </a>
+      </nav>
+    </aside>
+
+    <main class="admin-main">
+      <header class="admin-header">
+        <h1>Manage Practice Tests</h1>
+      </header>
+
+      <div class="upload-section">
+        <div class="upload-header">
+          <h2>Create Practice Test</h2>
+          <button class="btn-secondary" id="download-template-btn">
+            <i data-lucide="download" width="16" height="16" style="display: inline;"></i>
+            Download Template
+          </button>
+        </div>
+
+        <form id="test-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Test Title</label>
+              <input type="text" id="title" class="form-input" placeholder="e.g., Mock Test - Part 1" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Duration (minutes)</label>
+              <input type="number" id="duration" class="form-input" placeholder="e.g., 60" required min="1" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Description</label>
+            <textarea id="description" class="form-textarea" placeholder="Brief description of the test" required></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Link to Course (Optional)</label>
+            <select id="course-select" class="form-select">
+              <option value="">None</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Upload Questions (Excel)</label>
+            <div class="upload-area" id="upload-area">
+              <div style="margin-bottom: var(--spacing-sm);">
+                <i data-lucide="upload-cloud" width="32" height="32"></i>
+              </div>
+              <div style="font-size: 14px; color: var(--text-primary); margin-bottom: var(--spacing-xs);">
+                Click to upload or drag and drop
+              </div>
+              <div style="font-size: 12px; color: var(--text-tertiary);">
+                Excel files only (.xlsx, .xls)
+              </div>
+              <input type="file" id="excel-input" accept=".xlsx,.xls" />
+            </div>
+            <div id="file-name" style="font-size: 13px; color: var(--text-secondary); margin-top: var(--spacing-xs);"></div>
+          </div>
+
+          <button type="submit" class="btn-primary" id="submit-btn">
+            Create Practice Test
+          </button>
+        </form>
+      </div>
+
+      <div class="tests-list">
+        <h2 style="margin-bottom: var(--spacing-md);">All Practice Tests</h2>
+        <div id="tests-container"></div>
+      </div>
+    </main>
+  </div>
+
+  <script type="module" src="./admin-tests.ts"></script>
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>

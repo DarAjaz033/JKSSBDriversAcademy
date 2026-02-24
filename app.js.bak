@@ -1,0 +1,218 @@
+/* ===============================
+   JKSSB DRIVERS ACADEMY - MAIN APP
+   Modern, Smooth & Performant
+================================= */
+
+(function () {
+  'use strict';
+
+  const repo = ".";
+
+  // ========= INITIALIZATION =========
+  document.addEventListener('DOMContentLoaded', init);
+
+  function init() {
+    loadComponents();
+    addScrollEffects();
+    addCardAnimations();
+  }
+
+  // ========= LOAD NAVBAR & FOOTER =========
+  function loadComponents() {
+    loadNavbar();
+    loadFooter();
+  }
+
+  function loadNavbar() {
+    fetch(`${repo}/navbar.html`)
+      .then(res => {
+        if (!res.ok) throw new Error("Navbar load failed");
+        return res.text();
+      })
+      .then(html => {
+        const navPlaceholder = document.getElementById("navbar-placeholder");
+        if (navPlaceholder) {
+          navPlaceholder.innerHTML = html;
+          setTimeout(() => {
+            initMobileMenu();
+            highlightActiveLink();
+            addNavbarScrollEffect();
+          }, 0);
+        }
+      })
+      .catch(err => console.error('Navbar Error:', err));
+  }
+
+  function loadFooter() {
+    fetch(`${repo}/footer.html`)
+      .then(res => {
+        if (!res.ok) throw new Error("Footer load failed");
+        return res.text();
+      })
+      .then(html => {
+        const footerPlaceholder = document.getElementById("footer-placeholder");
+        if (footerPlaceholder) {
+          footerPlaceholder.innerHTML = html;
+        }
+      })
+      .catch(err => console.error('Footer Error:', err));
+  }
+
+  // ========= HIGHLIGHT ACTIVE PAGE =========
+  function highlightActiveLink() {
+    const currentPage = location.pathname.split("/").pop() || "index.html";
+
+    document.querySelectorAll(".nav-items a, .ms-nav a").forEach(link => {
+      const href = link.getAttribute("href");
+      if (href === currentPage) {
+        link.classList.add("active");
+      }
+    });
+  }
+
+  // ========= MOBILE SIDEBAR LOGIC =========
+  function initMobileMenu() {
+    const profileBtn = document.getElementById("mobileProfileBtn");
+    const sidebar = document.getElementById("mobileSidebar");
+    const overlay = document.getElementById("msOverlay");
+    const accordion = document.querySelector(".ms-accordion");
+
+    if (!profileBtn || !sidebar || !overlay) return;
+
+    function toggleSidebar() {
+      const isOpen = sidebar.classList.contains("open");
+
+      sidebar.classList.toggle("open");
+      overlay.classList.toggle("show");
+      profileBtn.classList.toggle("active");
+
+      document.body.style.overflow = isOpen ? "" : "hidden";
+
+      if (!isOpen) {
+        sidebar.setAttribute("aria-hidden", "false");
+      } else {
+        sidebar.setAttribute("aria-hidden", "true");
+      }
+    }
+
+    profileBtn.addEventListener("click", toggleSidebar);
+    overlay.addEventListener("click", toggleSidebar);
+
+    if (accordion) {
+      accordion.addEventListener("click", () => {
+        const expanded = accordion.getAttribute("aria-expanded") === "true";
+        accordion.setAttribute("aria-expanded", String(!expanded));
+      });
+    }
+
+    sidebar.querySelectorAll("a").forEach(link => {
+      link.addEventListener("click", () => {
+        if (window.innerWidth <= 768) {
+          toggleSidebar();
+        }
+      });
+    });
+
+    // Close on ESC key
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && sidebar.classList.contains("open")) {
+        toggleSidebar();
+      }
+    });
+  }
+
+  // ========= NAVBAR SCROLL EFFECT =========
+  function addNavbarScrollEffect() {
+    const navbar = document.querySelector(".navbar");
+    if (!navbar) return;
+
+    let lastScroll = 0;
+
+    window.addEventListener("scroll", () => {
+      const currentScroll = window.pageYOffset;
+
+      if (currentScroll <= 0) {
+        navbar.style.boxShadow = "0 2px 8px rgba(0, 0, 0, 0.05)";
+      } else {
+        navbar.style.boxShadow = "0 4px 16px rgba(0, 0, 0, 0.1)";
+      }
+
+      lastScroll = currentScroll;
+    }, { passive: true });
+  }
+
+  // ========= SCROLL EFFECTS =========
+  function addScrollEffects() {
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, observerOptions);
+
+    // Observe cards and feature elements
+    setTimeout(() => {
+      document.querySelectorAll('.card, .feature-card, .pricing-card, .stat-card').forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(30px)';
+        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(el);
+      });
+    }, 100);
+  }
+
+  // ========= CARD ANIMATIONS =========
+  function addCardAnimations() {
+    setTimeout(() => {
+      document.querySelectorAll('.card, .feature-card, .pricing-card').forEach((card, index) => {
+        card.style.animationDelay = `${index * 0.1}s`;
+      });
+    }, 100);
+  }
+
+  // ========= SMOOTH SCROLL FOR ANCHOR LINKS =========
+  document.addEventListener('click', (e) => {
+    const target = e.target.closest('a[href^="#"]');
+    if (!target) return;
+
+    e.preventDefault();
+    const id = target.getAttribute('href').slice(1);
+    const element = document.getElementById(id);
+
+    if (element) {
+      element.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  });
+
+  // ========= PERFORMANCE: Preload Critical Resources =========
+  function preloadCriticalResources() {
+    const criticalPages = ['course-details.html', 'my-courses.html'];
+
+    criticalPages.forEach(page => {
+      const link = document.createElement('link');
+      link.rel = 'prefetch';
+      link.href = `${repo}/${page}`;
+      document.head.appendChild(link);
+    });
+  }
+
+  // Preload after initial load
+  if (document.readyState === 'complete') {
+    setTimeout(preloadCriticalResources, 2000);
+  } else {
+    window.addEventListener('load', () => {
+      setTimeout(preloadCriticalResources, 2000);
+    });
+  }
+
+})();

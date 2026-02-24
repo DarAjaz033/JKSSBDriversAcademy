@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#B45309">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Course Details | JKSSB Drivers Academy</title>
+<link rel="icon" type="image/svg+xml" href="./favicon.svg">
+
+<link rel="stylesheet" href="./styles.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body>
+  <div id="app">
+    <header class="app-bar">
+      <div class="app-bar-content">
+        <div class="app-bar-title">
+          <div class="logo-circle">
+            <i data-lucide="shield-check" width="24" height="24"></i>
+          </div>
+          <span>Course Details</span>
+        </div>
+        <button class="icon-btn" onclick="window.location.href='./index.html'">
+          <i data-lucide="home" width="20" height="20"></i>
+        </button>
+      </div>
+    </header>
+
+    <main class="page-container">
+      <div class="page-content">
+      </div>
+    </main>
+  </div>
+
+<!-- MODAL FOR DETAILS -->
+<div id="detailModal" class="modal">
+  <span class="modal-close" onclick="closeModal()">×</span>
+  <div class="modal-content" id="modalBody"></div>
+</div>
+
+<!-- HIDDEN DETAILS -->
+<div id="full" style="display:none;">
+  <h2 style="color: var(--primary-700); margin-bottom: 24px;">Full Course Syllabus</h2>
+
+  <h3 style="color: var(--primary-600); margin-top: 24px;">Part I - Traffic Rules and Signalling</h3>
+  <ul style="line-height: 1.8;">
+    <li>Traffic Police hand signals</li>
+    <li>Basic Road Rules, driving methods and speed limits</li>
+    <li>Hand signals while driving</li>
+    <li>Traffic light signals</li>
+    <li>Road map reading</li>
+    <li>Knowledge of traffic signages for road safety</li>
+    <li>Fitness to drive</li>
+    <li>First aid kit</li>
+    <li>Good health & Road safety</li>
+    <li>Driving under influence of drugs/liquors</li>
+    <li>Difficult driving conditions</li>
+    <li>Night driving and fog conditions</li>
+  </ul>
+
+  <h3 style="color: var(--primary-600); margin-top: 24px;">Part II - MV Act, 1988 & CMV Rules, 1989</h3>
+  <ul style="line-height: 1.8;">
+    <li>Basic knowledge about provisions of the Motor Vehicle Act</li>
+    <li>Awareness about documents required for driving</li>
+    <li>Registration procedures</li>
+    <li>Licensing requirements</li>
+    <li>Insurance essentials</li>
+    <li>Offence related information</li>
+  </ul>
+
+  <h3 style="color: var(--primary-600); margin-top: 24px;">Part III - Motor Parts and Its Repair</h3>
+  <ul style="line-height: 1.8;">
+    <li>Identification of major assemblies of vehicle</li>
+    <li>Knowledge of daily and periodic inspection</li>
+    <li>Fault diagnosis in tyre and changing procedure</li>
+    <li>Fuel pump, clutch and brake working</li>
+    <li>Lubrication grades for different parts</li>
+    <li>Servicing schedule knowledge</li>
+    <li>Different starting methods</li>
+    <li>Dashboard symbols understanding</li>
+  </ul>
+</div>
+
+<div id="p1" style="display:none;">
+  <h2 style="color: var(--primary-700); margin-bottom: 24px;">Part I - Traffic Rules & Signalling</h2>
+  <ul style="line-height: 1.8;">
+    <li>Traffic Police hand signals</li>
+    <li>Basic Road Rules, driving methods and speed limits</li>
+    <li>Hand signals while driving</li>
+    <li>Traffic light signals</li>
+    <li>Road map reading</li>
+    <li>Knowledge of traffic signages for road safety</li>
+    <li>Fitness to drive</li>
+    <li>First aid kit</li>
+    <li>Good health & Road safety</li>
+    <li>Driving under influence of drugs/liquors</li>
+    <li>Difficult driving conditions</li>
+    <li>Driving on wet surface</li>
+    <li>Driving in fog</li>
+    <li>Night driving</li>
+    <li>Running on pavement</li>
+    <li>Brake failure</li>
+    <li>Towing</li>
+    <li>Essential knowledge about vehicle pollution</li>
+  </ul>
+</div>
+
+<div id="p2" style="display:none;">
+  <h2 style="color: var(--primary-700); margin-bottom: 24px;">Part II - MV Act & CMV Rules</h2>
+  <ul style="line-height: 1.8;">
+    <li>Basic knowledge about provisions of the Motor Vehicle Act</li>
+    <li>Awareness about documents required for driving</li>
+    <li>Registration</li>
+    <li>Licensing</li>
+    <li>Insurance</li>
+    <li>Offence related information</li>
+  </ul>
+</div>
+
+<div id="p3" style="display:none;">
+  <h2 style="color: var(--primary-700); margin-bottom: 24px;">Part III - Motor Parts and Its Repair</h2>
+  <ul style="line-height: 1.8;">
+    <li>Identification of major assemblies of vehicle</li>
+    <li>Knowledge of daily and periodic inspection</li>
+    <li>Knowledge of fault diagnosis in tyre and its changing procedure</li>
+    <li>Knowledge of fuel pump, clutch and brake working and their air bleeding procedure</li>
+    <li>Lubrication grades used in vehicle for engine, transmission, differential, suspension</li>
+    <li>Knowledge about servicing schedule and service centres location</li>
+    <li>Knowledge of different starting methods</li>
+    <li>Knowledge of dashboard symbols</li>
+  </ul>
+</div>
+
+<div id="mv" style="display:none;">
+  <h2 style="color: var(--primary-700); margin-bottom: 24px;">MV Act MCQ Book Details</h2>
+  <img src="https://drive.google.com/uc?export=view&id=1mqYoaZnF1f25PN8x5fq_gLPKVKa0xQrx"
+       style="max-width: 100%; border-radius: 16px; margin-bottom: 24px; box-shadow: var(--shadow-lg);">
+
+  <h3 style="color: var(--primary-600);">What's Included:</h3>
+  <ul style="line-height: 1.8;">
+    <li>300+ Updated Multiple Choice Questions</li>
+    <li>Complete Motor Vehicle Act, 1988 coverage</li>
+    <li>CMV Rules, 1989 included</li>
+    <li>Latest amendments incorporated</li>
+    <li>Highly important for JKSSB Driver exam</li>
+    <li>Answer key provided</li>
+  </ul>
+</div>
+
+<script type="module" src="./app.ts"></script>
+<script type="module" src="./course-details.ts"></script>
+<script>
+  lucide.createIcons();
+</script>
+
+</body>
+</html>
