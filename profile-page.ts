@@ -1,4 +1,4 @@
-import { onAuthChange, getCurrentUser, signOut, clearSessionToken, startSessionWatcher } from './auth-service';
+import { onAuthChange, getCurrentUser, signOut, clearSessionToken } from './auth-service';
 import { db } from './firebase-config';
 import { doc, getDoc } from 'firebase/firestore';
 
@@ -50,8 +50,6 @@ class ProfilePage {
   }
 
   private async loadProfile(user: any): Promise<void> {
-    // Start real-time session watcher — signs out if another device steals the session
-    startSessionWatcher(user.uid);
 
     this.hide('guest-section');
     this.show('profile-header');

@@ -66,11 +66,26 @@ document.getElementById('loading-name')!.textContent = pdfName;
 
 let isExplicitlyExiting = false;
 
+// Strict vendor-prefixed requestFullscreen
+const requestFullscreenStrict = async (element: HTMLElement) => {
+    const el = element as any;
+    if (el.requestFullscreen) {
+        await el.requestFullscreen();
+    } else if (el.webkitRequestFullscreen) {
+        await el.webkitRequestFullscreen();
+    } else if (el.mozRequestFullScreen) {
+        await el.mozRequestFullScreen();
+    } else if (el.msRequestFullscreen) {
+        await el.msRequestFullscreen();
+    }
+};
+
 // Attempt to forcefully enter fullscreen upon the user's first interaction
 const attemptFullscreen = async () => {
     try {
-        if (!document.fullscreenElement && document.documentElement.requestFullscreen) {
-            await document.documentElement.requestFullscreen();
+        const isFullscreen = document.fullscreenElement || (document as any).webkitFullscreenElement || (document as any).mozFullScreenElement || (document as any).msFullscreenElement;
+        if (!isFullscreen) {
+            await requestFullscreenStrict(document.documentElement);
             document.body.classList.add('pdf-active');
         }
     } catch (e) {
@@ -82,23 +97,53 @@ document.addEventListener('pointerdown', attemptFullscreen, { once: true });
 document.addEventListener('touchstart', attemptFullscreen, { once: true });
 document.addEventListener('keydown', attemptFullscreen, { once: true });
 
+// Floating Exit Button Logic
+let exitBtnTimeout: any;
+const floatingBtn = document.getElementById('floating-exit-btn');
+
+const showFloatingBtn = () => {
+    if (!floatingBtn) return;
+    floatingBtn.classList.add('show');
+    clearTimeout(exitBtnTimeout);
+    exitBtnTimeout = setTimeout(() => {
+        floatingBtn.classList.remove('show');
+    }, 3000); // Auto-hide after 3 seconds
+};
+
+document.addEventListener('pointerdown', showFloatingBtn);
+document.addEventListener('touchstart', showFloatingBtn);
+document.addEventListener('mousemove', showFloatingBtn);
+
+// ── Strict Teardown & Exit ───────────────────────────────────────────────────
+
+const handleExit = () => {
+    isExplicitlyExiting = true;
+
+    // Immediately destroy all references and UI to prevent lingering PDF views
+    pdfDoc = null;
+    document.body.innerHTML = '';
+
+    // Exit fullscreen strictly
+    const doc = document as any;
+    if (doc.exitFullscreen) doc.exitFullscreen().catch(() => { });
+    else if (doc.webkitExitFullscreen) doc.webkitExitFullscreen().catch(() => { });
+    else if (doc.mozCancelFullScreen) doc.mozCancelFullScreen().catch(() => { });
+    else if (doc.msExitFullscreen) doc.msExitFullscreen().catch(() => { });
+
+    document.body.classList.remove('pdf-active');
+
+    // Return silently to previous state
+    window.history.back();
+};
+
 document.addEventListener('fullscreenchange', () => {
-    // If the browser exited fullscreen, silently and immediately return to the previous page
-    if (!document.fullscreenElement && !isExplicitlyExiting) {
+    const isFullscreen = document.fullscreenElement || (document as any).webkitFullscreenElement || (document as any).mozFullScreenElement || (document as any).msFullscreenElement;
+    if (!isFullscreen && !isExplicitlyExiting) {
         handleExit();
     }
 });
 
-const handleExit = () => {
-    isExplicitlyExiting = true;
-    if (document.fullscreenElement) {
-        document.exitFullscreen().catch(e => console.warn(e));
-    }
-    document.body.classList.remove('pdf-active');
-    window.history.back();
-};
-
-document.getElementById('warning-close-btn')?.addEventListener('click', handleExit);
+if (floatingBtn) floatingBtn.addEventListener('click', handleExit);
 document.getElementById('explicit-close-btn')?.addEventListener('click', handleExit);
 
 // ── Load PDF.js from CDN ─────────────────────────────────────────────────────

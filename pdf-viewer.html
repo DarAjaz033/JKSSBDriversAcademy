@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <meta name="theme-color" content="#B45309">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <title>PDF Viewer | JKSSB Drivers Academy</title>
@@ -136,6 +136,33 @@
         }
 
 
+        /* ── Floating Exit Button ── */
+        .floating-exit-btn {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            z-index: 10000;
+            background: rgba(15, 23, 42, 0.75);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .floating-exit-btn.show {
+            opacity: 1;
+            visibility: visible;
+        }
 
         /* Strict app-wide PDF lockdown */
         body.pdf-active {
@@ -340,6 +367,14 @@
 </head>
 
 <body>
+
+    <!-- Floating Exit Button (Auto-Hides) -->
+    <button class="floating-exit-btn" id="floating-exit-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16">
+            <path d="M19 12H5M12 5l-7 7 7 7" />
+        </svg>
+        Exit
+    </button>
 
     <!-- Loading screen -->
     <div class="loading-screen" id="loading">

@@ -8,7 +8,9 @@ import {
   verifyPhoneCode,
   signOut,
   onAuthChange,
-  getCurrentUser
+  getCurrentUser,
+  initSessionVerifier,
+  stopSessionVerifier
 } from './auth-service';
 
 interface PageState {
@@ -244,7 +246,6 @@ class App {
   }
 
   private addEventListeners(): void {
-    // Handle navigate buttons in content
     const navigateButtons = document.querySelectorAll<HTMLButtonElement>('[data-navigate]');
 
     navigateButtons.forEach(btn => {
@@ -284,12 +285,19 @@ class App {
     onAuthChange((user) => {
       const profileBtn = document.getElementById('profile-btn');
       if (!profileBtn) return;
-      if (user && user.photoURL) {
-        // Show mini circular photo in header
-        const existing = profileBtn.querySelector('img');
-        if (!existing) {
-          profileBtn.innerHTML = `<img src="${user.photoURL}" alt="Profile" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:2px solid #B45309;">`;
+      if (user) {
+        // Start watching for single-device session overlaps globally
+        initSessionVerifier(user.uid);
+
+        if (user.photoURL) {
+          // Show mini circular photo in header
+          const existing = profileBtn.querySelector('img');
+          if (!existing) {
+            profileBtn.innerHTML = `<img src="${user.photoURL}" alt="Profile" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:2px solid #B45309;">`;
+          }
         }
+      } else {
+        stopSessionVerifier();
       }
     });
   }

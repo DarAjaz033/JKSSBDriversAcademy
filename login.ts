@@ -219,11 +219,23 @@ async function handleForgotPassword() {
 (window as any).handleForgotPassword = handleForgotPassword;
 
 // ─── Redirect already-logged-in users ────────────────────────────────────────
+// ─── Redirect already-logged-in users ────────────────────────────────────────
 // Only redirect if we are NOT in the middle of a new login (prevents race condition)
 
 onAuthChange((user) => {
     if (user && !loginInProgress) {
         // User is already logged in from a previous session — go straight to profile
-        window.location.href = './profile.html';
+        window.location.href = './index.html';
+    }
+});
+
+// ─── Boot Logic ──────────────────────────────────────────────────────────────
+
+document.addEventListener('DOMContentLoaded', () => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('error') === 'session_conflict') {
+        showToast('You have been logged in on another device. Please login again.', 'error');
+        // Clean URL to prevent repeated toasts on refresh
+        window.history.replaceState({}, document.title, window.location.pathname);
     }
 });

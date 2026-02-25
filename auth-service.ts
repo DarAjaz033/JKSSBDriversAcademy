@@ -41,6 +41,7 @@ export const signUpWithEmail = async (email: string, password: string) => {
 export const signInWithEmail = async (email: string, password: string) => {
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    await setupSingleDeviceLogin(userCredential.user.uid);
     return { success: true, user: userCredential.user };
   } catch (error: any) {
     return { success: false, error: error.message };
@@ -51,6 +52,7 @@ export const signInWithGoogle = async () => {
   try {
     const provider = new GoogleAuthProvider();
     const result = await signInWithPopup(auth, provider);
+    await setupSingleDeviceLogin(result.user.uid);
     return { success: true, user: result.user };
   } catch (error: any) {
     return { success: false, error: error.message };
@@ -90,6 +92,7 @@ export const verifyPhoneCode = async (code: string) => {
       return { success: false, error: 'No confirmation result available' };
     }
     const userCredential = await confirmationResult.confirm(code);
+    await setupSingleDeviceLogin(userCredential.user.uid);
     return { success: true, user: userCredential.user };
   } catch (error: any) {
     return { success: false, error: error.message };
@@ -142,44 +145,66 @@ export const saveUserToFirestore = async (user: User, extraData?: { name?: strin
   }
 };
 
-// ── Session token (single-session logic) ──────────────────────────────────────
+// ── Single-session watcher (30s Polling) ──────────────────────────────────────
 
 const SESSION_TOKEN_KEY = 'jkssb_session_token';
 
-export const generateAndSaveSessionToken = async (uid: string) => {
+// Generates a session token, writes to Firestore & LocalStorage
+export const setupSingleDeviceLogin = async (uid: string) => {
   try {
-    const token = Date.now().toString() + Math.random().toString(36).slice(2);
+    const token = crypto.randomUUID ? crypto.randomUUID() : Date.now().toString() + Math.random().toString(36).slice(2);
     localStorage.setItem(SESSION_TOKEN_KEY, token);
     const userRef = doc(db, 'users', uid);
     await setDoc(userRef, { sessionToken: token }, { merge: true });
-    return { success: true, token };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+    return token;
+  } catch (error) {
+    console.error('Failed to setup session token:', error);
+    return null;
   }
 };
 
-export const validateSessionToken = async (uid: string): Promise<boolean> => {
-  try {
-    const localToken = localStorage.getItem(SESSION_TOKEN_KEY);
+let sessionInterval: any = null;
 
-    // No local token — generate fresh one instead of signing out
-    if (!localToken) {
-      await generateAndSaveSessionToken(uid);
-      return true;
+export const initSessionVerifier = (uid: string) => {
+  if (sessionInterval) clearInterval(sessionInterval);
+
+  const verifyToken = async () => {
+    try {
+      const localToken = localStorage.getItem(SESSION_TOKEN_KEY);
+      if (!localToken) return; // If logged out locally, do nothing
+
+      const snap = await getDoc(doc(db, 'users', uid));
+      if (!snap.exists()) return; // User deleted?
+
+      const firestoreToken = snap.data()?.sessionToken;
+
+      // If tokens mismatch, immediate force logout
+      if (firestoreToken && firestoreToken !== localToken) {
+        console.warn('Session mismatch detected! Another device logged in.');
+        clearInterval(sessionInterval);
+        localStorage.removeItem(SESSION_TOKEN_KEY);
+
+        await firebaseSignOut(auth);
+
+        // Redirect with message flag
+        window.location.href = './login.html?error=session_conflict';
+      }
+    } catch (error) {
+      console.warn('Session verifier check failed (network issue?):', error);
     }
+  };
 
-    const snap = await getDoc(doc(db, 'users', uid));
+  // Run immediately on boot
+  verifyToken();
 
-    // Firestore doc doesn't exist or has no token yet — trust Firebase Auth and save token
-    if (!snap.exists() || !snap.data()?.sessionToken) {
-      await setDoc(doc(db, 'users', uid), { sessionToken: localToken }, { merge: true });
-      return true;
-    }
+  // Poll every 30 seconds exactly as requested
+  sessionInterval = setInterval(verifyToken, 30 * 1000);
+};
 
-    return localToken === snap.data()?.sessionToken;
-  } catch {
-    // On any error (network, etc.), trust Firebase Auth — don't sign out
-    return true;
+export const stopSessionVerifier = () => {
+  if (sessionInterval) {
+    clearInterval(sessionInterval);
+    sessionInterval = null;
   }
 };
 
@@ -190,8 +215,7 @@ export const clearSessionToken = async (uid: string) => {
   } catch { }
 };
 
-// ── Check if email is registered ──────────────────────────────────────────────
-
+// ── Check if email is registered (for password reset) ──────────────────────
 export const checkEmailRegistered = async (email: string): Promise<boolean> => {
   try {
     const methods = await fetchSignInMethods(auth, email);
@@ -201,34 +225,5 @@ export const checkEmailRegistered = async (email: string): Promise<boolean> => {
   }
 };
 
-// ── Single-session watcher ────────────────────────────────────────────────────
-// Call this once after login. If Firestore token changes (new device logged in),
-// automatically signs out the current session and redirects to login.
-
-let _sessionUnsubscribe: (() => void) | null = null;
-
-export const startSessionWatcher = (uid: string): void => {
-  if (_sessionUnsubscribe) _sessionUnsubscribe();
-
-  _sessionUnsubscribe = onSnapshot(
-    doc(db, 'users', uid),
-    (snap) => {
-      if (!snap.exists()) return;
-      const firestoreToken = snap.data()?.sessionToken;
-      const localToken = localStorage.getItem(SESSION_TOKEN_KEY);
-      // If both tokens exist but don't match — new session on another device
-      if (firestoreToken && localToken && firestoreToken !== localToken) {
-        console.warn('[SessionWatcher] Session invalidated by another device.');
-        localStorage.removeItem(SESSION_TOKEN_KEY);
-        firebaseSignOut(auth).then(() => {
-          window.location.href = './login.html';
-        });
-      }
-    },
-    () => { /* Ignore snapshot errors (network etc) */ }
-  );
-};
-
-export const stopSessionWatcher = (): void => {
-  if (_sessionUnsubscribe) { _sessionUnsubscribe(); _sessionUnsubscribe = null; }
-};
+// Alias to maintain compatibility with login.ts
+export const generateAndSaveSessionToken = setupSingleDeviceLogin;
