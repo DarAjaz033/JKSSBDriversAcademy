@@ -60,6 +60,54 @@ const pdfName = params.get('name') || 'Document';
 
 document.getElementById('pdf-title')!.textContent = pdfName;
 document.getElementById('loading-name')!.textContent = pdfName;
+document.getElementById('lobby-title')!.textContent = pdfName;
+
+// ── Fullscreen & Lockdown Logic ──────────────────────────────────────────────
+
+let isExplicitlyExiting = false;
+
+document.getElementById('open-pdf-btn')?.addEventListener('click', async () => {
+    try {
+        if (document.documentElement.requestFullscreen) {
+            await document.documentElement.requestFullscreen();
+        }
+    } catch (e) {
+        console.warn('Fullscreen request failed:', e);
+    }
+    document.body.classList.add('pdf-active');
+    document.getElementById('pdf-lobby')!.style.display = 'none';
+
+    // Only load the PDF AFTER they click open to ensure we have the interaction token
+    loadPdf();
+});
+
+document.addEventListener('fullscreenchange', () => {
+    // If the browser exited fullscreen but we didn't explicitly click the close button
+    if (!document.fullscreenElement && !isExplicitlyExiting) {
+        document.getElementById('exit-warning')?.classList.add('active');
+    }
+});
+
+document.getElementById('resume-pdf-btn')?.addEventListener('click', async () => {
+    try {
+        if (document.documentElement.requestFullscreen) {
+            await document.documentElement.requestFullscreen();
+        }
+    } catch (e) { }
+    document.getElementById('exit-warning')?.classList.remove('active');
+});
+
+const handleExit = () => {
+    isExplicitlyExiting = true;
+    if (document.fullscreenElement) {
+        document.exitFullscreen().catch(e => console.warn(e));
+    }
+    document.body.classList.remove('pdf-active');
+    window.history.back();
+};
+
+document.getElementById('warning-close-btn')?.addEventListener('click', handleExit);
+document.getElementById('explicit-close-btn')?.addEventListener('click', handleExit);
 
 // ── Load PDF.js from CDN ─────────────────────────────────────────────────────
 
@@ -102,7 +150,16 @@ async function renderPage(pageNum: number): Promise<void> {
     const ctx = canvas.getContext('2d')!;
     await page.render({ canvasContext: ctx, viewport }).promise;
 
+    // Block any potential link overlays that PDF.js sometimes native-renders
+    const annotationLayer = document.createElement('div');
+    annotationLayer.style.position = 'absolute';
+    annotationLayer.style.inset = '0';
+    annotationLayer.style.zIndex = '10';
+    annotationLayer.style.pointerEvents = 'none'; // Ensure canvas grabs events, but links are dead
+
     wrap.appendChild(canvas);
+    wrap.appendChild(annotationLayer);
+
     return wrap as any;
 }
 
@@ -215,6 +272,7 @@ function setupNavigation(): void {
     updateNavBtns();
 }
 
-// ── Boot ────────────────────────────────────────────────────────────────────
+// ── Boot sequence now waits for Lobby Interaction ───────────────────────────
 
-loadPdf();
+// Do not call loadPdf() automatically anymore. It is called by the Open Btn.
+// loadPdf();
