@@ -183,6 +183,177 @@
       font-size: 12px;
       color: var(--text-secondary);
     }
+
+    /* === NEW TEST OVERHAUL UI === */
+    /* Lobby Layout */
+    .lobby-card {
+      background: white;
+      padding: var(--spacing-xl);
+      border-radius: var(--radius-lg);
+      margin: var(--spacing-lg) auto;
+      box-shadow: var(--shadow-sm);
+      max-width: 600px;
+    }
+
+    .lobby-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: var(--spacing-md);
+      text-align: center;
+    }
+
+    .lobby-instructions {
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: var(--radius-md);
+      padding: var(--spacing-lg);
+      margin-bottom: var(--spacing-xl);
+    }
+
+    .lobby-instructions h3 {
+      font-size: 16px;
+      margin-bottom: var(--spacing-md);
+      color: #334155;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .lobby-instructions ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .lobby-instructions li {
+      font-size: 14px;
+      color: #475569;
+      margin-bottom: 12px;
+      display: flex;
+      gap: 10px;
+      line-height: 1.5;
+    }
+
+    /* Fixed Test Dashboard Header */
+    .test-dash-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: white;
+      padding: 12px var(--spacing-lg);
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      margin-bottom: var(--spacing-lg);
+      border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    }
+
+    .dash-timer {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #FEF2F2;
+      color: #DC2626;
+      padding: 6px 14px;
+      border-radius: 99px;
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: 0.5px;
+      border: 1px solid #FECACA;
+    }
+
+    .dash-time-warn {
+      animation: pulse 1s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.5;
+      }
+
+      100% {
+        opacity: 1;
+      }
+    }
+
+    /* Warning Overlay / Confirm Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(4px);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--spacing-lg);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.2s;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-content {
+      background: white;
+      padding: var(--spacing-xl);
+      border-radius: var(--radius-lg);
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+      transform: translateY(20px);
+      transition: transform 0.3s;
+    }
+
+    .modal-overlay.active .modal-content {
+      transform: translateY(0);
+    }
+
+    /* Quick Grid for Results */
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: var(--spacing-xl);
+    }
+
+    /* Fullscreen reset mechanics */
+    body.is-testing {
+      overflow: hidden !important;
+      width: 100vw !important;
+      height: 100vh !important;
+    }
+
+    body.is-testing .app-bar,
+    body.is-testing footer,
+    body.is-testing .bottom-nav,
+    body.is-testing #unav-root {
+      display: none !important;
+    }
+
+    body.is-testing .page-container {
+      top: 0 !important;
+      bottom: 0 !important;
+      height: 100vh !important;
+      overflow-y: auto !important;
+      /* Allow internal scroll only if necessary */
+      padding-bottom: 0 !important;
+    }
+
+    body.is-testing .pages-container {
+      bottom: 0 !important;
+    }
   </style>
 </head>
 
