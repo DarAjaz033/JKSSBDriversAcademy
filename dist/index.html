@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#B45309">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>JKSSB Drivers Academy</title>
+  <link rel="icon" type="image/svg+xml" href="./assets/favicon-DiZosfo3.svg">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    /* Stop original unav-footer from rendering behind fixed containers */
+    body>#unav-footer {
+      display: none !important;
+    }
+
+    .unav-footer-clone {
+      background: linear-gradient(135deg, #92400e 0%, #b45309 50%, #c2500a 100%) !important;
+      color: rgba(255, 255, 255, 0.92) !important;
+      padding: 12px 16px 10px !important;
+      text-align: center !important;
+      font-family: "Poppins", system-ui, sans-serif !important;
+      /* Force full viewport width ignoring any parent padding */
+      width: 100vw !important;
+      max-width: 100vw !important;
+      margin-left: calc(50% - 50vw) !important;
+      margin-right: 0 !important;
+      /* Pull down through parent padding to touch the nav */
+      margin-bottom: calc(-1 * var(--spacing-xl)) !important;
+      /* Adjust top margin for spacing */
+      margin-top: var(--spacing-lg) !important;
+      border-radius: 0 !important;
+      box-sizing: border-box !important;
+    }
+  </style>
+  <script type="module" crossorigin src="./assets/main-DicWphPS.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/modulepreload-polyfill-B5Qt9EMX.js">
+  <link rel="modulepreload" crossorigin href="./assets/firebase-config-DyDltD9C.js">
+  <link rel="modulepreload" crossorigin href="./assets/auth-service-CzQAHVFu.js">
+  <link rel="modulepreload" crossorigin href="./assets/app-sND44uRX.js">
+  <link rel="modulepreload" crossorigin href="./assets/escape-html-BUkjI-KV.js">
+  <link rel="modulepreload" crossorigin href="./assets/admin-service-B7fwtq3Q.js">
+  <link rel="stylesheet" crossorigin href="./assets/styles-BX1TAZul.css">
+</head>
+
+<body>
+  <div id="app">
+    <header class="app-bar">
+      <div class="app-bar-content">
+        <div class="app-bar-title">
+          <div class="logo-circle">
+            <i data-lucide="shield-check" width="24" height="24"></i>
+          </div>
+          <span id="page-title">JKSSB Academy</span>
+        </div>
+        <button class="icon-btn" id="profile-btn">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="profileGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#B45309;stop-opacity:1" />
+                <stop offset="50%" style="stop-color:#D97706;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#EA580C;stop-opacity:1" />
+              </linearGradient>
+            </defs>
+            <circle cx="12" cy="12" r="10" stroke="url(#profileGradient)" stroke-width="2" fill="none" />
+            <circle cx="12" cy="10" r="3" stroke="url(#profileGradient)" stroke-width="2" fill="none" />
+            <path d="M6.168 18.849A4 4 0 0 1 10 16h4a4 4 0 0 1 3.834 2.855" stroke="url(#profileGradient)"
+              stroke-width="2" stroke-linecap="round" />
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="pages-container">
+      <div class="page active" data-page="home">
+        <div class="page-content">
+          <div class="hero-carousel">
+            <div class="hero-card hero-slide active">
+              <div class="hero-gradient hero-gradient-1"></div>
+              <div class="hero-content">
+                <div class="hero-icon">
+                  <i data-lucide="shield-check" width="48" height="48"></i>
+                </div>
+                <h1 class="hero-title">Master Your<br>Driver Exam</h1>
+                <p class="hero-subtitle">Complete preparation for JKSSB Driver recruitment</p>
+                <button class="btn-primary" data-navigate="courses">
+                  <span>Explore Courses</span>
+                  <i data-lucide="arrow-right" width="20" height="20"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="hero-card hero-slide">
+              <div class="hero-gradient hero-gradient-2"></div>
+              <div class="hero-content">
+                <div class="hero-icon">
+                  <i data-lucide="book-open" width="48" height="48"></i>
+                </div>
+                <h1 class="hero-title">2500+ Practice<br>Questions</h1>
+                <p class="hero-subtitle">Comprehensive MCQs with detailed explanations</p>
+                <button class="btn-primary" data-navigate="courses">
+                  <span>Start Practicing</span>
+                  <i data-lucide="arrow-right" width="20" height="20"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="hero-card hero-slide">
+              <div class="hero-gradient hero-gradient-3"></div>
+              <div class="hero-content">
+                <div class="hero-icon">
+                  <i data-lucide="target" width="48" height="48"></i>
+                </div>
+                <h1 class="hero-title">Guaranteed<br>Success</h1>
+                <p class="hero-subtitle">Join 10,000+ students who cleared their exam</p>
+                <button class="btn-primary" data-navigate="courses">
+                  <span>View Success Stories</span>
+                  <i data-lucide="arrow-right" width="20" height="20"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="hero-card hero-slide">
+              <div class="hero-gradient hero-gradient-4"></div>
+              <div class="hero-content">
+                <div class="hero-icon">
+                  <i data-lucide="zap" width="48" height="48"></i>
+                </div>
+                <h1 class="hero-title">Learn Faster<br>Score Higher</h1>
+                <p class="hero-subtitle">Smart learning system adapts to your pace</p>
+                <button class="btn-primary" data-navigate="courses">
+                  <span>Get Started</span>
+                  <i data-lucide="arrow-right" width="20" height="20"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="carousel-indicators">
+              <span class="indicator active" data-slide="0"></span>
+              <span class="indicator" data-slide="1"></span>
+              <span class="indicator" data-slide="2"></span>
+              <span class="indicator" data-slide="3"></span>
+            </div>
+          </div>
+
+          <div class="stats-row">
+            <div class="stat-item">
+              <div class="stat-icon"><i data-lucide="book-open"></i></div>
+              <div class="stat-value">2500+</div>
+              <div class="stat-label">Questions</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-icon"><i data-lucide="target"></i></div>
+              <div class="stat-value">100%</div>
+              <div class="stat-label">Coverage</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-icon"><i data-lucide="star"></i></div>
+              <div class="stat-value">4.9</div>
+              <div class="stat-label">Rating</div>
+            </div>
+          </div>
+
+          <div class="section-header">
+            <h2>What You'll Get</h2>
+          </div>
+
+          <div class="feature-list">
+            <div class="feature-item">
+              <div class="feature-icon"><i data-lucide="traffic-cone"></i></div>
+              <div class="feature-content">
+                <h3>Traffic Rules</h3>
+                <p>Complete traffic rules, signals, and road safety</p>
+              </div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-icon"><i data-lucide="clipboard-list"></i></div>
+              <div class="feature-content">
+                <h3>MV Act & Rules</h3>
+                <p>Motor Vehicle Act 1988 & CMV Rules 1989</p>
+              </div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-icon"><i data-lucide="wrench"></i></div>
+              <div class="feature-content">
+                <h3>Mechanical Knowledge</h3>
+                <p>Vehicle parts, maintenance, and repair</p>
+              </div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-icon"><i data-lucide="file-text"></i></div>
+              <div class="feature-content">
+                <h3>Mock Tests</h3>
+                <p>Practice with 2500+ MCQs and explanations</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-header">
+            <h2>Why Choose JKSSB Academy?</h2>
+            <p>Your complete exam preparation partner</p>
+          </div>
+
+          <div class="feature-list">
+            <div class="feature-item">
+              <div class="feature-icon"><i data-lucide="check-circle"></i></div>
+              <div class="feature-content">
+                <h3>100% Syllabus Coverage</h3>
+                <p>Every topic from JKSSB notification covered in detail with comprehensive study material</p>
+              </div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-icon"><i data-lucide="users"></i></div>
+              <div class="feature-content">
+                <h3>10,000+ Success Stories</h3>
+                <p>Join thousands of students who cleared their JKSSB exam with our preparation</p>
+              </div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-icon"><i data-lucide="video"></i></div>
+              <div class="feature-content">
+                <h3>HD Video Lectures</h3>
+                <p>Expert faculty teaching every concept with real-world examples and visual demonstrations</p>
+              </div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-icon"><i data-lucide="smartphone"></i></div>
+              <div class="feature-content">
+                <h3>Learn Anytime, Anywhere</h3>
+                <p>Mobile-friendly platform to study on the go, offline access available for all content</p>
+              </div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-icon"><i data-lucide="headphones"></i></div>
+              <div class="feature-content">
+                <h3>24/7 Doubt Support</h3>
+                <p>Get your questions answered by experts anytime through chat and email support</p>
+              </div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-icon"><i data-lucide="award"></i></div>
+              <div class="feature-content">
+                <h3>Updated Content</h3>
+                <p>Regular updates based on latest JKSSB notification and exam pattern changes</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-header">
+            <h2>How It Works</h2>
+            <p>Simple 4-step learning process</p>
+          </div>
+
+          <div class="steps-container">
+            <div class="step-item">
+              <div class="step-number">1</div>
+              <div class="step-content">
+                <h3>Choose Your Course</h3>
+                <p>Select from Part I, Part II, Part III, or the Complete Package based on your preparation needs</p>
+              </div>
+            </div>
+            <div class="step-item">
+              <div class="step-number">2</div>
+              <div class="step-content">
+                <h3>Watch Video Lectures</h3>
+                <p>Learn from expert teachers with HD quality videos covering every topic in detail</p>
+              </div>
+            </div>
+            <div class="step-item">
+              <div class="step-number">3</div>
+              <div class="step-content">
+                <h3>Practice MCQs</h3>
+                <p>Test your knowledge with 2500+ practice questions with detailed explanations</p>
+              </div>
+            </div>
+            <div class="step-item">
+              <div class="step-number">4</div>
+              <div class="step-content">
+                <h3>Take Mock Tests</h3>
+                <p>Simulate real exam conditions with full-length mock tests and get instant scores</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-header">
+            <h2>What Students Say</h2>
+            <p>Success stories from our students</p>
+          </div>
+
+          <div class="testimonial-carousel">
+            <div class="testimonial-slider">
+              <div class="testimonial-card active">
+                <div class="testimonial-rating">
+                  <i data-lucide="star" class="star-filled"></i>
+                  <i data-lucide="star" class="star-filled"></i>
+                  <i data-lucide="star" class="star-filled"></i>
+                  <i data-lucide="star" class="star-filled"></i>
+                  <i data-lucide="star" class="star-filled"></i>
+                </div>
+                <p class="testimonial-text">"Excellent preparation material! The video lectures were very clear and the
+                  MCQs helped me understand every topic thoroughly. I cleared my exam in the first attempt."</p>
+                <div class="testimonial-author">
+                  <div class="author-avatar"><i data-lucide="user"></i></div>
+                  <div class="author-info">
+                    <div class="author-name">TAB</div>
+                    <div class="author-position">Selected as Driver, JKSSB 2024</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="testimonial-card">
+                <div class="testimonial-rating">
+                  <i data-lucide="star" class="star-filled"></i>
+                  <i data-lucide="star" class="star-filled"></i>
+                  <i data-lucide="star" class="star-filled"></i>
+                  <i data-lucide="star" class="star-filled"></i>
+                  <i data-lucide="star" class="star-filled"></i>
+                </div>
+                <p class="testimonial-text">"Best coaching platform for JKSSB driver exam. The mechanical part was
+                  explained so well that I scored full marks in Part III. Highly recommend!"</p>
+                <div class="testimonial-author">
+                  <div class="author-avatar"><i data-lucide="user"></i></div>
+                  <div class="author-info">
+                    <div class="author-name">TAB</div>
+                    <div class="author-position">Selected as Driver, JKSSB 2023</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="testimonial-card">
+                <div class="testimonial-rating">
+                  <i data-lucide="star" class="star-filled"></i>
+                  <i data-lucide="star" class="star-filled"></i>
+                  <i data-lucide="star" class="star-filled"></i>
+                  <i data-lucide="star" class="star-filled"></i>
+                  <i data-lucide="star" class="star-filled"></i>
+                </div>
+                <p class="testimonial-text">"The mock tests were exactly like the real exam. I was confident during my
+                  exam because I had practiced so much. Thank you JKSSB Academy!"</p>
+                <div class="testimonial-author">
+                  <div class="author-avatar"><i data-lucide="user"></i></div>
+                  <div class="author-info">
+                    <div class="author-name">TAB</div>
+                    <div class="author-position">Selected as Driver, JKSSB 2024</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="carousel-indicators">
+              <span class="indicator active" data-testimonial="0"></span>
+              <span class="indicator" data-testimonial="1"></span>
+              <span class="indicator" data-testimonial="2"></span>
+            </div>
+          </div>
+
+          <div class="section-header">
+            <h2>About JKSSB Driver Exam</h2>
+            <p>Everything you need to know</p>
+          </div>
+
+          <div class="info-section">
+            <div class="info-card">
+              <div class="info-icon"><i data-lucide="clipboard"></i></div>
+              <h3>Exam Pattern</h3>
+              <div class="info-details">
+                <div class="info-row">
+                  <span class="info-label">Total Questions:</span>
+                  <span class="info-value">100 MCQs</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">Duration:</span>
+                  <span class="info-value">90 Minutes</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">Total Marks:</span>
+                  <span class="info-value">100</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">Negative Marking:</span>
+                  <span class="info-value">0.25 per wrong answer</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="info-card">
+              <div class="info-icon"><i data-lucide="list"></i></div>
+              <h3>Syllabus Breakdown</h3>
+              <div class="info-details">
+                <div class="info-row">
+                  <span class="info-label">Part I:</span>
+                  <span class="info-value">Traffic Rules & Road Safety</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">Part II:</span>
+                  <span class="info-value">Motor Vehicle Act & CMV Rules</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">Part III:</span>
+                  <span class="info-value">Vehicle Parts & Repair Knowledge</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">Coverage:</span>
+                  <span class="info-value">As per JKSSB Notification</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-header">
+            <h2>Course Comparison</h2>
+            <p>Find the perfect package for you</p>
+          </div>
+
+          <div class="comparison-table">
+            <div class="comparison-header">
+              <div class="comparison-cell">Features</div>
+              <div class="comparison-cell">Part I</div>
+              <div class="comparison-cell">Part II</div>
+              <div class="comparison-cell">Part III</div>
+              <div class="comparison-cell highlight">Complete</div>
+            </div>
+            <div class="comparison-row">
+              <div class="comparison-cell">Video Lectures</div>
+              <div class="comparison-cell"><i data-lucide="check"></i></div>
+              <div class="comparison-cell"><i data-lucide="check"></i></div>
+              <div class="comparison-cell"><i data-lucide="check"></i></div>
+              <div class="comparison-cell highlight"><i data-lucide="check"></i></div>
+            </div>
+            <div class="comparison-row">
+              <div class="comparison-cell">Practice MCQs</div>
+              <div class="comparison-cell">800+</div>
+              <div class="comparison-cell">600+</div>
+              <div class="comparison-cell">700+</div>
+              <div class="comparison-cell highlight">2500+</div>
+            </div>
+            <div class="comparison-row">
+              <div class="comparison-cell">Mock Tests</div>
+              <div class="comparison-cell">5</div>
+              <div class="comparison-cell">3</div>
+              <div class="comparison-cell">4</div>
+              <div class="comparison-cell highlight">15</div>
+            </div>
+            <div class="comparison-row">
+              <div class="comparison-cell">PDF Study Material</div>
+              <div class="comparison-cell"><i data-lucide="check"></i></div>
+              <div class="comparison-cell"><i data-lucide="check"></i></div>
+              <div class="comparison-cell"><i data-lucide="check"></i></div>
+              <div class="comparison-cell highlight"><i data-lucide="check"></i></div>
+            </div>
+            <div class="comparison-row">
+              <div class="comparison-cell">Free MV Act Book</div>
+              <div class="comparison-cell"><i data-lucide="x"></i></div>
+              <div class="comparison-cell"><i data-lucide="x"></i></div>
+              <div class="comparison-cell"><i data-lucide="x"></i></div>
+              <div class="comparison-cell highlight"><i data-lucide="check"></i></div>
+            </div>
+            <div class="comparison-row">
+              <div class="comparison-cell">Lifetime Access</div>
+              <div class="comparison-cell">6 Months</div>
+              <div class="comparison-cell">6 Months</div>
+              <div class="comparison-cell">6 Months</div>
+              <div class="comparison-cell highlight">Lifetime</div>
+            </div>
+            <div class="comparison-row">
+              <div class="comparison-cell">24/7 Support</div>
+              <div class="comparison-cell"><i data-lucide="check"></i></div>
+              <div class="comparison-cell"><i data-lucide="check"></i></div>
+              <div class="comparison-cell"><i data-lucide="check"></i></div>
+              <div class="comparison-cell highlight"><i data-lucide="check"></i></div>
+            </div>
+          </div>
+
+          <div class="section-header">
+            <h2>Frequently Asked Questions</h2>
+            <p>Got questions? We have answers</p>
+          </div>
+
+          <div class="faq-list">
+            <div class="faq-item">
+              <div class="faq-question">
+                <div class="faq-question-text">
+                  <i data-lucide="help-circle"></i>
+                  <span>What is included in the Complete Package?</span>
+                </div>
+                <i data-lucide="chevron-down" class="faq-chevron"></i>
+              </div>
+              <div class="faq-answer">
+                The Complete Package includes all three parts (Traffic Rules, MV Act, and Mechanical Knowledge) with
+                2500+ MCQs, video lectures for every topic, 15 full-length mock tests, PDF study material, and a free MV
+                Act book. You also get lifetime access to all content and 24/7 support.
+              </div>
+            </div>
+
+            <div class="faq-item">
+              <div class="faq-question">
+                <div class="faq-question-text">
+                  <i data-lucide="help-circle"></i>
+                  <span>How long do I have access to the course?</span>
+                </div>
+                <i data-lucide="chevron-down" class="faq-chevron"></i>
+              </div>
+              <div class="faq-answer">
+                Individual parts (Part I, II, or III) give you 6 months of access. The Complete Package offers lifetime
+                access, meaning you can access all content forever with all future updates included at no extra cost.
+              </div>
+            </div>
+
+            <div class="faq-item">
+              <div class="faq-question">
+                <div class="faq-question-text">
+                  <i data-lucide="help-circle"></i>
+                  <span>Can I access courses on my mobile phone?</span>
+                </div>
+                <i data-lucide="chevron-down" class="faq-chevron"></i>
+              </div>
+              <div class="faq-answer">
+                Yes! Our platform is fully mobile-friendly and works on all devices. You can watch videos, practice
+                MCQs, and take mock tests on your smartphone, tablet, or computer. Offline access is also available for
+                videos and study material.
+              </div>
+            </div>
+
+            <div class="faq-item">
+              <div class="faq-question">
+                <div class="faq-question-text">
+                  <i data-lucide="help-circle"></i>
+                  <span>Are the mock tests similar to actual JKSSB exam?</span>
+                </div>
+                <i data-lucide="chevron-down" class="faq-chevron"></i>
+              </div>
+              <div class="faq-answer">
+                Yes, our mock tests are designed exactly like the actual JKSSB driver exam with the same pattern,
+                difficulty level, and time duration. They include 100 MCQs to be solved in 90 minutes, just like the
+                real exam.
+              </div>
+            </div>
+
+            <div class="faq-item">
+              <div class="faq-question">
+                <div class="faq-question-text">
+                  <i data-lucide="help-circle"></i>
+                  <span>What if I need help during preparation?</span>
+                </div>
+                <i data-lucide="chevron-down" class="faq-chevron"></i>
+              </div>
+              <div class="faq-answer">
+                We provide 24/7 doubt support through chat and email. Our expert faculty will answer all your questions
+                and help you clear your doubts. You can reach us anytime through the Contact Us section.
+              </div>
+            </div>
+
+            <div class="faq-item">
+              <div class="faq-question">
+                <div class="faq-question-text">
+                  <i data-lucide="help-circle"></i>
+                  <span>Is the content updated regularly?</span>
+                </div>
+                <i data-lucide="chevron-down" class="faq-chevron"></i>
+              </div>
+              <div class="faq-answer">
+                Yes, we regularly update our content based on the latest JKSSB notifications, exam pattern changes, and
+                feedback from students who recently appeared for the exam. All updates are free for enrolled students.
+              </div>
+            </div>
+          </div>
+
+          <div class="cta-card">
+            <h3>Ready to Start?</h3>
+            <p>Join thousands preparing for JKSSB Driver exam</p>
+            <button class="btn-secondary" data-navigate="courses">View All Courses</button>
+          </div>
+
+
+        </div>
+      </div>
+
+      <div class="page" data-page="courses">
+        <div class="page-content">
+          <div class="course-cards">
+            <div class="course-card featured">
+              <div class="course-badge">Best Value</div>
+              <div class="course-header">
+                <div class="course-icon"><i data-lucide="graduation-cap"></i></div>
+                <h3>Complete Package</h3>
+              </div>
+              <div class="course-price">
+                <span class="price-old">₹1999</span>
+                <span class="price-new">₹1149</span>
+                <span class="price-save">Save 42%</span>
+              </div>
+              <ul class="course-features">
+                <li>All 3 Parts Coverage</li>
+                <li>2500+ MCQ Questions</li>
+                <li>Video Lectures</li>
+                <li>Mock Tests</li>
+                <li>Free MV Act Book</li>
+                <li>Lifetime Access</li>
+              </ul>
+              <button class="btn-enroll"
+                onclick="window.open('https://payments.cashfree.com/forms?code=jkssbfullcourse&formId=FULLCOURSE', '_blank')">Enroll
+                Now</button>
+            </div>
+
+            <div class="course-card">
+              <div class="course-header">
+                <div class="course-icon"><i data-lucide="traffic-cone"></i></div>
+                <h3>Part I</h3>
+                <p class="course-subtitle">Traffic & Road Safety</p>
+              </div>
+              <div class="course-price">
+                <span class="price-old">₹899</span>
+                <span class="price-new">₹449</span>
+                <span class="price-save">50% OFF</span>
+              </div>
+              <ul class="course-features">
+                <li>Traffic Signals & Signs</li>
+                <li>Road Safety Rules</li>
+                <li>Hand Signals</li>
+                <li>First Aid Knowledge</li>
+              </ul>
+              <button class="btn-enroll"
+                onclick="window.open('https://payments.cashfree.com/forms?code=jkssbcourse&formId=PART1', '_blank')">Enroll
+                Now</button>
+            </div>
+
+            <div class="course-card">
+              <div class="course-header">
+                <div class="course-icon"><i data-lucide="clipboard-list"></i></div>
+                <h3>Part II</h3>
+                <p class="course-subtitle">MV Act & CMV Rules</p>
+              </div>
+              <div class="course-price">
+                <span class="price-old">₹499</span>
+                <span class="price-new">₹299</span>
+                <span class="price-save">40% OFF</span>
+              </div>
+              <ul class="course-features">
+                <li>Motor Vehicle Act 1988</li>
+                <li>CMV Rules 1989</li>
+                <li>Registration & Licensing</li>
+                <li>Insurance Essentials</li>
+              </ul>
+              <button class="btn-enroll"
+                onclick="window.open('https://payments.cashfree.com/forms?code=jkssbcoursePART2&formId=PART2', '_blank')">Enroll
+                Now</button>
+            </div>
+
+            <div class="course-card">
+              <div class="course-header">
+                <div class="course-icon"><i data-lucide="wrench"></i></div>
+                <h3>Part III</h3>
+                <p class="course-subtitle">Motor Parts & Repair</p>
+              </div>
+              <div class="course-price">
+                <span class="price-old">₹899</span>
+                <span class="price-new">₹449</span>
+                <span class="price-save">50% OFF</span>
+              </div>
+              <ul class="course-features">
+                <li>Vehicle Assembly</li>
+                <li>Daily Inspection</li>
+                <li>Repair Procedures</li>
+                <li>Dashboard Symbols</li>
+              </ul>
+              <button class="btn-enroll"
+                onclick="window.open('https://payments.cashfree.com/forms?code=jkssbcoursepart3&formId=PART3', '_blank')">Enroll
+                Now</button>
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+
+      <div class="page" data-page="learning">
+        <div class="page-content">
+          <div class="section-header">
+            <h2>My Learning</h2>
+            <p>Access your enrolled courses</p>
+          </div>
+
+          <div class="learning-cards">
+            <a href="full-course.html" class="learning-card">
+              <div class="learning-icon"><i data-lucide="graduation-cap"></i></div>
+              <div class="learning-content">
+                <h3>Complete Package</h3>
+                <p>All Parts • 2500+ Questions</p>
+                <div class="learning-progress">
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%"></div>
+                  </div>
+                  <span class="progress-text">Start Learning</span>
+                </div>
+              </div>
+              <i data-lucide="chevron-right" class="learning-arrow" width="20" height="20"></i>
+            </a>
+
+            <a href="part-1.html" class="learning-card">
+              <div class="learning-icon"><i data-lucide="traffic-cone"></i></div>
+              <div class="learning-content">
+                <h3>Part I - Traffic Rules</h3>
+                <p>Traffic & Road Safety</p>
+                <div class="learning-progress">
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%"></div>
+                  </div>
+                  <span class="progress-text">Start Learning</span>
+                </div>
+              </div>
+              <i data-lucide="chevron-right" class="learning-arrow" width="20" height="20"></i>
+            </a>
+
+            <a href="part-2.html" class="learning-card">
+              <div class="learning-icon"><i data-lucide="clipboard-list"></i></div>
+              <div class="learning-content">
+                <h3>Part II - MV Act</h3>
+                <p>Motor Vehicle Act & Rules</p>
+                <div class="learning-progress">
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%"></div>
+                  </div>
+                  <span class="progress-text">Start Learning</span>
+                </div>
+              </div>
+              <i data-lucide="chevron-right" class="learning-arrow" width="20" height="20"></i>
+            </a>
+
+            <a href="part-3.html" class="learning-card">
+              <div class="learning-icon"><i data-lucide="wrench"></i></div>
+              <div class="learning-content">
+                <h3>Part III - Mechanical</h3>
+                <p>Motor Parts & Repair</p>
+                <div class="learning-progress">
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%"></div>
+                  </div>
+                  <span class="progress-text">Start Learning</span>
+                </div>
+              </div>
+              <i data-lucide="chevron-right" class="learning-arrow" width="20" height="20"></i>
+            </a>
+          </div>
+
+          <div class="section-header">
+            <h2>Resources</h2>
+          </div>
+
+          <div class="menu-list">
+            <a href="demo-pdfs.html" class="menu-item">
+              <div class="menu-icon"><i data-lucide="file-text"></i></div>
+              <span>Demo PDFs</span>
+              <i data-lucide="chevron-right" width="20" height="20"></i>
+            </a>
+            <a href="mock-tests.html" class="menu-item">
+              <div class="menu-icon"><i data-lucide="clipboard-check"></i></div>
+              <span>Mock Tests</span>
+              <i data-lucide="chevron-right" width="20" height="20"></i>
+            </a>
+            <a href="jkssb-updates.html" class="menu-item">
+              <div class="menu-icon"><i data-lucide="bell"></i></div>
+              <span>JKSSB Updates</span>
+              <i data-lucide="chevron-right" width="20" height="20"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="page" data-page="more">
+        <div class="page-content">
+          <div class="section-header">
+            <h2>More</h2>
+          </div>
+
+          <div class="menu-list">
+            <a href="gk-pdfs.html" class="menu-item">
+              <div class="menu-icon"><i data-lucide="book-open"></i></div>
+              <span>GK PDFs</span>
+              <i data-lucide="chevron-right" width="20" height="20"></i>
+            </a>
+            <a href="feedback.html" class="menu-item">
+              <div class="menu-icon"><i data-lucide="message-circle"></i></div>
+              <span>Feedback</span>
+              <i data-lucide="chevron-right" width="20" height="20"></i>
+            </a>
+            <a href="contact.html" class="menu-item">
+              <div class="menu-icon"><i data-lucide="mail"></i></div>
+              <span>Contact Us</span>
+              <i data-lucide="chevron-right" width="20" height="20"></i>
+            </a>
+          </div>
+
+          <div class="section-header">
+            <h2>Legal</h2>
+          </div>
+
+          <div class="menu-list">
+            <a href="privacy-policy.html" class="menu-item">
+              <div class="menu-icon"><i data-lucide="lock"></i></div>
+              <span>Privacy Policy</span>
+              <i data-lucide="chevron-right" width="20" height="20"></i>
+            </a>
+            <a href="terms-and-conditions.html" class="menu-item">
+              <div class="menu-icon"><i data-lucide="scroll-text"></i></div>
+              <span>Terms & Conditions</span>
+              <i data-lucide="chevron-right" width="20" height="20"></i>
+            </a>
+            <a href="refund-policy.html" class="menu-item">
+              <div class="menu-icon"><i data-lucide="banknote"></i></div>
+              <span>Refund Policy</span>
+              <i data-lucide="chevron-right" width="20" height="20"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Authentication Modal -->
+    <div id="auth-modal" class="auth-modal">
+      <div class="auth-modal-content">
+        <button class="auth-close-btn" id="close-auth-modal">
+          <i data-lucide="x" width="24" height="24"></i>
+        </button>
+
+        <div class="auth-header">
+          <h2 id="auth-title">Sign In</h2>
+          <p id="auth-subtitle">Access your courses and progress</p>
+        </div>
+
+        <!-- Auth Method Tabs -->
+        <div class="auth-tabs">
+          <button class="auth-tab active" data-method="email">Email</button>
+          <button class="auth-tab" data-method="phone">Phone</button>
+        </div>
+
+        <!-- Email Auth Form -->
+        <form id="email-auth-form" class="auth-form">
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" placeholder="your@email.com" required>
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="••••••••" required>
+          </div>
+          <div id="email-error" class="auth-error"></div>
+          <button type="submit" class="btn-auth" id="email-submit-btn">
+            <span>Sign In</span>
+          </button>
+          <div class="auth-toggle">
+            <span id="auth-mode-text">Don't have an account?</span>
+            <button type="button" id="toggle-auth-mode">Sign Up</button>
+          </div>
+        </form>
+
+        <!-- Phone Auth Form -->
+        <form id="phone-auth-form" class="auth-form" style="display: none;">
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" placeholder="+91 1234567890" required>
+          </div>
+          <div id="phone-error" class="auth-error"></div>
+          <button type="submit" class="btn-auth" id="phone-submit-btn">
+            <span>Send Code</span>
+          </button>
+
+          <!-- OTP Verification -->
+          <div id="otp-section" style="display: none;">
+            <div class="form-group">
+              <label for="otp">Verification Code</label>
+              <input type="text" id="otp" placeholder="123456" maxlength="6">
+            </div>
+            <button type="button" class="btn-auth" id="verify-otp-btn">
+              <span>Verify Code</span>
+            </button>
+          </div>
+        </form>
+
+        <div id="recaptcha-container"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    lucide.createIcons();
+    document.querySelectorAll('#copyright-year').forEach(el => {
+      el.textContent = new Date().getFullYear();
+    });
+  </script>
+  <script src="./nav.js"></script>
+  <script>
+    // In index.html, the outer pages-container is fixed, and the .page-content areas
+    // scroll independently. This intercepts the nav.js universal footer creation,
+    // clones it, and naturally injects it into every scrollable page view so it scrolls
+    // instead of hiding behind the background.
+    document.addEventListener("DOMContentLoaded", function () {
+      // Small timeout to let nav.js build the footer first
+      setTimeout(function () {
+        var originalFooter = document.getElementById('unav-footer');
+        if (originalFooter) {
+          document.querySelectorAll('.page-content').forEach(function (contentArea) {
+            var cloned = originalFooter.cloneNode(true);
+            cloned.id = ""; // remove duplicate id
+            cloned.className = "unav-footer-clone";
+            contentArea.appendChild(cloned);
+          });
+        }
+      }, 50);
+    });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#B45309">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Feedback | JKSSB Drivers Academy</title>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script type="module" crossorigin src="./assets/modulepreload-polyfill-B5Qt9EMX.js"></script>
+  <script type="module" crossorigin src="./assets/firebase-config-DyDltD9C.js"></script>
+  <script type="module" crossorigin src="./assets/auth-service-CzQAHVFu.js"></script>
+  <script type="module" crossorigin src="./assets/app-sND44uRX.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/styles-BX1TAZul.css">
+</head>
+
+<body>
+  <div id="app">
+    <header class="app-bar">
+      <div class="app-bar-content">
+        <button class="icon-btn" onclick="window.history.back()">
+          <i data-lucide="arrow-left" width="24" height="24"></i>
+        </button>
+        <div class="app-bar-title">
+          <span>Feedback</span>
+        </div>
+        <div style="width: 40px;"></div>
+      </div>
+    </header>
+
+    <main class="page-container">
+      <div class="page-content">
+        <div class="info-card">
+          <div class="info-icon">
+            <i data-lucide="message-square" width="48" height="48"></i>
+          </div>
+          <h1 class="info-title">We Value Your Feedback</h1>
+          <p class="info-description">
+            Student feedback is extremely important to us. It helps us improve
+            our courses, study material, and overall learning experience.
+          </p>
+        </div>
+
+        <div class="section-header">
+          <h2>Share Your Thoughts</h2>
+        </div>
+
+        <div class="feature-list">
+          <div class="feature-item">
+            <div class="feature-icon">
+              <i data-lucide="star"></i>
+            </div>
+            <div class="feature-content">
+              <h3>Course Quality</h3>
+              <p>Tell us about your learning experience</p>
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">
+              <i data-lucide="book"></i>
+            </div>
+            <div class="feature-content">
+              <h3>Study Material</h3>
+              <p>Share thoughts on content quality</p>
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">
+              <i data-lucide="lightbulb"></i>
+            </div>
+            <div class="feature-content">
+              <h3>Suggestions</h3>
+              <p>Help us improve our platform</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="alert-card warning">
+          <div class="alert-icon">
+            <i data-lucide="construction"></i>
+          </div>
+          <div class="alert-content">
+            <h3>Form Coming Soon</h3>
+            <p>The feedback form is currently under development. For now, please share your feedback by contacting us
+              directly via email or WhatsApp.</p>
+          </div>
+        </div>
+
+        <div class="section-header">
+          <h2>Quick Actions</h2>
+        </div>
+
+        <div class="menu-list">
+          <a href="./contact.html" class="menu-item">
+            <div class="menu-icon">
+              <i data-lucide="mail"></i>
+            </div>
+            <span>Contact Us Directly</span>
+            <i data-lucide="chevron-right" width="20" height="20"></i>
+          </a>
+          <a href="#" class="menu-item" onclick="alert('Form coming soon!'); return false;">
+            <div class="menu-icon">
+              <i data-lucide="file-edit"></i>
+            </div>
+            <span>Submit Feedback Form</span>
+            <i data-lucide="chevron-right" width="20" height="20"></i>
+          </a>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>lucide.createIcons();</script>
+  <script src="./nav.js"></script>
+</body>
+
+</html>
