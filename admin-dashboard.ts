@@ -8,7 +8,13 @@ class AdminDashboard {
 
   private async init(): Promise<void> {
     onAuthChange(async (user) => {
-      if (!user || !isAdmin(user.email)) {
+      if (!user) {
+        window.location.href = './admin-login.html';
+        return;
+      }
+
+      const isUserAdmin = await isAdmin(user);
+      if (!isUserAdmin) {
         window.location.href = './admin-login.html';
         return;
       }

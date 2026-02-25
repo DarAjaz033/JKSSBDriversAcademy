@@ -7,124 +7,456 @@
   <meta name="theme-color" content="#B45309">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <title>Mock Tests | JKSSB Drivers Academy</title>
+  <title>Course Details | JKSSB Drivers Academy</title>
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
   <link rel="stylesheet" href="./styles.css">
   <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    /* ── Section label ── */
+    .cd-section-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #b45309;
+      margin: 0 0 10px;
+      padding-left: 2px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .cd-section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to right, rgba(180, 83, 9, 0.2), transparent);
+    }
+
+    /* ── Enrolled course strip (2-col grid same as my-courses) ── */
+    .cd-enrolled-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 11px;
+    }
+
+    .cd-enrolled-card {
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 6px 22px rgba(124, 45, 18, 0.26);
+      animation: cdUp 0.38s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    @keyframes cdUp {
+      from {
+        opacity: 0;
+        transform: translateY(18px) scale(0.96);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .cd-enrolled-face {
+      background: linear-gradient(148deg, #3d0c02 0%, #7c2d12 28%, #b45309 60%, #f97316 82%, #fbbf24 100%);
+      padding: 14px 12px 13px;
+      min-height: 145px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cd-enrolled-face::before {
+      content: '';
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.07);
+      top: -32px;
+      right: -26px;
+      pointer-events: none;
+    }
+
+    .cd-enrolled-badge {
+      position: absolute;
+      top: 9px;
+      right: 9px;
+      z-index: 2;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      color: #fff;
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      border-radius: 99px;
+      padding: 2px 7px;
+      backdrop-filter: blur(6px);
+    }
+
+    .cd-enrolled-title {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.38;
+      text-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
+      margin: 0 0 12px;
+      position: relative;
+      z-index: 1;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .cd-enrolled-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      padding: 7px 10px;
+      border: 1.5px solid rgba(255, 255, 255, 0.38);
+      border-radius: 11px;
+      background: rgba(255, 255, 255, 0.17);
+      backdrop-filter: blur(8px);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 600;
+      font-family: 'Poppins', system-ui, sans-serif;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background .17s, border-color .17s;
+      width: 100%;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cd-enrolled-btn:hover {
+      background: rgba(255, 255, 255, 0.28);
+      border-color: rgba(255, 255, 255, 0.7);
+    }
+
+    /* ── Available course card ── */
+    .cd-avail-card {
+      background: rgba(255, 255, 255, 0.82);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.95);
+      border-radius: 18px;
+      box-shadow: 0 3px 18px rgba(180, 83, 9, 0.10);
+      padding: 16px 16px 14px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-decoration: none;
+      color: inherit;
+      transition: transform .18s, box-shadow .18s;
+      animation: cdUp 0.38s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .cd-avail-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(180, 83, 9, 0.18);
+    }
+
+    .cd-avail-icon {
+      width: 48px;
+      height: 48px;
+      flex-shrink: 0;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #7c2d12, #f97316);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(180, 83, 9, 0.3);
+    }
+
+    .cd-avail-body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .cd-avail-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #1c1917;
+      line-height: 1.3;
+      margin: 0 0 3px;
+    }
+
+    .cd-avail-meta {
+      font-size: 12px;
+      color: #9ca3af;
+      margin: 0 0 8px;
+    }
+
+    .cd-avail-price {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      background: linear-gradient(120deg, #b45309, #f97316);
+      padding: 5px 12px;
+      border-radius: 99px;
+      box-shadow: 0 2px 8px rgba(180, 83, 9, 0.3);
+    }
+
+    .cd-avail-arrow {
+      color: #d1d5db;
+      flex-shrink: 0;
+    }
+
+    /* ── Mock test card ── */
+    .cd-mock-card {
+      background: rgba(255, 255, 255, 0.82);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.95);
+      border-radius: 16px;
+      box-shadow: 0 2px 14px rgba(0, 0, 0, 0.06);
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      animation: cdUp 0.38s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .cd-mock-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 13px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cd-mock-icon.free {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: #fff;
+    }
+
+    .cd-mock-icon.locked {
+      background: linear-gradient(135deg, #e5e7eb, #d1d5db);
+      color: #9ca3af;
+    }
+
+    .cd-mock-icon.demo {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: #fff;
+    }
+
+    .cd-mock-body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .cd-mock-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #1c1917;
+      margin: 0 0 3px;
+      line-height: 1.3;
+    }
+
+    .cd-mock-meta {
+      font-size: 11.5px;
+      color: #9ca3af;
+      margin: 0;
+    }
+
+    .cd-mock-action-free {
+      font-size: 12px;
+      font-weight: 700;
+      color: #fff;
+      background: linear-gradient(120deg, #22c55e, #16a34a);
+      padding: 6px 14px;
+      border-radius: 99px;
+      text-decoration: none;
+      flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(22, 163, 74, 0.3);
+      transition: opacity .15s;
+    }
+
+    .cd-mock-action-free:hover {
+      opacity: .88;
+    }
+
+    .cd-mock-action-demo {
+      font-size: 12px;
+      font-weight: 700;
+      color: #fff;
+      background: linear-gradient(120deg, #3b82f6, #2563eb);
+      padding: 6px 14px;
+      border-radius: 99px;
+      text-decoration: none;
+      flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+      transition: opacity .15s;
+    }
+
+    .cd-mock-action-demo:hover {
+      opacity: .88;
+    }
+
+    .cd-mock-lock {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      background: rgba(0, 0, 0, 0.05);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #9ca3af;
+      flex-shrink: 0;
+    }
+
+    /* ── Loading spinner inline ── */
+    .cd-spinner {
+      width: 28px;
+      height: 28px;
+      border: 2.5px solid rgba(180, 83, 9, 0.15);
+      border-top-color: #b45309;
+      border-radius: 50%;
+      animation: cdSpin .8s linear infinite;
+      margin: 0 auto;
+    }
+
+    @keyframes cdSpin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
 </head>
 
 <body>
   <div id="app">
     <header class="app-bar">
       <div class="app-bar-content">
-        <button class="icon-btn" onclick="window.history.back()">
-          <i data-lucide="arrow-left" width="24" height="24"></i>
-        </button>
         <div class="app-bar-title">
-          <span>Mock Tests</span>
+          <div class="logo-circle">
+            <i data-lucide="graduation-cap" width="22" height="22"></i>
+          </div>
+          <span>Course Details</span>
         </div>
-        <div style="width: 40px;"></div>
+        <button class="icon-btn" onclick="window.location.href='./index.html'">
+          <i data-lucide="home" width="20" height="20"></i>
+        </button>
       </div>
     </header>
 
     <main class="page-container">
-      <div class="page-content">
-        <div class="info-card">
-          <div class="info-icon">
-            <i data-lucide="clipboard-check" width="48" height="48"></i>
-          </div>
-          <h1 class="info-title">Practice Exams</h1>
-          <p class="info-description">
-            Practice tests designed specifically for JKSSB Driver and
-            other competitive driver recruitment examinations.
-          </p>
-        </div>
+      <div class="page-content" id="cd-root"
+        style="display:flex;flex-direction:column;gap:22px;padding:16px 14px 32px;">
 
-        <div class="section-header">
-          <h2>Test Features</h2>
-        </div>
+        <!-- ── My Enrolled Courses ── -->
+        <section id="cd-enrolled-section">
+          <div class="cd-section-label">
+            <i data-lucide="bookmark-check" width="14" height="14"></i>
+            My Enrolled Courses
+          </div>
+          <div id="cd-enrolled-grid" class="cd-enrolled-grid">
+            <div style="grid-column:1/-1;text-align:center;padding:20px 0;">
+              <div class="cd-spinner"></div>
+            </div>
+          </div>
+        </section>
 
-        <div class="feature-list">
-          <div class="feature-item">
-            <div class="feature-icon success">
-              <i data-lucide="check-circle"></i>
-            </div>
-            <div class="feature-content">
-              <h3>Topic-wise MCQ Practice</h3>
-              <p>Practice tests for specific topics</p>
+        <!-- ── Available Courses ── -->
+        <section>
+          <div class="cd-section-label">
+            <i data-lucide="layout-grid" width="14" height="14"></i>
+            Available Courses
+          </div>
+          <div id="cd-avail-list" style="display:flex;flex-direction:column;gap:10px;">
+            <div style="text-align:center;padding:20px 0;">
+              <div class="cd-spinner"></div>
             </div>
           </div>
-          <div class="feature-item">
-            <div class="feature-icon success">
-              <i data-lucide="check-circle"></i>
-            </div>
-            <div class="feature-content">
-              <h3>Full-length Mock Tests</h3>
-              <p>Based on actual exam pattern</p>
-            </div>
-          </div>
-          <div class="feature-item">
-            <div class="feature-icon success">
-              <i data-lucide="check-circle"></i>
-            </div>
-            <div class="feature-content">
-              <h3>Previous Year Questions</h3>
-              <p>Practice with real exam questions</p>
-            </div>
-          </div>
-        </div>
+        </section>
 
-        <div class="alert-card info">
-          <div class="alert-icon">
-            <i data-lucide="info"></i>
+        <!-- ── Mock Tests ── -->
+        <section>
+          <div class="cd-section-label">
+            <i data-lucide="clipboard-list" width="14" height="14"></i>
+            Mock Tests
           </div>
-          <div class="alert-content">
-            <h3>Online Testing Platform</h3>
-            <p>Tests are conducted through online quiz platforms and forms, allowing candidates to practice anytime,
-              anywhere.</p>
+
+          <!-- Free demo mock -->
+          <div style="display:flex;flex-direction:column;gap:10px;" id="cd-mocks-list">
+
+            <!-- Demo mock — always visible, free -->
+            <div class="cd-mock-card">
+              <div class="cd-mock-icon demo">
+                <i data-lucide="play-circle" width="22" height="22"></i>
+              </div>
+              <div class="cd-mock-body">
+                <div class="cd-mock-title">🎯 Demo Mock Test</div>
+                <div class="cd-mock-meta">10 questions · 10 min · Free preview</div>
+              </div>
+              <a href="./practice-test.html?demo=1" class="cd-mock-action-demo">Try Free</a>
+            </div>
+
+            <!-- Locked Mock 1 -->
+            <div class="cd-mock-card">
+              <div class="cd-mock-icon locked">
+                <i data-lucide="lock" width="20" height="20"></i>
+              </div>
+              <div class="cd-mock-body">
+                <div class="cd-mock-title">Full Mock Test — Set 1</div>
+                <div class="cd-mock-meta">100 questions · 60 min · All Parts</div>
+              </div>
+              <div class="cd-mock-lock" title="Purchase any course to unlock">
+                <i data-lucide="lock" width="16" height="16"></i>
+              </div>
+            </div>
+
+            <!-- Locked Mock 2 -->
+            <div class="cd-mock-card">
+              <div class="cd-mock-icon locked">
+                <i data-lucide="lock" width="20" height="20"></i>
+              </div>
+              <div class="cd-mock-body">
+                <div class="cd-mock-title">Full Mock Test — Set 2</div>
+                <div class="cd-mock-meta">100 questions · 60 min · All Parts</div>
+              </div>
+              <div class="cd-mock-lock" title="Purchase any course to unlock">
+                <i data-lucide="lock" width="16" height="16"></i>
+              </div>
+            </div>
+
+            <!-- Locked Mock 3 -->
+            <div class="cd-mock-card">
+              <div class="cd-mock-icon locked">
+                <i data-lucide="lock" width="20" height="20"></i>
+              </div>
+              <div class="cd-mock-body">
+                <div class="cd-mock-title">Full Mock Test — Set 3</div>
+                <div class="cd-mock-meta">100 questions · 60 min · All Parts</div>
+              </div>
+              <div class="cd-mock-lock" title="Purchase any course to unlock">
+                <i data-lucide="lock" width="16" height="16"></i>
+              </div>
+            </div>
+
+            <!-- Dynamic real tests appended here by JS -->
+            <div id="cd-dynamic-tests"></div>
           </div>
-        </div>
+        </section>
 
-        <div class="section-header">
-          <h2>Available Tests</h2>
-        </div>
-
-        <div class="menu-list">
-          <a href="#" class="menu-item" onclick="alert('Test coming soon!'); return false;">
-            <div class="menu-icon">
-              <i data-lucide="clipboard-check"></i>
-            </div>
-            <span>Part I - Traffic Rules Test</span>
-            <i data-lucide="chevron-right" width="20" height="20"></i>
-          </a>
-          <a href="#" class="menu-item" onclick="alert('Test coming soon!'); return false;">
-            <div class="menu-icon">
-              <i data-lucide="clipboard-check"></i>
-            </div>
-            <span>Part II - MV Act Test</span>
-            <i data-lucide="chevron-right" width="20" height="20"></i>
-          </a>
-          <a href="#" class="menu-item" onclick="alert('Test coming soon!'); return false;">
-            <div class="menu-icon">
-              <i data-lucide="clipboard-check"></i>
-            </div>
-            <span>Part III - Mechanical Test</span>
-            <i data-lucide="chevron-right" width="20" height="20"></i>
-          </a>
-          <a href="#" class="menu-item" onclick="alert('Test coming soon!'); return false;">
-            <div class="menu-icon">
-              <i data-lucide="clipboard-check"></i>
-            </div>
-            <span>Full Mock Test - All Parts</span>
-            <i data-lucide="chevron-right" width="20" height="20"></i>
-          </a>
-        </div>
       </div>
     </main>
   </div>
 
-  <script type="module" src="./app.ts"></script>
   <script type="module" src="./mock-tests.ts"></script>
-  <script>lucide.createIcons();</script>
+  <script>if (window.lucide) lucide.createIcons();</script>
   <script src="./nav.js"></script>
 </body>
 

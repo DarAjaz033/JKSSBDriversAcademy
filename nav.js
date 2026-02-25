@@ -1,301 +1,202 @@
 /**
- * nav.js — Universal Bottom Navigation + Page Transitions + Toast System
- * Include on every page: <script src="./nav.js"></script>
- * Auto-skips: pdf-viewer.html, video-viewer.html, admin*.html, login.html
+ * nav.js — Universal Bottom Nav + Footer Injector
+ * No blink: uses inline SVGs + CSS View Transitions
+ * Excluded: admin pages, login.html, pdf-viewer.html
  */
 (function () {
   'use strict';
 
-  const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+  var page = window.location.pathname.split('/').pop() || 'index.html';
+  var SKIP = ['login.html', 'admin-login.html', 'admin-dashboard.html',
+    'admin-courses.html', 'admin-pdfs.html', 'admin-tests.html',
+    'admin-purchases.html', 'pdf-viewer.html', 'video-viewer.html'];
 
-  // Pages that should NOT get the bottom nav
-  const SKIP_PAGES = ['pdf-viewer.html', 'video-viewer.html', 'login.html',
-    'admin-login.html', 'admin-dashboard.html', 'admin-courses.html',
-    'admin-pdfs.html', 'admin-tests.html', 'admin-purchases.html'];
+  if (SKIP.indexOf(page) !== -1) return;
 
-  const skipNav = SKIP_PAGES.some(p => currentPage === p || currentPage.startsWith('admin'));
+  /* ── Active tab detection ─────────────────────────────────────── */
+  var isMore = ['privacy-policy.html', 'terms-and-conditions.html', 'refund-policy.html',
+    'contact.html', 'feedback.html', 'copyright-warning.html',
+    'jkssb-updates.html', 'profile.html'].indexOf(page) !== -1;
+  var isLearning = ['mock-tests.html', 'practice-test.html', 'gk-pdfs.html',
+    'demo-pdfs.html'].indexOf(page) !== -1;
+  var isCourses = ['my-courses.html', 'course-details.html', 'full-course.html',
+    'course-purchase.html', 'part-1.html', 'part-2.html',
+    'part-3.html'].indexOf(page) !== -1;
+  var isHome = !isMore && !isLearning && !isCourses;
 
-  // ── Tab definitions ──────────────────────────────────────────────────────────
-  const TABS = [
-    {
-      id: 'nav-home', href: './index.html', label: 'Home',
-      match: ['index.html', ''],
-      icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22">
-               <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-               <polyline points="9 22 9 12 15 12 15 22"/>
-             </svg>`
-    },
-    {
-      id: 'nav-courses', href: './my-courses.html', label: 'Courses',
-      match: ['my-courses.html', 'course-details.html', 'full-course.html', 'part-1.html', 'part-2.html', 'part-3.html', 'course-purchase.html'],
-      icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22">
-               <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
-             </svg>`
-    },
-    {
-      id: 'nav-tests', href: './mock-tests.html', label: 'Tests',
-      match: ['mock-tests.html', 'practice-test.html'],
-      icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22">
-               <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/>
-               <rect x="9" y="3" width="6" height="4" rx="2"/><path d="m9 12 2 2 4-4"/>
-             </svg>`
-    },
-    {
-      id: 'nav-pdfs', href: './gk-pdfs.html', label: 'PDFs',
-      match: ['gk-pdfs.html', 'demo-pdfs.html'],
-      icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22">
-               <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
-               <polyline points="14 2 14 8 20 8"/>
-             </svg>`
-    },
-    {
-      id: 'nav-profile', href: './profile.html', label: 'Profile',
-      match: ['profile.html'],
-      icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22">
-               <circle cx="12" cy="8" r="4"/>
-               <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
-             </svg>`
-    }
-  ];
+  /* ── Inline SVGs (no Lucide = no flash) ──────────────────────── */
+  var SVG = {
+    home: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>',
+    book: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>',
+    grad: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>',
+    more: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg>',
+    // Favicon-inspired shield/graduation icon for footer brand
+    brand: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>',
+    fb: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>',
+    ig: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>',
+    tw: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg>',
+    yt: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"/></svg>',
+    wa: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21"/><path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1"/></svg>',
+    mail: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>',
+    shield: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
+    file: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>',
+    refund: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3"/></svg>'
+  };
 
-  // ── Active tab detection ─────────────────────────────────────────────────────
-  function getActiveId() {
-    for (const tab of TABS) {
-      if (tab.match.includes(currentPage)) return tab.id;
-    }
-    return '';
+  /* ── CSS ────────────────────────────────────────────────────────── */
+  if (!document.getElementById('navjs-style')) {
+    var style = document.createElement('style');
+    style.id = 'navjs-style';
+    style.textContent =
+      /* View Transitions — page content fades, nav+footer stay fixed */
+      '@supports (view-transition-name: x) {' +
+      '@media (prefers-reduced-motion: no-preference) {' +
+      '::view-transition-old(root) { animation: nj-out 0.13s ease; }' +
+      '::view-transition-new(root) { animation: nj-in  0.13s ease; }' +
+      '@keyframes nj-out { from{opacity:1} to{opacity:0} }' +
+      '@keyframes nj-in  { from{opacity:0} to{opacity:1} }' +
+      '}' +
+      '#unav-root   { view-transition-name: bottom-nav; }' +
+      '#unav-footer { view-transition-name: app-footer; }' +
+      '}' +
+
+      /* ── Bottom Nav ── */
+      '#unav-root {' +
+      'position:fixed;bottom:0;left:0;right:0;z-index:9999;' +
+      'display:flex;align-items:stretch;height:62px;' +
+      'background:#fff;' +
+      'border-top:1px solid rgba(0,0,0,0.09);' +
+      'box-shadow:0 -2px 10px rgba(0,0,0,0.06);' +
+      'padding-bottom:env(safe-area-inset-bottom,0);' +
+      '}' +
+      '#unav-root a {' +
+      'flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;' +
+      'text-decoration:none;color:#9CA3AF;font-size:10.5px;font-weight:600;' +
+      'font-family:"Poppins",system-ui,sans-serif;' +
+      '-webkit-tap-highlight-color:transparent;transition:color 0.18s;' +
+      '}' +
+      '#unav-root a.active,#unav-root a:hover { color:#B45309; }' +
+      '#unav-root a svg { flex-shrink:0; }' +
+
+      /* ── Footer ── */
+      '#unav-footer {' +
+      'background:linear-gradient(135deg,#92400e 0%,#b45309 50%,#c2500a 100%);' +
+      'color:rgba(255,255,255,0.92);' +
+      'padding:12px 16px 10px;' +
+      'text-align:center;' +
+      'font-family:"Poppins",system-ui,sans-serif;' +
+      '}' +
+      '.njf-brand { display:flex;align-items:center;justify-content:center;gap:7px;margin-bottom:3px; }' +
+      '.njf-brand svg { flex-shrink:0; }' +
+      '.njf-brand-name { font-size:14px;font-weight:700;color:#fff;letter-spacing:0.2px; }' +
+      '.njf-tagline { font-size:10.5px;color:rgba(255,255,255,0.7);margin:0 0 8px; }' +
+      '.njf-social { display:flex;justify-content:center;gap:8px;margin-bottom:8px; }' +
+      '.njf-social a {' +
+      'display:flex;align-items:center;justify-content:center;' +
+      'width:30px;height:30px;border-radius:50%;' +
+      'background:rgba(255,255,255,0.15);color:rgba(255,255,255,0.9);' +
+      'text-decoration:none;transition:background 0.2s;' +
+      '-webkit-tap-highlight-color:transparent;' +
+      '}' +
+      '.njf-social a:hover { background:rgba(255,255,255,0.28); }' +
+      '.njf-links { display:flex;flex-wrap:wrap;justify-content:center;gap:4px 10px;margin-bottom:8px; }' +
+      '.njf-links a {' +
+      'display:flex;align-items:center;gap:3px;' +
+      'font-size:11.5px;color:rgba(255,255,255,0.85);text-decoration:none;' +
+      'transition:color 0.18s;' +
+      '}' +
+      '.njf-links a:hover { color:#fff; }' +
+      '.njf-sep { opacity:0.3;font-size:11px; }' +
+      '.njf-bottom { border-top:1px solid rgba(255,255,255,0.15);padding-top:6px;' +
+      'display:flex;flex-wrap:wrap;justify-content:center;gap:2px 10px; }' +
+      '.njf-copy,.njf-designed { font-size:10.5px;color:rgba(255,255,255,0.65);margin:0; }' +
+      '.njf-designer { font-weight:600;color:rgba(255,255,255,0.9); }' +
+
+      /* Push body content above fixed bottom nav */
+      'body { padding-bottom:calc(62px + env(safe-area-inset-bottom,0px)) !important; }';
+
+    document.head.appendChild(style);
   }
 
-  // ── Inject global styles ─────────────────────────────────────────────────────
-  function injectStyles() {
-    if (document.getElementById('nav-global-styles')) return;
-    const s = document.createElement('style');
-    s.id = 'nav-global-styles';
-    s.textContent = `
-      /* ── Page enter animation ───────────────────── */
-      #app, .profile-screen, .auth-wrapper {
-        animation: navPageEnter 0.28s cubic-bezier(0.16,1,0.3,1) both;
-        will-change: opacity, transform;
-      }
-      @keyframes navPageEnter {
-        from { opacity:0; transform:translateY(10px); }
-        to   { opacity:1; transform:translateY(0); }
-      }
-      @keyframes navPageLeave {
-        from { opacity:1; transform:translateY(0); }
-        to   { opacity:0; transform:translateY(-6px); }
-      }
-
-      /* ── Bottom nav ────────────────────────────── */
-      #unav {
-        position: fixed;
-        bottom:0; left:0; right:0;
-        z-index: 9000;
-        height: 60px;
-        background: rgba(255,255,255,0.96);
-        backdrop-filter: blur(18px);
-        -webkit-backdrop-filter: blur(18px);
-        border-top: 1px solid rgba(180,83,9,0.1);
-        display: flex;
-        align-items: stretch;
-        box-shadow: 0 -2px 16px rgba(0,0,0,0.07);
-        padding-bottom: env(safe-area-inset-bottom, 0);
-        will-change: transform;
-      }
-      body { padding-bottom: calc(60px + env(safe-area-inset-bottom, 0px)) !important; }
-      .unav-btn {
-        flex: 1;
-        display: flex; flex-direction: column;
-        align-items: center; justify-content: center;
-        gap: 2px;
-        text-decoration: none;
-        color: #9ca3af;
-        padding: 6px 2px 5px;
-        position: relative;
-        border: none; background: none; cursor: pointer;
-        -webkit-tap-highlight-color: transparent;
-        transition: color 0.18s;
-      }
-      .unav-btn:hover { color: #b45309; }
-      .unav-btn.active { color: #c85d10; }
-      .unav-btn.active svg { transform: scale(1.08); stroke: #c85d10; }
-      .unav-btn svg { transition: transform 0.22s cubic-bezier(0.34,1.56,0.64,1); }
-      .unav-lbl {
-        font-size: 9.5px; font-weight: 700;
-        font-family: 'Poppins', system-ui, sans-serif;
-        letter-spacing: 0.1px; line-height: 1;
-      }
-      .unav-pip {
-        position: absolute; bottom: 4px; left: 50%;
-        transform: translateX(-50%);
-        width: 3px; height: 3px; border-radius: 50%;
-        background: #c85d10;
-      }
-
-      /* ── Toast ─────────────────────────────────── */
-      #app-toast-wrap {
-        position: fixed;
-        top: 64px; left: 50%;
-        transform: translateX(-50%);
-        z-index: 99999;
-        display: flex; flex-direction: column;
-        align-items: center; gap: 8px;
-        pointer-events: none;
-        width: min(92vw, 380px);
-      }
-      .app-toast-el {
-        padding: 13px 20px;
-        border-radius: 14px;
-        font-size: 13px; font-weight: 600;
-        font-family: 'Poppins', system-ui, sans-serif;
-        color: white; text-align: center;
-        backdrop-filter: blur(20px);
-        box-shadow: 0 8px 28px rgba(0,0,0,0.18);
-        pointer-events: all;
-        animation: toastSlide 0.38s cubic-bezier(0.34,1.56,0.64,1) both;
-        will-change: opacity, transform;
-      }
-      @keyframes toastSlide {
-        from { opacity:0; transform:translateY(-14px) scale(0.92); }
-        to   { opacity:1; transform:translateY(0) scale(1); }
-      }
-      @keyframes toastFadeOut {
-        to { opacity:0; transform:translateY(-8px); }
-      }
-      .app-toast-el.success { background: rgba(16,185,129,0.92); }
-      .app-toast-el.error   { background: rgba(239,68,68,0.90); }
-      .app-toast-el.info    { background: rgba(180,83,9,0.92); }
-
-      /* ── Performance ────────────────────────────── */
-      * { -webkit-tap-highlight-color: transparent; }
-      img { loading: lazy; }
-    `;
-    document.head.appendChild(s);
-  }
-
-  // ── Build and inject bottom nav ──────────────────────────────────────────────
-  function injectNav() {
-    if (skipNav || document.getElementById('unav')) return;
-    const active = getActiveId();
-    const nav = document.createElement('nav');
-    nav.id = 'unav';
+  /* ── Build bottom nav ─────────────────────────────────────────── */
+  function buildNav() {
+    if (document.getElementById('unav-root')) return;
+    var nav = document.createElement('nav');
+    nav.id = 'unav-root';
     nav.setAttribute('role', 'navigation');
     nav.setAttribute('aria-label', 'Main navigation');
-    nav.innerHTML = TABS.map(t => `
-      <a href="${t.href}" class="unav-btn${t.id === active ? ' active' : ''}"
-         id="${t.id}" aria-label="${t.label}" data-href="${t.href}">
-        ${t.icon}
-        <span class="unav-lbl">${t.label}</span>
-        ${t.id === active ? '<div class="unav-pip"></div>' : ''}
-      </a>`).join('');
-    document.body.appendChild(nav);
+    nav.innerHTML =
+      '<a href="./index.html"' + (isHome ? ' class="active"' : '') + '>' + SVG.home + '<span>Home</span></a>' +
+      '<a href="./my-courses.html"' + (isCourses ? ' class="active"' : '') + '>' + SVG.book + '<span>Courses</span></a>' +
+      '<a href="./mock-tests.html"' + (isLearning ? ' class="active"' : '') + '>' + SVG.grad + '<span>Course Details</span></a>' +
+      '<a href="./profile.html"' + (isMore ? ' class="active"' : '') + '>' + SVG.more + '<span>More</span></a>';
 
-    // Intercept nav clicks for smooth exit transition
-    nav.querySelectorAll('a').forEach(a => {
-      // Preload on hover/touch
-      a.addEventListener('mouseenter', () => prefetch(a.dataset.href), { once: true });
-      a.addEventListener('touchstart', () => prefetch(a.dataset.href), { passive: true, once: true });
-      a.addEventListener('click', e => {
-        if (a.classList.contains('active')) { e.preventDefault(); return; }
-        e.preventDefault();
-        smoothNavigate(a.dataset.href || a.href);
+    /* Use View Transition navigate when supported */
+    setTimeout(function () {
+      nav.querySelectorAll('a').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          if (a.classList.contains('active') || !a.getAttribute('href')) { e.preventDefault(); return; }
+          if (!document.startViewTransition) return;
+          e.preventDefault();
+          document.startViewTransition(function () { window.location.href = a.getAttribute('href'); });
+        });
       });
-    });
+    }, 0);
+    document.body.appendChild(nav);
   }
 
-  // ── Toast system ─────────────────────────────────────────────────────────────
-  function ensureToastWrap() {
-    if (!document.getElementById('app-toast-wrap')) {
-      const w = document.createElement('div');
-      w.id = 'app-toast-wrap';
-      document.body.appendChild(w);
+  /* ── Build footer ─────────────────────────────────────────────── */
+  function buildFooter() {
+    if (document.getElementById('unav-footer')) return;
+    var yr = new Date().getFullYear();
+    var footer = document.createElement('footer');
+    footer.id = 'unav-footer';
+    footer.innerHTML =
+      '<div class="njf-brand">' +
+      SVG.brand +
+      '<span class="njf-brand-name">JKSSB Drivers Academy</span>' +
+      '</div>' +
+      '<p class="njf-tagline">Excellence in Exam Preparation</p>' +
+      '<div class="njf-social">' +
+      '<a href="#" aria-label="Facebook">' + SVG.fb + '</a>' +
+      '<a href="#" aria-label="Instagram">' + SVG.ig + '</a>' +
+      '<a href="#" aria-label="Twitter">' + SVG.tw + '</a>' +
+      '<a href="#" aria-label="YouTube">' + SVG.yt + '</a>' +
+      '<a href="#" aria-label="WhatsApp">' + SVG.wa + '</a>' +
+      '</div>' +
+      '<div class="njf-links">' +
+      '<a href="./contact.html">' + SVG.mail + 'Contact Us</a>' +
+      '<span class="njf-sep">|</span>' +
+      '<a href="./privacy-policy.html">' + SVG.shield + 'Privacy Policy</a>' +
+      '<span class="njf-sep">|</span>' +
+      '<a href="./terms-and-conditions.html">' + SVG.file + 'Terms &amp; Conditions</a>' +
+      '<span class="njf-sep">|</span>' +
+      '<a href="./refund-policy.html">' + SVG.refund + 'Refund Policy</a>' +
+      '</div>' +
+      '<div class="njf-bottom">' +
+      '<p class="njf-copy">&copy; ' + yr + ' JKSSB Drivers Academy. All rights reserved.</p>' +
+      '<p class="njf-designed">Designed by <span class="njf-designer">Dar Ajaz</span></p>' +
+      '</div>';
+
+    /* Insert footer BEFORE the bottom nav so it appears above it */
+    var nav = document.getElementById('unav-root');
+    if (nav) {
+      document.body.insertBefore(footer, nav);
+    } else {
+      document.body.appendChild(footer);
     }
-    return document.getElementById('app-toast-wrap');
   }
 
-  window.showAppToast = function (msg, type, duration) {
-    type = type || 'info';
-    duration = duration || 3000;
-    const wrap = ensureToastWrap();
-    const el = document.createElement('div');
-    el.className = 'app-toast-el ' + type;
-    el.textContent = msg;
-    wrap.appendChild(el);
-    setTimeout(() => {
-      el.style.animation = 'toastFadeOut 0.3s ease forwards';
-      setTimeout(() => el.remove(), 300);
-    }, duration);
-  };
-
-  // ── Smooth page-exit then navigate ────────────────────────────────────────────
-  window.smoothNavigate = function (href) {
-    if (!href) return;
-    const app = document.getElementById('app') || document.querySelector('main') || document.body;
-    app.style.animation = 'navPageLeave 0.15s ease forwards';
-    setTimeout(() => { window.location.href = href; }, 140);
-  };
-
-  // ── Prefetch pages for instant navigation ─────────────────────────────────────
-  const prefetched = new Set();
-  function prefetch(href) {
-    if (!href || prefetched.has(href)) return;
-    prefetched.add(href);
-    const l = document.createElement('link');
-    l.rel = 'prefetch'; l.href = href;
-    document.head.appendChild(l);
-  }
-
-  // Also intercept ALL internal anchor clicks sitewide for smooth transitions
-  document.addEventListener('click', function (e) {
-    const a = e.target.closest('a');
-    if (!a) return;
-    const href = a.getAttribute('href');
-    // Only handle internal .html links that aren't already handled, no anchors, no external
-    if (!href || href.startsWith('#') || href.startsWith('http') || href.startsWith('mailto')
-      || href.startsWith('tel') || a.target === '_blank') return;
-    // Skip PDF links — they go to pdf-viewer.html which IS an internal page
-    // Skip if onclick already set
-    if (a.hasAttribute('onclick') && a.getAttribute('onclick') !== '') return;
-    e.preventDefault();
-    // Skip transition for same page
-    const target = href.split('?')[0].split('/').pop();
-    if (target === currentPage) return;
-    prefetch(href);
-    smoothNavigate(href);
-  }, true); // capture phase
-
-  // ── Check sessionStorage for post-login toast ──────────────────────────────
-  function checkToast() {
-    try {
-      const msg = sessionStorage.getItem('app_toast_msg');
-      const type = sessionStorage.getItem('app_toast_type') || 'success';
-      if (msg) {
-        sessionStorage.removeItem('app_toast_msg');
-        sessionStorage.removeItem('app_toast_type');
-        // Delay slightly so page has rendered
-        setTimeout(() => window.showAppToast(msg, type, 3500), 500);
-      }
-    } catch { }
-  }
-
-  // ── Prefetch likely-next pages ──────────────────────────────────────────────
-  function prefetchCommon() {
-    ['./index.html', './profile.html', './mock-tests.html', './gk-pdfs.html']
-      .forEach(p => prefetch(p));
-  }
-
-  // ── Init ────────────────────────────────────────────────────────────────────
+  /* ── Init ─────────────────────────────────────────────────────── */
   function init() {
-    injectStyles();
-    if (!skipNav) injectNav();
-    ensureToastWrap();
-    checkToast();
-    setTimeout(prefetchCommon, 1000);
+    buildNav();
+    buildFooter();
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
+  if (document.body) {
     init();
+  } else {
+    document.addEventListener('DOMContentLoaded', init);
   }
+
 })();

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,207 +10,256 @@
   <link rel="stylesheet" href="./styles.css">
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
+    :root {
+      --sidebar-width: 280px;
+    }
+
     .admin-container {
       display: flex;
       min-height: 100vh;
-      background: #F9FAFB;
+      background: #F8FAFC;
     }
+
     .admin-sidebar {
-      width: 260px;
-      background: white;
-      border-right: 1px solid var(--border-color);
-      padding: var(--spacing-md);
+      width: var(--sidebar-width);
+      background: #1E293B;
+      color: white;
+      padding: 1.5rem;
       position: fixed;
       height: 100vh;
-      overflow-y: auto;
+      z-index: 50;
+      transition: all 0.3s ease;
     }
+
     .admin-brand {
-      font-size: 20px;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 1.25rem;
       font-weight: 700;
-      color: var(--primary);
-      padding: var(--spacing-md);
-      margin-bottom: var(--spacing-lg);
+      color: white;
+      margin-bottom: 2.5rem;
+      padding: 0 0.5rem;
     }
+
     .admin-nav-item {
       display: flex;
       align-items: center;
-      gap: var(--spacing-sm);
-      padding: var(--spacing-sm) var(--spacing-md);
-      border-radius: var(--radius-md);
-      color: var(--text-secondary);
+      gap: 0.75rem;
+      padding: 0.875rem 1rem;
+      border-radius: 0.5rem;
+      color: #94A3B8;
       text-decoration: none;
-      margin-bottom: var(--spacing-xs);
+      margin-bottom: 0.5rem;
       transition: all 0.2s ease;
+      font-weight: 500;
     }
-    .admin-nav-item:hover,
+
+    .admin-nav-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: white;
+    }
+
     .admin-nav-item.active {
-      background: #FEF3C7;
-      color: var(--primary);
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 4px 12px rgba(180, 83, 9, 0.2);
     }
+
     .admin-main {
       flex: 1;
-      margin-left: 260px;
-      padding: var(--spacing-lg);
+      margin-left: var(--sidebar-width);
+      padding: 2rem;
     }
-    .admin-header {
-      background: white;
-      padding: var(--spacing-md) var(--spacing-lg);
-      border-radius: var(--radius-lg);
-      margin-bottom: var(--spacing-lg);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+    .page-header {
+      margin-bottom: 2rem;
     }
-    .admin-header h1 {
-      font-size: 24px;
+
+    .page-header h1 {
+      font-size: 1.875rem;
       font-weight: 700;
-      color: var(--text-primary);
+      color: #0F172A;
+      margin-bottom: 0.5rem;
     }
-    .upload-section {
+
+    .page-header p {
+      color: #64748B;
+    }
+
+    .grid-container {
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: 2rem;
+    }
+
+    .card {
       background: white;
-      padding: var(--spacing-lg);
-      border-radius: var(--radius-lg);
+      border-radius: 1rem;
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-      margin-bottom: var(--spacing-lg);
+      border: 1px solid #E2E8F0;
+      overflow: hidden;
     }
-    .upload-header {
+
+    .card-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid #E2E8F0;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: var(--spacing-md);
     }
-    .btn-secondary {
-      background: #6B7280;
-      color: white;
-      border: none;
-      padding: var(--spacing-xs) var(--spacing-md);
-      border-radius: var(--radius-md);
-      font-size: 13px;
+
+    .card-header h2 {
+      font-size: 1.125rem;
       font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease;
+      color: #1E293B;
     }
-    .btn-secondary:hover {
-      background: #4B5563;
+
+    .card-body {
+      padding: 1.5rem;
     }
-    .form-row {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: var(--spacing-md);
-      margin-bottom: var(--spacing-md);
-    }
+
     .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: var(--spacing-xs);
+      margin-bottom: 1.25rem;
     }
+
     .form-label {
-      font-size: 14px;
+      display: block;
+      font-size: 0.875rem;
       font-weight: 600;
-      color: var(--text-primary);
+      color: #1E293B;
+      margin-bottom: 0.5rem;
     }
+
     .form-input,
-    .form-textarea,
-    .form-select {
-      padding: var(--spacing-sm);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-md);
-      font-size: 14px;
-    }
+    .form-select,
     .form-textarea {
-      min-height: 80px;
-      resize: vertical;
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #E2E8F0;
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      transition: border-color 0.2s;
     }
+
     .form-input:focus,
-    .form-textarea:focus,
-    .form-select:focus {
+    .form-select:focus,
+    .form-textarea:focus {
       outline: none;
       border-color: var(--primary);
       box-shadow: 0 0 0 3px rgba(180, 83, 9, 0.1);
     }
-    .upload-area {
-      border: 2px dashed var(--border-color);
-      border-radius: var(--radius-lg);
-      padding: var(--spacing-xl);
+
+    .upload-zone {
+      border: 2px dashed #CBD5E1;
+      border-radius: 1rem;
+      padding: 1.5rem;
       text-align: center;
-      transition: all 0.2s ease;
       cursor: pointer;
-      margin-bottom: var(--spacing-md);
+      background: #F8FAFC;
+      transition: all 0.2s;
     }
-    .upload-area.dragover {
+
+    .upload-zone:hover,
+    .upload-zone.dragover {
       border-color: var(--primary);
-      background: #FEF3C7;
+      background: #FFF7ED;
     }
-    #excel-input {
-      display: none;
-    }
+
     .btn-primary {
-      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      background: var(--primary);
       color: white;
       border: none;
-      padding: var(--spacing-sm) var(--spacing-lg);
-      border-radius: var(--radius-md);
-      font-size: 14px;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.2s;
+      width: 100%;
     }
+
     .btn-primary:hover {
+      background: var(--primary-dark);
       transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(180, 83, 9, 0.3);
     }
-    .btn-primary:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
+
+    .btn-secondary {
+      background: #E2E8F0;
+      color: #475569;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
-    .tests-list {
+
+    /* Test List Styles */
+    .test-card {
       background: white;
-      padding: var(--spacing-lg);
-      border-radius: var(--radius-lg);
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    }
-    .test-item {
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-md);
-      padding: var(--spacing-md);
-      margin-bottom: var(--spacing-md);
-    }
-    .test-item-header {
+      border: 1px solid #E2E8F0;
+      border-radius: 1rem;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
       display: flex;
       justify-content: space-between;
-      align-items: start;
-      margin-bottom: var(--spacing-sm);
+      align-items: center;
+      transition: all 0.2s;
     }
-    .test-title {
-      font-size: 16px;
-      font-weight: 600;
-      color: var(--text-primary);
+
+    .test-card:hover {
+      border-color: var(--primary-light);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     }
+
+    .test-info h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #1E293B;
+      margin-bottom: 0.25rem;
+    }
+
     .test-meta {
       display: flex;
-      gap: var(--spacing-md);
-      font-size: 13px;
-      color: var(--text-tertiary);
+      gap: 1.25rem;
+      font-size: 0.8125rem;
+      color: #64748B;
     }
-    .btn-icon {
-      background: none;
-      border: none;
-      padding: var(--spacing-xs);
-      cursor: pointer;
-      border-radius: var(--radius-sm);
-      transition: all 0.2s ease;
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 0.375rem;
     }
-    .btn-icon.delete:hover {
-      background: #FEE2E2;
-      color: #DC2626;
+
+    @media (max-width: 1024px) {
+      .grid-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .admin-sidebar {
+        transform: translateX(-100%);
+      }
+
+      .admin-main {
+        margin-left: 0;
+      }
     }
   </style>
 </head>
+
 <body>
   <div class="admin-container">
     <aside class="admin-sidebar">
-      <div class="admin-brand">Admin Panel</div>
+      <div class="admin-brand">
+        <i data-lucide="shield-check"></i>
+        <span>Admin Portal</span>
+      </div>
       <nav>
         <a href="./admin-dashboard.html" class="admin-nav-item">
           <i data-lucide="layout-dashboard" width="20" height="20"></i>
@@ -231,77 +281,86 @@
           <i data-lucide="shopping-cart" width="20" height="20"></i>
           Purchases
         </a>
-        <a href="./index.html" class="admin-nav-item">
-          <i data-lucide="home" width="20" height="20"></i>
-          Back to Site
-        </a>
+        <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1);">
+          <a href="./index.html" class="admin-nav-item">
+            <i data-lucide="home" width="20" height="20"></i>
+            Back to Site
+          </a>
+        </div>
       </nav>
     </aside>
 
     <main class="admin-main">
-      <header class="admin-header">
+      <div class="page-header">
         <h1>Manage Practice Tests</h1>
-      </header>
-
-      <div class="upload-section">
-        <div class="upload-header">
-          <h2>Create Practice Test</h2>
-          <button class="btn-secondary" id="download-template-btn">
-            <i data-lucide="download" width="16" height="16" style="display: inline;"></i>
-            Download Template
-          </button>
-        </div>
-
-        <form id="test-form">
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">Test Title</label>
-              <input type="text" id="title" class="form-input" placeholder="e.g., Mock Test - Part 1" required />
-            </div>
-            <div class="form-group">
-              <label class="form-label">Duration (minutes)</label>
-              <input type="number" id="duration" class="form-input" placeholder="e.g., 60" required min="1" />
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Description</label>
-            <textarea id="description" class="form-textarea" placeholder="Brief description of the test" required></textarea>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Link to Course (Optional)</label>
-            <select id="course-select" class="form-select">
-              <option value="">None</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Upload Questions (Excel)</label>
-            <div class="upload-area" id="upload-area">
-              <div style="margin-bottom: var(--spacing-sm);">
-                <i data-lucide="upload-cloud" width="32" height="32"></i>
-              </div>
-              <div style="font-size: 14px; color: var(--text-primary); margin-bottom: var(--spacing-xs);">
-                Click to upload or drag and drop
-              </div>
-              <div style="font-size: 12px; color: var(--text-tertiary);">
-                Excel files only (.xlsx, .xls)
-              </div>
-              <input type="file" id="excel-input" accept=".xlsx,.xls" />
-            </div>
-            <div id="file-name" style="font-size: 13px; color: var(--text-secondary); margin-top: var(--spacing-xs);"></div>
-          </div>
-
-          <button type="submit" class="btn-primary" id="submit-btn">
-            Create Practice Test
-          </button>
-        </form>
+        <p>Upload questions and configure student assessments.</p>
       </div>
 
-      <div class="tests-list">
-        <h2 style="margin-bottom: var(--spacing-md);">All Practice Tests</h2>
-        <div id="tests-container"></div>
+      <div class="grid-container">
+        <div class="content-area">
+          <div class="card">
+            <div class="card-header">
+              <h2>Existing Tests</h2>
+            </div>
+            <div class="card-body">
+              <div id="tests-container">
+                <!-- Tests loaded here -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar-area">
+          <div class="card">
+            <div class="card-header">
+              <h2>Create New Test</h2>
+              <button class="btn-secondary" id="download-template-btn">
+                <i data-lucide="download" width="14" height="14"></i> Template
+              </button>
+            </div>
+            <div class="card-body">
+              <form id="test-form">
+                <div class="form-group">
+                  <label class="form-label">Test Title</label>
+                  <input type="text" id="title" class="form-input" placeholder="e.g. Mock Test 01" required />
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Duration (minutes)</label>
+                  <input type="number" id="duration" class="form-input" placeholder="60" required min="1" />
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Description</label>
+                  <textarea id="description" class="form-textarea" placeholder="What covers this test?"
+                    required></textarea>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Associated Course</label>
+                  <select id="course-select" class="form-select">
+                    <option value="">None / General</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Questions (Excel)</label>
+                  <div class="upload-zone" id="upload-area">
+                    <i data-lucide="upload-cloud" width="28" height="28"
+                      style="color: var(--primary); margin-bottom: 0.5rem;"></i>
+                    <p style="font-size: 0.8125rem; font-weight: 600; color: #1E293B;">Click to upload questions</p>
+                    <p style="font-size: 0.75rem; color: #64748B;">.xlsx or .xls files only</p>
+                    <input type="file" id="excel-input" accept=".xlsx,.xls" hidden />
+                  </div>
+                  <div id="file-name" style="font-size: 0.75rem; color: #16A34A; margin-top: 0.5rem; font-weight: 500;">
+                  </div>
+                </div>
+
+                <button type="submit" class="btn-primary" id="submit-btn">Create Test</button>
+              </form>
+            </div>
+          </div>
+        </div>
       </div>
     </main>
   </div>
@@ -311,4 +370,5 @@
     lucide.createIcons();
   </script>
 </body>
+
 </html>

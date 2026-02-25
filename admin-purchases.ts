@@ -1,5 +1,6 @@
 import { onAuthChange } from './auth-service';
 import { isAdmin, getAllPurchases, getCourse, Purchase } from './admin-service';
+import { showToast } from './admin-toast';
 
 class AdminPurchasesPage {
   private purchasesContainer: HTMLElement;
@@ -11,7 +12,13 @@ class AdminPurchasesPage {
 
   private async init(): Promise<void> {
     onAuthChange(async (user) => {
-      if (!user || !isAdmin(user.email)) {
+      if (!user) {
+        window.location.href = './admin-login.html';
+        return;
+      }
+
+      const isUserAdmin = await isAdmin(user);
+      if (!isUserAdmin) {
         window.location.href = './admin-login.html';
         return;
       }
@@ -43,7 +50,8 @@ class AdminPurchasesPage {
         .map(purchase => this.renderPurchaseRow(purchase))
         .join('');
     } else {
-      this.purchasesContainer.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: var(--spacing-lg);">No purchases found</td></tr>';
+      this.purchasesContainer.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #64748B; padding: 2rem;">No purchases found.</td></tr>';
+      showToast('No purchases to display.', 'info', 2500);
     }
   }
 
@@ -53,15 +61,20 @@ class AdminPurchasesPage {
       : 'N/A';
 
     const statusClass = purchase.status === 'completed' ? 'completed' :
-                       purchase.status === 'pending' ? 'pending' : 'failed';
+      purchase.status === 'pending' ? 'pending' : 'failed';
 
     return `
       <tr>
-        <td>${purchase.userId.substring(0, 8)}...</td>
-        <td>${purchase.courseName}</td>
-        <td>₹${purchase.amount}</td>
-        <td style="font-family: monospace; font-size: 12px;">${purchase.paymentId.substring(0, 16)}...</td>
-        <td><span class="status-badge ${statusClass}">${purchase.status}</span></td>
+        <td>
+            <div class="user-info">
+                <span>${purchase.userId.substring(0, 10)}...</span>
+                <span class="user-email">UID: ${purchase.userId}</span>
+            </div>
+        </td>
+        <td style="font-weight: 600;">${purchase.courseName}</td>
+        <td style="font-weight: 700;">₹${purchase.amount}</td>
+        <td style="font-family: monospace; font-size: 0.75rem; color: #64748B;">${purchase.paymentId}</td>
+        <td><span class="status-badge ${statusClass}">${purchase.status.toUpperCase()}</span></td>
         <td>${date}</td>
       </tr>
     `;
@@ -69,3 +82,4 @@ class AdminPurchasesPage {
 }
 
 new AdminPurchasesPage();
+

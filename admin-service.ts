@@ -16,7 +16,7 @@ import {
 } from 'firebase/firestore';
 import {
   ref,
-  uploadBytes,
+  uploadBytesResumable,
   getDownloadURL,
   deleteObject
 } from 'firebase/storage';
@@ -233,7 +233,11 @@ export const uploadPDF = async (file: File) => {
     const fileName = `${timestamp}_${file.name}`;
     const storageRef = ref(storage, `pdfs/${fileName}`);
 
-    await uploadBytes(storageRef, file);
+    // Use resumable upload for consistency
+    await new Promise<void>((resolve, reject) => {
+      const task = uploadBytesResumable(storageRef, file);
+      task.on('state_changed', null, reject, () => resolve());
+    });
     const url = await getDownloadURL(storageRef);
 
     const pdfDoc = await addDoc(collection(db, 'pdfs'), {
@@ -268,6 +272,95 @@ export const deletePDF = async (pdfId: string, url: string) => {
     await deleteObject(storageRef);
     await deleteDoc(doc(db, 'pdfs', pdfId));
     return { success: true };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+};
+
+/** Upload a PDF file and immediately link it to a course.
+ *  onProgress is called with 0-100 as bytes transfer. */
+export const uploadPDFToCourse = (
+  file: File,
+  courseId: string,
+  onProgress?: (percent: number) => void
+): Promise<{ success: true; id: string; url: string } | { success: false; error: string }> => {
+  return new Promise((resolve) => {
+    const timestamp = Date.now();
+    const fileName = `${timestamp}_${file.name}`;
+    const storageRef = ref(storage, `pdfs/${fileName}`);
+    const task = uploadBytesResumable(storageRef, file);
+
+    task.on(
+      'state_changed',
+      (snapshot) => {
+        const pct = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+        onProgress?.(pct);
+      },
+      (error) => resolve({ success: false, error: error.message }),
+      async () => {
+        try {
+          const url = await getDownloadURL(task.snapshot.ref);
+          const pdfDoc = await addDoc(collection(db, 'pdfs'), {
+            name: file.name,
+            url,
+            size: file.size,
+            courseId,
+            uploadedAt: serverTimestamp()
+          });
+
+          // Link to course
+          const courseRef = doc(db, 'courses', courseId);
+          const courseSnap = await getDoc(courseRef);
+          if (courseSnap.exists()) {
+            const existing: string[] = (courseSnap.data() as Course).pdfIds ?? [];
+            if (!existing.includes(pdfDoc.id)) {
+              await updateDoc(courseRef, { pdfIds: [...existing, pdfDoc.id], updatedAt: serverTimestamp() });
+            }
+          }
+
+          resolve({ success: true, id: pdfDoc.id, url });
+        } catch (err: any) {
+          resolve({ success: false, error: err.message });
+        }
+      }
+    );
+  });
+};
+
+/** Delete a PDF and remove it from its course's pdfIds list. */
+export const deletePDFFromCourse = async (pdfId: string, url: string, courseId: string) => {
+  try {
+    try {
+      const storageRef = ref(storage, url);
+      await deleteObject(storageRef);
+    } catch (_) { /* Ignore storage errors — file may already be deleted */ }
+    await deleteDoc(doc(db, 'pdfs', pdfId));
+
+    const courseRef = doc(db, 'courses', courseId);
+    const courseSnap = await getDoc(courseRef);
+    if (courseSnap.exists()) {
+      const existing: string[] = (courseSnap.data() as Course).pdfIds ?? [];
+      await updateDoc(courseRef, {
+        pdfIds: existing.filter(id => id !== pdfId),
+        updatedAt: serverTimestamp()
+      });
+    }
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+};
+
+/** Get all practice tests linked to a specific course. */
+export const getCourseQuizzes = async (courseId: string) => {
+  try {
+    const q = query(collection(db, 'practiceTests'), where('courseId', '==', courseId));
+    const querySnapshot = await getDocs(q);
+    const tests: PracticeTest[] = [];
+    querySnapshot.forEach((doc) => {
+      tests.push({ id: doc.id, ...doc.data() } as PracticeTest);
+    });
+    return { success: true, tests };
   } catch (error: any) {
     return { success: false, error: error.message };
   }

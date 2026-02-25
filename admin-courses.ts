@@ -1,12 +1,12 @@
 import { onAuthChange } from './auth-service';
 import { isAdmin, getCourses, createCourse, updateCourse, updateCourseRank, deleteCourse, Course } from './admin-service';
+import { showToast, showConfirm } from './admin-toast';
 
 class AdminCoursesPage {
   private form: HTMLFormElement;
   private submitBtn: HTMLButtonElement;
   private cancelBtn: HTMLButtonElement;
   private coursesContainer: HTMLElement;
-  private successMessage: HTMLElement;
   private editingCourseId: string | null = null;
   private coursesList: Course[] = [];
 
@@ -20,7 +20,6 @@ class AdminCoursesPage {
     this.submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
     this.cancelBtn = document.getElementById('cancel-btn') as HTMLButtonElement;
     this.coursesContainer = document.getElementById('courses-container') as HTMLElement;
-    this.successMessage = document.getElementById('success-message') as HTMLElement;
     this.categorySelect = document.getElementById('category') as HTMLSelectElement;
     this.newCategoryInput = document.getElementById('new-category') as HTMLInputElement;
     this.descriptionPointsContainer = document.getElementById('description-points-container') as HTMLElement;
@@ -28,12 +27,13 @@ class AdminCoursesPage {
     this.init();
   }
 
+  // ─── Init ────────────────────────────────────────────────────────────────────
+
   private async init(): Promise<void> {
     onAuthChange(async (user) => {
-      if (!user || !isAdmin(user.email)) {
-        window.location.href = './admin-login.html';
-        return;
-      }
+      if (!user) { window.location.href = './admin-login.html'; return; }
+      const adminCheck = await isAdmin(user);
+      if (!adminCheck) { window.location.href = './admin-login.html'; return; }
 
       this.form.addEventListener('submit', (e) => this.handleSubmit(e));
       this.cancelBtn.addEventListener('click', () => this.cancelEdit());
@@ -44,72 +44,66 @@ class AdminCoursesPage {
     });
   }
 
+  // ─── Description Helpers ─────────────────────────────────────────────────────
+
   private buildDescriptionFromForm(): string {
     const heading = (document.getElementById('description-heading') as HTMLInputElement).value.trim();
     const inputs = this.descriptionPointsContainer.querySelectorAll<HTMLInputElement>('.description-point-input');
-    const lines = Array.from(inputs)
-      .map(inp => inp.value.trim())
-      .filter(Boolean);
-    if (lines.length === 0 && !heading) {
-      this.addPointBtn.focus();
-      throw new Error('Please add at least a description heading or one point');
-    }
-    const numberedLines = lines.map((l, i) => `${i + 1}. ${l}`);
-    const combined = heading ? [heading, ...numberedLines].join(' ') : numberedLines.join(' ');
-    return combined;
+    const lines = Array.from(inputs).map(inp => inp.value.trim()).filter(Boolean);
+    if (lines.length === 0 && !heading) throw new Error('Please add at least a description heading or one point');
+    const numbered = lines.map((l, i) => `${i + 1}. ${l}`);
+    return heading ? [heading, ...numbered].join(' ') : numbered.join(' ');
   }
 
   private ensureDescriptionPoints(): void {
-    if (this.descriptionPointsContainer.children.length === 0) {
-      this.addDescriptionPoint('', false);
-    }
+    if (this.descriptionPointsContainer.children.length === 0) this.addDescriptionPoint('', false);
   }
 
-  private addDescriptionPoint(value: string = '', focusInput: boolean = true): void {
+  private addDescriptionPoint(value = '', focus = true): void {
     const index = this.descriptionPointsContainer.children.length + 1;
     const row = document.createElement('div');
     row.className = 'description-point-row';
+
     const numSpan = document.createElement('span');
     numSpan.className = 'point-number';
     numSpan.textContent = `${index}.`;
+
     const input = document.createElement('input');
     input.type = 'text';
     input.className = 'form-input description-point-input';
-    input.placeholder = 'e.g., Identification of major assemblies of vehicle';
+    input.placeholder = 'e.g., Identification of major assemblies';
     input.value = value;
+
     const removeBtn = document.createElement('button');
     removeBtn.type = 'button';
-    removeBtn.className = 'btn-icon remove-point-btn delete';
+    removeBtn.className = 'btn-icon delete';
     removeBtn.title = 'Remove point';
     removeBtn.style.flexShrink = '0';
-    removeBtn.innerHTML = '<i data-lucide="trash-2" width="14" height="14"></i>';
-    removeBtn.addEventListener('click', () => {
-      row.remove();
-      this.updatePointNumbers();
-    });
+    removeBtn.innerHTML = '<i data-lucide="trash-2" width="16" height="16"></i>';
+    removeBtn.addEventListener('click', () => { row.remove(); this.updatePointNumbers(); });
+
     row.append(numSpan, input, removeBtn);
     this.descriptionPointsContainer.appendChild(row);
     (window as any).lucide?.createIcons();
-    if (focusInput) input.focus();
+    if (focus) input.focus();
   }
 
   private updatePointNumbers(): void {
     this.descriptionPointsContainer.querySelectorAll('.description-point-row').forEach((row, i) => {
-      const numSpan = row.querySelector('.point-number');
-      if (numSpan) numSpan.textContent = `${i + 1}.`;
+      const span = row.querySelector('.point-number');
+      if (span) span.textContent = `${i + 1}.`;
     });
   }
 
   private parseDescriptionToForm(description: string): void {
     const trimmed = description.trim();
     const segments = trimmed.split(/\s*\d+\.\s+/).map(s => s.trim()).filter(Boolean);
-    const headingEl = document.getElementById('description-heading') as HTMLInputElement;
+    (document.getElementById('description-heading') as HTMLInputElement).value = '';
     this.descriptionPointsContainer.innerHTML = '';
     if (segments.length > 1) {
-      headingEl.value = segments[0];
-      segments.slice(1).forEach(point => this.addDescriptionPoint(point, false));
+      (document.getElementById('description-heading') as HTMLInputElement).value = segments[0];
+      segments.slice(1).forEach(p => this.addDescriptionPoint(p, false));
     } else {
-      headingEl.value = '';
       if (trimmed) this.addDescriptionPoint(trimmed, false);
       else this.ensureDescriptionPoints();
     }
@@ -119,16 +113,10 @@ class AdminCoursesPage {
     const value = this.categorySelect.value;
     if (value === '__new__') {
       const newCat = this.newCategoryInput.value.trim();
-      if (!newCat) {
-        this.newCategoryInput.focus();
-        throw new Error('Please enter the new category name');
-      }
+      if (!newCat) { this.newCategoryInput.focus(); throw new Error('Please enter the new category name'); }
       return newCat;
     }
-    if (!value) {
-      this.categorySelect.focus();
-      throw new Error('Please select or create a category');
-    }
+    if (!value) { this.categorySelect.focus(); throw new Error('Please select or create a category'); }
     return value;
   }
 
@@ -140,16 +128,16 @@ class AdminCoursesPage {
     if (isNew) this.newCategoryInput.focus();
   }
 
+  // ─── Form Submit ─────────────────────────────────────────────────────────────
+
   private async handleSubmit(e: Event): Promise<void> {
     e.preventDefault();
-
-    let category: string;
-    let description: string;
+    let category: string, description: string;
     try {
       category = this.getSelectedCategory();
       description = this.buildDescriptionFromForm();
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Please fill in all required fields');
+      showToast(err instanceof Error ? err.message : 'Please fill in all required fields', 'warning');
       return;
     }
 
@@ -164,130 +152,146 @@ class AdminCoursesPage {
     };
 
     this.submitBtn.disabled = true;
-    this.submitBtn.textContent = this.editingCourseId ? 'Updating...' : 'Creating...';
+    const originalText = this.submitBtn.textContent!;
+    this.submitBtn.textContent = this.editingCourseId ? 'Updating…' : 'Creating…';
 
-    let result;
-    if (this.editingCourseId) {
-      result = await updateCourse(this.editingCourseId, courseData);
-    } else {
-      result = await createCourse(courseData);
-    }
+    const result = this.editingCourseId
+      ? await updateCourse(this.editingCourseId, courseData)
+      : await createCourse(courseData);
 
     if (result.success) {
-      this.showSuccess(this.editingCourseId ? 'Course updated successfully!' : 'Course created successfully!');
+      showToast(this.editingCourseId ? 'Course updated successfully!' : 'Course created successfully!', 'success');
       this.form.reset();
       this.cancelEdit();
       await this.loadCourses();
     } else {
-      alert('Error: ' + result.error);
+      showToast('Error: ' + result.error, 'error');
     }
 
     this.submitBtn.disabled = false;
-    this.submitBtn.textContent = 'Create Course';
+    this.submitBtn.textContent = originalText;
   }
+
+  // ─── Load & Render ───────────────────────────────────────────────────────────
 
   private async loadCourses(): Promise<void> {
     const result = await getCourses();
-
     if (result.success && result.courses) {
       this.coursesList = result.courses;
       this.populateCategoryOptions(result.courses);
-      this.coursesContainer.innerHTML = result.courses
-        .map((course, index) => this.renderCourseItem(course, index))
-        .join('');
+      this.coursesContainer.innerHTML = result.courses.length > 0
+        ? result.courses.map((c, i) => this.renderCourseItem(c, i)).join('')
+        : '<p style="text-align:center;color:#64748B;padding:2rem;">No courses yet. Create one using the form.</p>';
       this.attachEventListeners();
     } else {
-      this.coursesContainer.innerHTML = '<p>No courses found</p>';
+      this.coursesContainer.innerHTML = '<p style="text-align:center;color:#DC2626;padding:2rem;">Failed to load courses.</p>';
+      showToast('Failed to load courses: ' + (result.error ?? 'Unknown error'), 'error');
     }
   }
 
   private populateCategoryOptions(courses: Course[]): void {
-    const select = this.categorySelect;
-    const existingValues = new Set(Array.from(select.options).map(o => o.value));
-
+    const existing = new Set(Array.from(this.categorySelect.options).map(o => o.value));
     courses.forEach(c => {
-      if (c.category && c.category !== '__new__' && !existingValues.has(c.category)) {
-        existingValues.add(c.category);
+      if (c.category && c.category !== '__new__' && !existing.has(c.category)) {
+        existing.add(c.category);
         const opt = document.createElement('option');
         opt.value = c.category;
         opt.textContent = c.category;
-        select.insertBefore(opt, select.lastElementChild);
+        this.categorySelect.insertBefore(opt, this.categorySelect.lastElementChild);
       }
     });
   }
 
   private renderCourseItem(course: Course, index: number): string {
     const rank = index + 1;
-    const canMoveUp = index > 0;
-    const canMoveDown = index < this.coursesList.length - 1;
+    const canUp = index > 0;
+    const canDown = index < this.coursesList.length - 1;
     return `
-      <div class="course-item" data-id="${course.id}">
-        <div class="course-rank" style="display: flex; align-items: center; gap: 8px; margin-right: 12px;">
-          <span class="rank-badge" style="min-width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center; background: var(--gradient-primary); color: white; border-radius: var(--radius-sm); font-size: 13px; font-weight: 700;">#${rank}</span>
-          <div style="display: flex; flex-direction: column; gap: 2px;">
-            <button type="button" class="btn-icon move-up-btn" data-id="${course.id}" data-index="${index}" ${!canMoveUp ? 'disabled' : ''} title="Move up">
-              <i data-lucide="chevron-up" width="16" height="16"></i>
-            </button>
-            <button type="button" class="btn-icon move-down-btn" data-id="${course.id}" data-index="${index}" ${!canMoveDown ? 'disabled' : ''} title="Move down">
-              <i data-lucide="chevron-down" width="16" height="16"></i>
-            </button>
-          </div>
-        </div>
-        <div style="flex: 1;">
-          <div class="course-item-header">
-            <div class="course-title">${course.title}</div>
-            <div class="course-actions">
-              <button class="btn-icon edit-btn" data-id="${course.id}">
-                <i data-lucide="edit-2" width="16" height="16"></i>
-              </button>
-              <button class="btn-icon delete delete-btn" data-id="${course.id}">
-                <i data-lucide="trash-2" width="16" height="16"></i>
-              </button>
-            </div>
-          </div>
-          <div class="course-description">${course.description}</div>
+      <div class="course-card" data-id="${course.id}">
+        <div class="course-info">
+          <div class="course-badge">${course.category}</div>
+          <h3>${course.title}</h3>
           <div class="course-meta">
-            <span>₹${course.price}</span>
-            <span>•</span>
-            <span>${course.duration}</span>
-            <span>•</span>
-            <span>${course.category}</span>
+            <div class="meta-item"><i data-lucide="indian-rupee" width="13" height="13"></i> ${course.price}</div>
+            <div class="meta-item"><i data-lucide="clock" width="13" height="13"></i> ${course.duration}</div>
+            <div class="meta-item"><i data-lucide="hash" width="13" height="13"></i> Rank #${rank}</div>
           </div>
         </div>
-      </div>
-    `;
+        <div class="btn-icon-group">
+          <div style="display:flex;flex-direction:column;gap:3px;margin-right:6px;">
+            <button class="btn-icon move-up-btn" data-id="${course.id}" data-index="${index}" ${!canUp ? 'disabled' : ''} title="Move up">
+              <i data-lucide="chevron-up" width="15" height="15"></i>
+            </button>
+            <button class="btn-icon move-down-btn" data-id="${course.id}" data-index="${index}" ${!canDown ? 'disabled' : ''} title="Move down">
+              <i data-lucide="chevron-down" width="15" height="15"></i>
+            </button>
+          </div>
+          <button class="btn-icon edit-btn" data-id="${course.id}" title="Edit">
+            <i data-lucide="edit-3" width="17" height="17"></i>
+          </button>
+          <button class="btn-icon delete delete-btn" data-id="${course.id}" title="Delete">
+            <i data-lucide="trash-2" width="17" height="17"></i>
+          </button>
+        </div>
+      </div>`;
   }
 
   private attachEventListeners(): void {
-    (window as any).lucide.createIcons();
+    (window as any).lucide?.createIcons();
 
-    document.querySelectorAll('.edit-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const id = (e.currentTarget as HTMLElement).getAttribute('data-id');
+    this.coursesContainer.querySelectorAll<HTMLButtonElement>('.edit-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-id');
         if (id) this.editCourse(id);
       });
     });
 
-    document.querySelectorAll('.delete-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const id = (e.currentTarget as HTMLElement).getAttribute('data-id');
-        if (id) this.deleteCourse(id);
+    this.coursesContainer.querySelectorAll<HTMLButtonElement>('.delete-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-id');
+        if (id) this.handleDelete(id, btn);
       });
     });
 
-    document.querySelectorAll('.move-up-btn:not([disabled])').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const index = parseInt((e.currentTarget as HTMLElement).getAttribute('data-index') || '0', 10);
+    this.coursesContainer.querySelectorAll<HTMLButtonElement>('.move-up-btn:not([disabled])').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const index = parseInt(btn.getAttribute('data-index') ?? '0');
         this.moveCourse(index, -1);
       });
     });
 
-    document.querySelectorAll('.move-down-btn:not([disabled])').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const index = parseInt((e.currentTarget as HTMLElement).getAttribute('data-index') || '0', 10);
+    this.coursesContainer.querySelectorAll<HTMLButtonElement>('.move-down-btn:not([disabled])').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const index = parseInt(btn.getAttribute('data-index') ?? '0');
         this.moveCourse(index, 1);
       });
     });
+  }
+
+  // ─── Actions ─────────────────────────────────────────────────────────────────
+
+  private async handleDelete(courseId: string, btn: HTMLButtonElement): Promise<void> {
+    const course = this.coursesList.find(c => c.id === courseId);
+    const confirmed = await showConfirm(
+      'Delete Course?',
+      `This will permanently delete "${course?.title ?? 'this course'}". This cannot be undone.`,
+      'Delete Course'
+    );
+    if (!confirmed) return;
+
+    btn.disabled = true;
+    const card = btn.closest<HTMLElement>('.course-card');
+    if (card) card.style.opacity = '0.5';
+
+    const result = await deleteCourse(courseId);
+    if (result.success) {
+      showToast('Course deleted successfully!', 'success');
+      await this.loadCourses();
+    } else {
+      showToast('Delete failed: ' + result.error, 'error');
+      btn.disabled = false;
+      if (card) card.style.opacity = '1';
+    }
   }
 
   private async moveCourse(currentIndex: number, direction: number): Promise<void> {
@@ -298,48 +302,48 @@ class AdminCoursesPage {
     const target = this.coursesList[targetIndex];
     if (!current?.id || !target?.id) return;
 
-    const unrankedBase = 1000;
-    const currentRank = typeof current.rank === 'number' ? current.rank : unrankedBase + currentIndex;
-    const targetRank = typeof target.rank === 'number' ? target.rank : unrankedBase + targetIndex;
+    const base = 1000;
+    const currentRank = typeof current.rank === 'number' ? current.rank : base + currentIndex;
+    const targetRank = typeof target.rank === 'number' ? target.rank : base + targetIndex;
 
-    const r1 = await updateCourseRank(current.id, targetRank);
-    const r2 = await updateCourseRank(target.id, currentRank);
+    const [r1, r2] = await Promise.all([
+      updateCourseRank(current.id, targetRank),
+      updateCourseRank(target.id, currentRank)
+    ]);
 
     if (r1.success && r2.success) {
-      this.showSuccess('Course order updated!');
+      showToast('Course order updated!', 'info');
       await this.loadCourses();
     } else {
-      alert('Error updating order: ' + (r1.error || r2.error));
+      showToast('Error updating order: ' + (r1.error ?? r2.error), 'error');
     }
   }
 
   private async editCourse(courseId: string): Promise<void> {
-    const result = await getCourses();
-    if (result.success && result.courses) {
-      const course = result.courses.find(c => c.id === courseId);
-      if (course) {
-        this.editingCourseId = courseId;
-        (document.getElementById('title') as HTMLInputElement).value = course.title;
-        this.parseDescriptionToForm(course.description);
-        (document.getElementById('price') as HTMLInputElement).value = course.price.toString();
-        (document.getElementById('duration') as HTMLInputElement).value = course.duration;
+    const course = this.coursesList.find(c => c.id === courseId);
+    if (!course) return;
 
-        const categoryOpt = Array.from(this.categorySelect.options).find(o => o.value === course.category);
-        if (categoryOpt !== undefined) {
-          this.categorySelect.value = course.category;
-          this.newCategoryInput.style.display = 'none';
-          this.newCategoryInput.value = '';
-        } else {
-          this.categorySelect.value = '__new__';
-          this.newCategoryInput.style.display = 'block';
-          this.newCategoryInput.value = course.category;
-        }
+    this.editingCourseId = courseId;
+    (document.getElementById('title') as HTMLInputElement).value = course.title;
+    this.parseDescriptionToForm(course.description);
+    (document.getElementById('price') as HTMLInputElement).value = course.price.toString();
+    (document.getElementById('duration') as HTMLInputElement).value = course.duration;
 
-        this.submitBtn.textContent = 'Update Course';
-        this.cancelBtn.style.display = 'block';
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
+    const catOpt = Array.from(this.categorySelect.options).find(o => o.value === course.category);
+    if (catOpt) {
+      this.categorySelect.value = course.category;
+      this.newCategoryInput.style.display = 'none';
+    } else {
+      this.categorySelect.value = '__new__';
+      this.newCategoryInput.style.display = 'block';
+      this.newCategoryInput.value = course.category;
     }
+
+    document.getElementById('form-title')!.textContent = 'Edit Course';
+    this.submitBtn.textContent = 'Update Course';
+    this.cancelBtn.style.display = 'block';
+    this.form.scrollIntoView({ behavior: 'smooth' });
+    showToast(`Editing "${course.title}"`, 'info', 2000);
   }
 
   private cancelEdit(): void {
@@ -350,30 +354,9 @@ class AdminCoursesPage {
     this.ensureDescriptionPoints();
     this.newCategoryInput.style.display = 'none';
     this.newCategoryInput.value = '';
+    document.getElementById('form-title')!.textContent = 'Create New Course';
     this.submitBtn.textContent = 'Create Course';
     this.cancelBtn.style.display = 'none';
-  }
-
-  private async deleteCourse(courseId: string): Promise<void> {
-    if (!confirm('Are you sure you want to delete this course?')) {
-      return;
-    }
-
-    const result = await deleteCourse(courseId);
-    if (result.success) {
-      this.showSuccess('Course deleted successfully!');
-      await this.loadCourses();
-    } else {
-      alert('Error: ' + result.error);
-    }
-  }
-
-  private showSuccess(message: string): void {
-    this.successMessage.textContent = message;
-    this.successMessage.classList.add('show');
-    setTimeout(() => {
-      this.successMessage.classList.remove('show');
-    }, 3000);
   }
 }
 

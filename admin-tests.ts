@@ -1,6 +1,7 @@
 import { onAuthChange } from './auth-service';
 import { isAdmin, createPracticeTest, getPracticeTests, deletePracticeTest, getCourses, updateCourse, getCourse, PracticeTest, Question } from './admin-service';
 import { parseExcelFile, downloadExcelTemplate } from './excel-parser';
+import { showToast, showConfirm } from './admin-toast';
 
 class AdminTestsPage {
   private form: HTMLFormElement;
@@ -27,7 +28,13 @@ class AdminTestsPage {
 
   private async init(): Promise<void> {
     onAuthChange(async (user) => {
-      if (!user || !isAdmin(user.email)) {
+      if (!user) {
+        window.location.href = './admin-login.html';
+        return;
+      }
+
+      const isUserAdmin = await isAdmin(user);
+      if (!isUserAdmin) {
         window.location.href = './admin-login.html';
         return;
       }
@@ -74,7 +81,7 @@ class AdminTestsPage {
     ];
 
     if (!validTypes.includes(file.type) && !file.name.endsWith('.xlsx') && !file.name.endsWith('.xls')) {
-      alert('Please select an Excel file');
+      showToast('Please select an Excel (.xlsx) file', 'warning');
       return;
     }
 
@@ -83,8 +90,9 @@ class AdminTestsPage {
       this.questions = await parseExcelFile(file);
       this.fileNameEl.textContent = `✓ Loaded ${this.questions.length} questions from ${file.name}`;
       this.fileNameEl.style.color = '#16A34A';
+      showToast(`Loaded ${this.questions.length} questions`, 'success', 2500);
     } catch (error) {
-      alert('Error parsing Excel file. Please check the format and try again.');
+      showToast('Error parsing Excel file. Check the format and try again.', 'error');
       this.fileNameEl.textContent = '';
       this.questions = [];
     }
@@ -94,7 +102,7 @@ class AdminTestsPage {
     e.preventDefault();
 
     if (this.questions.length === 0) {
-      alert('Please upload an Excel file with questions');
+      showToast('Please upload an Excel file with questions', 'warning');
       return;
     }
 
@@ -131,13 +139,13 @@ class AdminTestsPage {
         }
       }
 
-      alert('Practice test created successfully!');
+      showToast('Practice test created successfully!', 'success');
       this.form.reset();
       this.fileNameEl.textContent = '';
       this.questions = [];
       await this.loadTests();
     } else {
-      alert('Error: ' + result.error);
+      showToast('Error: ' + result.error, 'error');
     }
 
     this.submitBtn.disabled = false;
@@ -151,27 +159,30 @@ class AdminTestsPage {
       this.testsContainer.innerHTML = result.tests.map(test => this.renderTestItem(test)).join('');
       this.attachEventListeners();
     } else {
-      this.testsContainer.innerHTML = '<p>No practice tests found</p>';
+      this.testsContainer.innerHTML = '<p style="text-align: center; color: #64748B; padding: 2rem;">No practice tests found.</p>';
     }
   }
 
   private renderTestItem(test: PracticeTest): string {
     return `
-      <div class="test-item">
-        <div class="test-item-header">
-          <div class="test-title">${test.title}</div>
-          <button class="btn-icon delete delete-btn" data-id="${test.id}">
-            <i data-lucide="trash-2" width="16" height="16"></i>
-          </button>
+      <div class="test-card">
+        <div class="test-info">
+          <h3>${test.title}</h3>
+          <p style="font-size: 0.875rem; color: #64748B; margin-bottom: 0.75rem;">${test.description}</p>
+          <div class="test-meta">
+            <div class="meta-item">
+              <i data-lucide="help-circle" width="14" height="14"></i>
+              ${test.questions.length} questions
+            </div>
+            <div class="meta-item">
+              <i data-lucide="clock" width="14" height="14"></i>
+              ${test.duration} minutes
+            </div>
+          </div>
         </div>
-        <div style="font-size: 14px; color: var(--text-secondary); margin-bottom: var(--spacing-sm);">
-          ${test.description}
-        </div>
-        <div class="test-meta">
-          <span>${test.questions.length} questions</span>
-          <span>•</span>
-          <span>${test.duration} minutes</span>
-        </div>
+        <button class="btn-icon delete delete-btn" data-id="${test.id}" title="Delete Test">
+          <i data-lucide="trash-2" width="18" height="18"></i>
+        </button>
       </div>
     `;
   }
@@ -188,26 +199,26 @@ class AdminTestsPage {
   }
 
   private async deleteTest(testId: string): Promise<void> {
-    if (!confirm('Are you sure you want to delete this practice test?')) {
-      return;
-    }
+    const confirmed = await showConfirm('Delete Practice Test?', 'This will permanently delete the test and all its questions.', 'Delete Test');
+    if (!confirmed) return;
 
     const result = await deletePracticeTest(testId);
     if (result.success) {
-      alert('Practice test deleted successfully!');
+      showToast('Practice test deleted.', 'success');
       await this.loadTests();
     } else {
-      alert('Error: ' + result.error);
+      showToast('Error: ' + result.error, 'error');
     }
   }
 
   private async loadCourses(): Promise<void> {
     const result = await getCourses();
     if (result.success && result.courses) {
-      this.courseSelect.innerHTML = '<option value="">None</option>' +
+      this.courseSelect.innerHTML = '<option value="">None / General</option>' +
         result.courses.map(course => `<option value="${course.id}">${course.title}</option>`).join('');
     }
   }
 }
 
 new AdminTestsPage();
+
