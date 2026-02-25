@@ -215,9 +215,7 @@ class PracticeTestPage {
       const warnClass = this.timeRemaining <= 60 ? 'dash-time-warn' : '';
       headerHTML = `
         <div class="test-dash-header">
-          <button class="btn btn-secondary" id="leave-test-btn" style="padding: 6px 12px; font-size: 12px;">
-            <i data-lucide="x" width="14" style="margin-right:4px; vertical-align:middle;"></i>Leave
-          </button>
+          <div style="font-weight:700; color:#475569; font-size:16px;">Practice Test</div>
           <div class="dash-timer ${warnClass}" id="dash-timer-wrap">
             <i data-lucide="timer" width="18"></i> <span id="dash-timer-txt">${mm}:${ss}</span>
           </div>
@@ -297,6 +295,14 @@ class PracticeTestPage {
         ${prevBtnHTML}
         ${nextBtnHTML}
       </div>
+      
+      ${!isReviewMode ? `
+        <div style="margin-top: var(--spacing-xl); text-align: center; border-top: 1px solid #E2E8F0; padding-top: var(--spacing-lg);">
+          <button class="btn btn-secondary" id="leave-test-btn" style="color: #DC2626; border-color: #FECACA; background: #FEF2F2;">
+            <i data-lucide="log-out" width="16" style="margin-right:8px; vertical-align:middle;"></i>Leave Test
+          </button>
+        </div>
+      ` : ''}
     `;
 
     this.attachActiveTestListeners(isReviewMode);
@@ -342,7 +348,7 @@ class PracticeTestPage {
     const isSure = confirm("Are you sure you want to completely leave this test? Your progress will be lost.");
     if (isSure) {
       if (document.fullscreenElement) document.exitFullscreen().catch(e => console.warn(e));
-      window.history.back();
+      window.location.href = "mock-tests.html";
     } else {
       this.startTimer();
     }
@@ -467,7 +473,7 @@ class PracticeTestPage {
       if (document.fullscreenElement) {
         document.exitFullscreen().catch(e => console.warn(e));
       }
-      window.history.back();
+      window.location.href = "mock-tests.html";
     });
     (window as any).lucide.createIcons();
   }
