@@ -222,6 +222,15 @@
     buildNav();
     buildFooter();
     interceptPdfs();
+
+    // Register Service Worker for heavy caching and offline PDFs
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('/sw.js').catch(function (err) {
+          console.warn('ServiceWorker registration failed: ', err);
+        });
+      });
+    }
   }
 
   if (document.body) {

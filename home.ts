@@ -59,13 +59,13 @@ class HomePage {
 
       if (this.currentUser) {
         const userCoursesResult = await getUserCoursesWithDetails(this.currentUser.uid);
-        if (userCoursesResult.success && userCoursesResult.courses && userCoursesResult.courses.length > 0) {
-          html += await this.renderMyCoursesSection(userCoursesResult.courses);
+        if (userCoursesResult.success && 'courses' in userCoursesResult && userCoursesResult.courses && userCoursesResult.courses.length > 0) {
+          html += await this.renderMyCoursesSection(userCoursesResult.courses as AdminCourse[]);
         }
       }
 
       const coursesResult = await getCourses();
-      const allCourses = coursesResult.success && coursesResult.courses ? coursesResult.courses : [];
+      const allCourses = coursesResult.success && 'courses' in coursesResult && coursesResult.courses ? coursesResult.courses : [];
 
       if (allCourses.length === 0 && !html) {
         this.coursesContainer.innerHTML = `

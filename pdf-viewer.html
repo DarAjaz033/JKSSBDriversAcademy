@@ -135,74 +135,7 @@
             background: transparent;
         }
 
-        /* ── Lobby Screen (To trigger fullscreen gesture) ── */
-        .pdf-lobby {
-            position: fixed;
-            inset: 0;
-            background: #fff;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 24px;
-            text-align: center;
-        }
 
-        .pdf-lobby h2 {
-            font-size: 24px;
-            color: #1e293b;
-            margin-bottom: 12px;
-        }
-
-        .pdf-lobby p {
-            color: #64748b;
-            margin-bottom: 32px;
-            max-width: 400px;
-            line-height: 1.5;
-        }
-
-        .pdf-lobby button {
-            background: #16A34A;
-            color: white;
-            border: none;
-            padding: 16px 32px;
-            font-size: 18px;
-            font-weight: 700;
-            border-radius: 12px;
-            cursor: pointer;
-            box-shadow: 0 4px 6px rgba(22, 163, 74, 0.2);
-        }
-
-        /* ── Anti-Cheat Overlay ── */
-        .exit-warning-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(8px);
-            z-index: 10000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 24px;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.2s;
-        }
-
-        .exit-warning-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .exit-warning-content {
-            background: white;
-            padding: 32px;
-            border-radius: 16px;
-            max-width: 400px;
-            text-align: center;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-        }
 
         /* Strict app-wide PDF lockdown */
         body.pdf-active {
@@ -424,40 +357,6 @@
         <button class="error-back" onclick="window.history.back()">← Go Back</button>
     </div>
 
-    <!-- Document Lobby (Forces Fullscreen Interaction) -->
-    <div class="pdf-lobby" id="pdf-lobby">
-        <svg viewBox="0 0 24 24" width="64" height="64" stroke="#16A34A" stroke-width="1.5" fill="none" class="mb-4">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-            <path d="M14 2v6h6"></path>
-            <path d="M16 13H8"></path>
-            <path d="M16 17H8"></path>
-            <path d="M10 9H8"></path>
-        </svg>
-        <h2 id="lobby-title">Loading...</h2>
-        <p>This document is protected and will open in full-screen mode. Do not exit full-screen while reading.</p>
-        <button id="open-pdf-btn">Open PDF</button>
-    </div>
-
-    <!-- Exit Warning Overlay -->
-    <div class="exit-warning-overlay" id="exit-warning">
-        <div class="exit-warning-content">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2" width="48" height="48"
-                style="margin: 0 auto 16px;">
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="12" y1="8" x2="12" y2="12"></line>
-                <line x1="12" y1="16" x2="12.01" y2="16"></line>
-            </svg>
-            <h3 style="font-size: 20px; color: #DC2626; margin-bottom: 12px;">Reading Paused</h3>
-            <p style="color: #475569; font-size: 14px; margin-bottom: 24px;">You have exited full-screen mode. You must
-                read this document in full-screen.</p>
-            <button id="resume-pdf-btn"
-                style="background:#16A34A; color:white; border:none; padding:12px 24px; border-radius:8px; font-weight:700; width:100%; cursor:pointer;">Resume
-                Reading</button>
-            <button id="warning-close-btn"
-                style="background:transparent; color:#64748B; border:1px solid #CBD5E1; padding:12px 24px; border-radius:8px; font-weight:600; width:100%; cursor:pointer; margin-top:12px;">Close
-                Document</button>
-        </div>
-    </div>
 
     <!-- Top bar -->
     <div class="viewer-bar">

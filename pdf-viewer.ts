@@ -62,41 +62,31 @@ const pdfName = params.get('name') || 'Document';
 
 document.getElementById('pdf-title')!.textContent = pdfName;
 document.getElementById('loading-name')!.textContent = pdfName;
-document.getElementById('lobby-title')!.textContent = pdfName;
-
 // ── Fullscreen & Lockdown Logic ──────────────────────────────────────────────
 
 let isExplicitlyExiting = false;
 
-document.getElementById('open-pdf-btn')?.addEventListener('click', async () => {
+// Attempt to forcefully enter fullscreen upon the user's first interaction
+const attemptFullscreen = async () => {
     try {
-        if (document.documentElement.requestFullscreen) {
+        if (!document.fullscreenElement && document.documentElement.requestFullscreen) {
             await document.documentElement.requestFullscreen();
+            document.body.classList.add('pdf-active');
         }
     } catch (e) {
-        console.warn('Fullscreen request failed:', e);
+        // Silently fail if interaction wasn't trusted enough yet
     }
-    document.body.classList.add('pdf-active');
-    document.getElementById('pdf-lobby')!.style.display = 'none';
+};
 
-    // Only load the PDF AFTER they click open to ensure we have the interaction token
-    loadPdf();
-});
+document.addEventListener('pointerdown', attemptFullscreen, { once: true });
+document.addEventListener('touchstart', attemptFullscreen, { once: true });
+document.addEventListener('keydown', attemptFullscreen, { once: true });
 
 document.addEventListener('fullscreenchange', () => {
-    // If the browser exited fullscreen but we didn't explicitly click the close button
+    // If the browser exited fullscreen, silently and immediately return to the previous page
     if (!document.fullscreenElement && !isExplicitlyExiting) {
-        document.getElementById('exit-warning')?.classList.add('active');
+        handleExit();
     }
-});
-
-document.getElementById('resume-pdf-btn')?.addEventListener('click', async () => {
-    try {
-        if (document.documentElement.requestFullscreen) {
-            await document.documentElement.requestFullscreen();
-        }
-    } catch (e) { }
-    document.getElementById('exit-warning')?.classList.remove('active');
 });
 
 const handleExit = () => {
@@ -190,12 +180,8 @@ async function loadPdf(): Promise<void> {
 
         const lib = (window as any).pdfjsLib;
 
-        // Fetch the PDF via a fetch request to prevent direct URL access
-        const response = await fetch(pdfUrl, { mode: 'cors', credentials: 'omit' });
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const arrayBuffer = await response.arrayBuffer();
-
-        pdfDoc = await lib.getDocument({ data: arrayBuffer }).promise;
+        // Let PDF.js handle the URL directly (bypasses some manual fetch CORS issues)
+        pdfDoc = await lib.getDocument(pdfUrl).promise;
         totalPages = pdfDoc.numPages;
 
         document.getElementById('total-pages')!.textContent = `/ ${totalPages}`;
@@ -274,7 +260,14 @@ function setupNavigation(): void {
     updateNavBtns();
 }
 
-// ── Boot sequence now waits for Lobby Interaction ───────────────────────────
+// ── Boot ────────────────────────────────────────────────────────────────────
 
-// Do not call loadPdf() automatically anymore. It is called by the Open Btn.
-// loadPdf();
+loadPdf();
+
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(err => {
+            console.warn('[PDFViewer] ServiceWorker registration failed: ', err);
+        });
+    });
+}
