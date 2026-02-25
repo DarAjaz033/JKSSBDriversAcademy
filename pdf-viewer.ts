@@ -24,6 +24,8 @@ document.addEventListener('keydown', (e) => {
         e.ctrlKey && e.key === 'u',   // View source
         e.metaKey && e.key === 's',   // Cmd+S (mac)
         e.metaKey && e.key === 'p',   // Cmd+P (mac)
+        e.key === 'PrintScreen',      // Windows Print Screen
+        e.metaKey && e.shiftKey && (e.key === '3' || e.key === '4' || e.key === '5') // Mac Screenshots
     ];
     if (blocked.some(Boolean)) e.preventDefault();
 });

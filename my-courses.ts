@@ -379,7 +379,7 @@ class MyCoursesPage {
     /* PDF list body */
     const pdfBody = pdfs.length > 0
       ? pdfs.map(pdf => `
-          <a href="${pdf.url}" target="_blank" rel="noopener" class="mc-item">
+          <a href="./pdf-viewer.html?name=${encodeURIComponent(pdf.name)}&url=${encodeURIComponent(pdf.url)}" class="mc-item">
             <span class="mc-ico-pdf">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>

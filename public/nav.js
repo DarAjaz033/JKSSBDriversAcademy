@@ -187,10 +187,41 @@
     }
   }
 
+  /* ── Universal PDF Click Interceptor ──────────────────────────── */
+  function interceptPdfs() {
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest ? e.target.closest('a') : null;
+      if (!a) return;
+
+      var href = a.getAttribute('href') || a.href || '';
+      if (!href) return;
+
+      // Detect if the link points to a PDF or Firebase Storage blob
+      var isPdf = href.toLowerCase().indexOf('.pdf') !== -1 || href.indexOf('firebasestorage.googleapis.com') !== -1;
+
+      if (isPdf) {
+        // If it's ALREADY routed through the pdf-viewer, let it pass natively
+        if (href.indexOf('pdf-viewer.html') !== -1) return;
+
+        // Hijack the click
+        e.preventDefault();
+        e.stopPropagation();
+
+        var pdfName = a.textContent ? a.textContent.replace(/[\n\r]+/g, ' ').trim() : 'Document';
+        if (!pdfName || pdfName.length > 40) pdfName = 'Secured Document';
+
+        // Route strictly to the internal viewer
+        var viewerUrl = './pdf-viewer.html?name=' + encodeURIComponent(pdfName) + '&url=' + encodeURIComponent(a.href);
+        window.location.href = viewerUrl;
+      }
+    }, true); // Use capture phase to intercept before React/Vue/Local listeners
+  }
+
   /* ── Init ─────────────────────────────────────────────────────── */
   function init() {
     buildNav();
     buildFooter();
+    interceptPdfs();
   }
 
   if (document.body) {

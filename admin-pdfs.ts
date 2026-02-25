@@ -230,7 +230,7 @@ class AdminPDFsPage {
           <div class="pdf-meta">${sizeMB} MB</div>
         </div>
         <div class="pdf-actions">
-          <a href="${pdf.url}" target="_blank" class="btn-icon" title="Preview">
+          <a href="./pdf-viewer.html?name=${encodeURIComponent(pdf.name)}&url=${encodeURIComponent(pdf.url)}" class="btn-icon" title="Preview">
             <i data-lucide="eye" width="16" height="16"></i>
           </a>
           <button class="btn-icon delete delete-pdf-btn" data-id="${pdf.id}" data-url="${pdf.url}" data-course-id="${courseId}" title="Delete">

@@ -41,11 +41,13 @@
             min-height: 100vh;
             overflow-x: hidden;
 
-            /* Security: disable text selection */
+            /* Security: disable text selection and mobile long-press menus */
             user-select: none;
             -webkit-user-select: none;
             -moz-user-select: none;
             -ms-user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         /* ── Top bar ───────────────────────────── */
