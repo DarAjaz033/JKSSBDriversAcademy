@@ -1,4 +1,4 @@
-import"./firebase-config-CsUtaHqz.js";/* empty css               */import"./global-pdf-viewer-HjeyeNNL.js";import{o as u}from"./auth-service-DAVyyWu1.js";import{g,b as m,f}from"./admin-service-Bysf_l-8.js";let x=0;function b(){return++x}class v{constructor(){this.coursesContainer=document.querySelector("#courses-content"),this.injectStyles(),this.init()}injectStyles(){if(document.getElementById("mc-styles"))return;const e=document.createElement("style");e.id="mc-styles",e.textContent=`
+import"./firebase-config-CsUtaHqz.js";/* empty css               */import"./global-pdf-viewer-PBUvBJhC.js";import{o as g}from"./auth-service-BYs2Equ7.js";import{g as u,b as m,f}from"./admin-service-CQyGqwJl.js";let x=0;function v(){return++x}class b{constructor(){this.coursesContainer=document.querySelector("#courses-content"),this.injectStyles(),this.init()}injectStyles(){if(document.getElementById("mc-styles"))return;const e=document.createElement("style");e.id="mc-styles",e.textContent=`
       /* page wrapper — 1 col stack */
       #courses-content {
         display: flex;
@@ -265,30 +265,17 @@ import"./firebase-config-CsUtaHqz.js";/* empty css               */import"./glob
 
       /* loading / empty spans full */
       .mc-full { width: 100%; }
-      .mc-loading {
-        text-align:center; padding:52px 24px;
-      }
-      .mc-spinner {
-        width:40px; height:40px;
-        border:3px solid rgba(180,83,9,0.15);
-        border-top-color:#b45309;
-        border-radius:50%;
-        animation:mcSpin .8s linear infinite;
-        margin:0 auto 14px;
-      }
-      @keyframes mcSpin { to{transform:rotate(360deg);} }
-    `,document.head.appendChild(e)}async init(){u(async e=>{e?await this.loadUserCourses(e.uid):this.showEmptyState("Please Sign In","You need to sign in to view your courses.","Go to Home","./index.html")})}async loadUserCourses(e){this.coursesContainer.innerHTML=`
-      <div class="mc-full mc-loading">
-        <div class="mc-spinner"></div>
-        <p style="color:#9ca3af;font-size:13.5px;">Loading your courses…</p>
-      </div>`;const t=await g(e);if(t.success&&t.courses&&t.courses.length>0){const i=await m(),n=i.success&&i.pdfs?i.pdfs:[],s=[],r=[];for(const a of t.courses){const p=n.filter(o=>{var l;return(l=a.pdfIds)==null?void 0:l.includes(o.id)}),c=await f(a.id),h=c.success&&c.tests?c.tests:[],d=this.buildCardWithViews(a,p,h);s.push(d.card),r.push(d.views)}this.coursesContainer.innerHTML=`
+    `,document.head.appendChild(e)}async init(){g(async e=>{e?await this.loadUserCourses(e.uid):this.showEmptyState("Please Sign In","You need to sign in to view your courses.","Go to Home","./index.html")},!0)}async loadUserCourses(e){this.coursesContainer.innerHTML=`
+      <div class="skeleton-card" style="margin-bottom: var(--spacing-md);"><div class="skeleton skeleton-img"></div><div style="padding-top:12px;"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-text"></div></div></div>
+      <div class="skeleton-card" style="margin-bottom: var(--spacing-md);"><div class="skeleton skeleton-img"></div><div style="padding-top:12px;"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-text"></div></div></div>
+    `;const t=await u(e);if(t.success&&t.courses&&t.courses.length>0){const i=await m(),s=i.success&&i.pdfs?i.pdfs:[],n=[],r=[];for(const a of t.courses){const p=s.filter(o=>{var l;return(l=a.pdfIds)==null?void 0:l.includes(o.id)}),c=await f(a.id),h=c.success&&c.tests?c.tests:[],d=this.buildCardWithViews(a,p,h);n.push(d.card),r.push(d.views)}this.coursesContainer.innerHTML=`
         <div class="mc-wrapper">
           <div class="mc-courses-list" id="mc-courses-list">
-            ${s.join("")}
+            ${n.join("")}
           </div>
           ${r.join("")}
         </div>
-      `,this.attachListeners()}else this.showEmptyState("No Courses Yet","You haven't enrolled in any courses yet. Browse and start learning today!","Browse Courses","./index.html")}buildCardWithViews(e,t,i){const n=b(),s=`mc-view-pdf-${n}`,r=`mc-view-quiz-${n}`,a=this.categoryIcon(e.category),p=t.length>0?t.map(o=>`
+      `,this.attachListeners()}else this.showEmptyState("No Courses Yet","You haven't enrolled in any courses yet. Browse and start learning today!","Browse Courses","./index.html")}buildCardWithViews(e,t,i){const s=v(),n=`mc-view-pdf-${s}`,r=`mc-view-quiz-${s}`,a=this.categoryIcon(e.category),p=t.length>0?t.map(o=>`
           <a href="./pdf-viewer.html?name=${encodeURIComponent(o.name)}&url=${encodeURIComponent(o.url)}" class="mc-item">
             <span class="mc-ico-pdf">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
@@ -328,7 +315,7 @@ import"./firebase-config-CsUtaHqz.js";/* empty css               */import"./glob
 
           <div class="mc-btns">
             <!-- PDFs btn -->
-            <button class="mc-btn" data-target="${s}">
+            <button class="mc-btn" data-target="${n}">
               <span class="mc-btn-icon-pdf">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
@@ -358,7 +345,7 @@ import"./firebase-config-CsUtaHqz.js";/* empty css               */import"./glob
         </div>
       </div>`,d=`
       <!-- PDFs View -->
-      <div class="mc-content-view" id="${s}">
+      <div class="mc-content-view" id="${n}">
         <div class="mc-view-header">
           <button class="mc-btn-back">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
@@ -378,16 +365,16 @@ import"./firebase-config-CsUtaHqz.js";/* empty css               */import"./glob
         </div>
         <div class="mc-view-list">${c}</div>
       </div>
-    `;return{card:h,views:d}}attachListeners(){const e=this.coursesContainer.querySelector(".mc-courses-list");this.coursesContainer.querySelectorAll(".mc-btn").forEach(t=>{t.addEventListener("click",()=>{const i=t.getAttribute("data-target"),n=document.getElementById(i);e.classList.add("hidden"),n.classList.add("active"),window.scrollTo({top:0,behavior:"smooth"})})}),this.coursesContainer.querySelectorAll(".mc-btn-back").forEach(t=>{t.addEventListener("click",i=>{i.currentTarget.closest(".mc-content-view").classList.remove("active"),e.classList.remove("hidden")})})}categoryIcon(e){return{"Complete Package":'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>',"Traffic Rules":'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>',"MV Act":'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>',Mechanical:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.34 19.66l-1.41 1.41M20 12h2M2 12h2M19.07 19.07l-1.41-1.41M4.34 4.34L2.93 2.93M12 20v2M12 2v2"/></svg>'}[e]??'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>'}showEmptyState(e,t,i,n){var s;this.coursesContainer.innerHTML=`
+    `;return{card:h,views:d}}attachListeners(){const e=this.coursesContainer.querySelector(".mc-courses-list");this.coursesContainer.querySelectorAll(".mc-btn").forEach(t=>{t.addEventListener("click",()=>{const i=t.getAttribute("data-target"),s=document.getElementById(i);e.classList.add("hidden"),s.classList.add("active"),window.scrollTo({top:0,behavior:"smooth"})})}),this.coursesContainer.querySelectorAll(".mc-btn-back").forEach(t=>{t.addEventListener("click",i=>{i.currentTarget.closest(".mc-content-view").classList.remove("active"),e.classList.remove("hidden")})})}categoryIcon(e){return{"Complete Package":'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>',"Traffic Rules":'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>',"MV Act":'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>',Mechanical:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.34 19.66l-1.41 1.41M20 12h2M2 12h2M19.07 19.07l-1.41-1.41M4.34 4.34L2.93 2.93M12 20v2M12 2v2"/></svg>'}[e]??'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>'}showEmptyState(e,t,i,s){var n;this.coursesContainer.innerHTML=`
       <div class="mc-full info-card" style="text-align:center;margin:8px 0;">
         <div class="info-icon" style="margin:0 auto var(--spacing-lg);">
           <i data-lucide="book-open" style="width:48px;height:48px;"></i>
         </div>
         <h2 style="font-size:21px;font-weight:700;color:var(--text-primary);margin-bottom:var(--spacing-md);">${e}</h2>
         <p style="font-size:14px;color:var(--text-secondary);margin-bottom:var(--spacing-lg);line-height:1.6;">${t}</p>
-        <a href="${n}" class="btn-primary"
+        <a href="${s}" class="btn-primary"
            style="display:inline-flex;width:auto;padding:13px 26px;font-size:14px;font-weight:600;text-decoration:none;">
           <span>${i}</span>
           <i data-lucide="arrow-right" style="width:18px;height:18px;"></i>
         </a>
-      </div>`,(s=window.lucide)==null||s.createIcons()}}new v;
+      </div>`,(n=window.lucide)==null||n.createIcons()}}new b;

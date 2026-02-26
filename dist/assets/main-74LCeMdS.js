@@ -1,4 +1,8 @@
-import"./firebase-config-CsUtaHqz.js";/* empty css               */import"./app-CI_mKbmi.js";import{o as c}from"./auth-service-DAVyyWu1.js";import{e as n}from"./escape-html-BUkjI-KV.js";import{g as p,a as g,b as u,c as x}from"./admin-service-Bysf_l-8.js";import"./global-pdf-viewer-HjeyeNNL.js";class h{constructor(){this.currentUser=null,this.coursesContainer=document.querySelector(".course-cards"),this.init(),this.setupExpandTopicsDelegation()}setupExpandTopicsDelegation(){document.addEventListener("click",e=>{var s;const t=e.target.closest(".expand-more-topics-btn");if(!t)return;e.preventDefault(),e.stopPropagation();const i=t,a=i.closest(".course-description-card"),r=a==null?void 0:a.querySelector(".course-topics-extra");if(!r)return;const o=getComputedStyle(r).display==="none";r.style.display=o?"block":"none",i.textContent=o?i.dataset.lessText||"Show less":i.dataset.moreText||"+ more topics",(s=window.lucide)==null||s.createIcons()})}async init(){c(async e=>{this.currentUser=e,await this.loadCourses()})}async loadCourses(){if(this.coursesContainer)try{let e="";if(this.currentUser){const r=await p(this.currentUser.uid);r.success&&"courses"in r&&r.courses&&r.courses.length>0&&(e+=await this.renderMyCoursesSection(r.courses))}const t=await g(),i=t.success&&"courses"in t&&t.courses?t.courses:[];if(i.length===0&&!e){this.coursesContainer.innerHTML=`
+import"./firebase-config-CsUtaHqz.js";/* empty css               */import"./app-CWVjG5oO.js";import{o as c}from"./auth-service-BYs2Equ7.js";import{e as n}from"./escape-html-BUkjI-KV.js";import{g as p,a as g,b as u,c as x}from"./admin-service-CQyGqwJl.js";import"./global-pdf-viewer-PBUvBJhC.js";class v{constructor(){this.currentUser=null,this.coursesContainer=document.querySelector(".course-cards"),this.init(),this.setupExpandTopicsDelegation()}setupExpandTopicsDelegation(){document.addEventListener("click",e=>{var a;const t=e.target.closest(".expand-more-topics-btn");if(!t)return;e.preventDefault(),e.stopPropagation();const i=t,s=i.closest(".course-description-card"),r=s==null?void 0:s.querySelector(".course-topics-extra");if(!r)return;const o=getComputedStyle(r).display==="none";r.style.display=o?"block":"none",i.textContent=o?i.dataset.lessText||"Show less":i.dataset.moreText||"+ more topics",(a=window.lucide)==null||a.createIcons()})}async init(){c(async e=>{this.currentUser=e,await this.loadCourses()})}async loadCourses(){if(this.coursesContainer){this.coursesContainer.innerHTML=`
+      <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div style="padding-top:12px;"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-text"></div><div class="skeleton skeleton-text" style="width:50%;"></div></div></div>
+      <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div style="padding-top:12px;"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-text"></div><div class="skeleton skeleton-text" style="width:50%;"></div></div></div>
+      <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div style="padding-top:12px;"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-text"></div><div class="skeleton skeleton-text" style="width:50%;"></div></div></div>
+    `;try{let e="";if(this.currentUser){const r=await p(this.currentUser.uid);r.success&&"courses"in r&&r.courses&&r.courses.length>0&&(e+=await this.renderMyCoursesSection(r.courses))}const t=await g(),i=t.success&&"courses"in t&&t.courses?t.courses:[];if(i.length===0&&!e){this.coursesContainer.innerHTML=`
           <div class="alert-card info" style="grid-column: 1/-1;">
             <div class="alert-icon">
               <i data-lucide="info"></i>
@@ -8,7 +12,7 @@ import"./firebase-config-CsUtaHqz.js";/* empty css               */import"./app-
               <p>Courses are being prepared. Check back soon!</p>
             </div>
           </div>
-        `,window.lucide.createIcons();return}const a=i.map(r=>({id:r.id,title:r.title,description:r.description,price:r.price,duration:r.duration,category:r.category}));e&&(e+='<div style="grid-column: 1/-1; height: 1px; background: var(--border); margin: var(--spacing-lg) 0;"></div>',e+='<div style="grid-column: 1/-1; margin-bottom: var(--spacing-md);"><h3 style="font-size: 20px; font-weight: 700; color: var(--text-primary);">All Courses</h3><p style="color: var(--text-secondary); font-size: 14px; margin-top: 4px;">Browse our complete course catalog</p></div>'),e+=a.map((r,o)=>this.renderCourseCard(r,!e&&o===0)).join(""),this.coursesContainer.innerHTML=e,window.lucide.createIcons()}catch(e){console.error("Error loading courses:",e),this.coursesContainer&&(this.coursesContainer.innerHTML=`
+        `,window.lucide.createIcons();return}const s=i.map(r=>({id:r.id,title:r.title,description:r.description,price:r.price,duration:r.duration,category:r.category}));e&&(e+='<div style="grid-column: 1/-1; height: 1px; background: var(--border); margin: var(--spacing-lg) 0;"></div>',e+='<div style="grid-column: 1/-1; margin-bottom: var(--spacing-md);"><h3 style="font-size: 20px; font-weight: 700; color: var(--text-primary);">All Courses</h3><p style="color: var(--text-secondary); font-size: 14px; margin-top: 4px;">Browse our complete course catalog</p></div>'),e+=s.map((r,o)=>this.renderCourseCard(r,!e&&o===0)).join(""),this.coursesContainer.innerHTML=e,window.lucide.createIcons()}catch(e){console.error("Error loading courses:",e),this.coursesContainer&&(this.coursesContainer.innerHTML=`
           <div class="alert-card error" style="grid-column: 1/-1;">
             <div class="alert-icon">
               <i data-lucide="alert-circle"></i>
@@ -18,7 +22,7 @@ import"./firebase-config-CsUtaHqz.js";/* empty css               */import"./app-
               <p>Unable to load courses. Please refresh the page.</p>
             </div>
           </div>
-        `,window.lucide.createIcons())}}async renderMyCoursesSection(e){let t='<div style="grid-column: 1/-1; margin-bottom: var(--spacing-md);"><h3 style="font-size: 20px; font-weight: 700; color: var(--text-primary);">My Courses</h3><p style="color: var(--text-secondary); font-size: 14px; margin-top: 4px;">Continue your learning journey</p></div>';for(const i of e)t+=await this.renderPurchasedCourseCard(i);return t}async renderPurchasedCourseCard(e){const t=await u(),i=await x(),a=t.success&&t.pdfs?t.pdfs.filter(s=>e.pdfIds.includes(s.id)):[],r=i.success&&i.tests?i.tests.filter(s=>e.practiceTestIds.includes(s.id)):[];return`
+        `,window.lucide.createIcons())}}}async renderMyCoursesSection(e){let t='<div style="grid-column: 1/-1; margin-bottom: var(--spacing-md);"><h3 style="font-size: 20px; font-weight: 700; color: var(--text-primary);">My Courses</h3><p style="color: var(--text-secondary); font-size: 14px; margin-top: 4px;">Continue your learning journey</p></div>';for(const i of e)t+=await this.renderPurchasedCourseCard(i);return t}async renderPurchasedCourseCard(e){const t=await u(),i=await x(),s=t.success&&t.pdfs?t.pdfs.filter(a=>e.pdfIds.includes(a.id)):[],r=i.success&&i.tests?i.tests.filter(a=>e.practiceTestIds.includes(a.id)):[];return`
       <div class="course-card purchased" style="background: linear-gradient(135deg, rgba(180, 83, 9, 0.05) 0%, rgba(217, 119, 6, 0.05) 100%); border: 2px solid var(--primary); position: relative; overflow: hidden;">
         <div style="position: absolute; top: 12px; right: 12px; background: var(--gradient-primary); color: white; padding: 6px 14px; border-radius: var(--radius-full); font-size: 12px; font-weight: 700; box-shadow: 0 2px 8px rgba(180, 83, 9, 0.3);">
           ENROLLED
@@ -36,8 +40,8 @@ import"./firebase-config-CsUtaHqz.js";/* empty css               */import"./app-
               <i data-lucide="file-text" style="width: 18px; height: 18px; color: white;"></i>
             </div>
             <div style="flex: 1; min-width: 0;">
-              <div style="font-size: 22px; font-weight: 700; color: var(--primary); line-height: 1; margin-bottom: 2px;">${a.length}</div>
-              <div style="font-size: 12px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">${a.length===1?"PDF":"PDFs"}</div>
+              <div style="font-size: 22px; font-weight: 700; color: var(--primary); line-height: 1; margin-bottom: 2px;">${s.length}</div>
+              <div style="font-size: 12px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">${s.length===1?"PDF":"PDFs"}</div>
             </div>
           </div>
           <div style="flex: 1; display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: linear-gradient(135deg, rgba(217, 119, 6, 0.08) 0%, rgba(251, 146, 60, 0.08) 100%); border-radius: var(--radius-md); border: 1px solid rgba(217, 119, 6, 0.2);">
@@ -54,14 +58,14 @@ import"./firebase-config-CsUtaHqz.js";/* empty css               */import"./app-
           Continue Learning
         </button>
       </div>
-    `}formatDescriptionForCard(e){const t=e.trim(),i=t.split(/\s*\d+\.\s+/).map(a=>a.trim()).filter(Boolean);return i.length>1?{title:i[0],points:i.slice(1),isList:!0}:{title:void 0,points:[t],isList:!1}}renderTopicItem(e){return`
+    `}formatDescriptionForCard(e){const t=e.trim(),i=t.split(/\s*\d+\.\s+/).map(s=>s.trim()).filter(Boolean);return i.length>1?{title:i[0],points:i.slice(1),isList:!0}:{title:void 0,points:[t],isList:!1}}renderTopicItem(e){return`
       <li style="display: flex; align-items: flex-start; gap: 10px; min-height: 20px;">
         <span style="width: 18px; height: 18px; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; margin-top: 2px;">
           <i data-lucide="check" style="width: 14px; height: 14px; color: var(--primary); stroke-width: 3;"></i>
         </span>
         <span style="flex: 1; color: var(--text-secondary); line-height: 1.5; padding-top: 0;">${n(e)}</span>
       </li>
-    `}renderDescriptionForCard(e){const{title:t,points:i,isList:a}=this.formatDescriptionForCard(e);if(a&&i.length>0){const o=i.slice(0,4),s=i.slice(4),d=s.length;return`
+    `}renderDescriptionForCard(e){const{title:t,points:i,isList:s}=this.formatDescriptionForCard(e);if(s&&i.length>0){const o=i.slice(0,4),a=i.slice(4),d=a.length;return`
         <div class="course-description-card" style="font-size: 14px; color: var(--text-secondary);">
           ${t?`<div style="font-weight: 600; color: var(--text-primary); margin-bottom: 10px; font-size: 15px;">${n(t)}</div>`:""}
           <ul class="course-topics-visible" style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px;">
@@ -70,7 +74,7 @@ import"./firebase-config-CsUtaHqz.js";/* empty css               */import"./app-
           ${d>0?`
             <div class="course-topics-extra" style="display: none; margin-top: 8px;">
               <ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px;">
-                ${s.map(l=>this.renderTopicItem(l)).join("")}
+                ${a.map(l=>this.renderTopicItem(l)).join("")}
               </ul>
             </div>
             <button type="button" class="expand-more-topics-btn" style="font-size: 13px; color: var(--primary); font-weight: 600; margin-top: 8px; padding: 6px 0; background: none; border: none; cursor: pointer; text-align: left; font-family: inherit; display: block; width: 100%; -webkit-tap-highlight-color: transparent; touch-action: manipulation;" data-more-text="+ ${d} more topics" data-less-text="Show less">
@@ -116,4 +120,4 @@ import"./firebase-config-CsUtaHqz.js";/* empty css               */import"./app-
           View Details
         </button>
       </div>
-    `}getCategoryIcon(e){return{"Traffic Rules":"traffic-cone","MV Act":"clipboard-list",Mechanical:"wrench","Complete Package":"graduation-cap","Full Course":"graduation-cap","Part I":"traffic-cone","Part II":"clipboard-list","Part III":"wrench"}[e]||"book-open"}}document.querySelector(".course-cards")&&new h;
+    `}getCategoryIcon(e){return{"Traffic Rules":"traffic-cone","MV Act":"clipboard-list",Mechanical:"wrench","Complete Package":"graduation-cap","Full Course":"graduation-cap","Part I":"traffic-cone","Part II":"clipboard-list","Part III":"wrench"}[e]||"book-open"}}document.querySelector(".course-cards")&&new v;

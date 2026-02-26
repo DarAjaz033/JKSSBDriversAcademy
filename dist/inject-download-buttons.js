@@ -53,7 +53,7 @@ async function scanAndInjectButtons() {
         if (link.dataset.pdfBtnInjected) return;
 
         // Skip if a download button already exists in this container
-        if (link.parentElement?.querySelector('.secure-download-btn')) return;
+        if (link.querySelector('.secure-download-btn')) return;
 
         // Mark as injected
         link.dataset.pdfBtnInjected = "true";
@@ -109,7 +109,13 @@ async function scanAndInjectButtons() {
         btn.onmouseout = () => { btn.style.transform = 'scale(1)'; };
 
         // Clean URL for cache key checking (strip token just like the downloader does)
-        const cacheUrlArr = rawPdfUrl.split('?');
+        let finalUrlToFetch = rawPdfUrl;
+        if (rawPdfUrl.includes('pdf-viewer.html')) {
+            const params = new URLSearchParams(rawPdfUrl.substring(rawPdfUrl.indexOf('?')));
+            finalUrlToFetch = decodeURIComponent(params.get('url') || rawPdfUrl);
+        }
+
+        const cacheUrlArr = finalUrlToFetch.split('?');
         const cleanCacheUrl = cacheUrlArr[0].includes('firebasestorage')
             ? cacheUrlArr.join('?')
             : cacheUrlArr[0];
@@ -161,7 +167,7 @@ async function scanAndInjectButtons() {
         btnContainer.appendChild(btn);
 
         // Fetch file size in the background
-        const sizeText = await getPdfSize(rawPdfUrl);
+        const sizeText = await getPdfSize(finalUrlToFetch);
         if (sizeText) {
             sizeLabel.innerHTML = sizeText;
             sizeLabel.style.display = 'block';
