@@ -187,10 +187,26 @@
     }
   }
 
+
+  // Deprecated downloadPdfSafely removed in favor of FirebaseCacheManager
   /* ── Init ─────────────────────────────────────────────────────── */
   function init() {
     buildNav();
     buildFooter();
+
+    // Inject the global App-Locked PDF Downloader scanner
+    var dlScript = document.createElement('script');
+    dlScript.src = './inject-download-buttons.js';
+    document.body.appendChild(dlScript);
+
+    // Register Service Worker for heavy caching and offline PDFs
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('/sw.js').catch(function (err) {
+          console.warn('ServiceWorker registration failed: ', err);
+        });
+      });
+    }
   }
 
   if (document.body) {

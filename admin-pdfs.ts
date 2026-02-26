@@ -1,3 +1,5 @@
+import './public/global-pdf-viewer';
+import { db, storage } from './firebase-config';
 import { onAuthChange } from './auth-service';
 import {
   isAdmin,

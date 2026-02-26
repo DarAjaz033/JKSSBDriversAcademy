@@ -7,251 +7,20 @@
     <meta name="theme-color" content="#B45309">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <title>PDF Viewer | JKSSB Drivers Academy</title>
-    <link rel="icon" type="image/svg+xml" href="./assets/favicon-DiZosfo3.svg">
+    <link rel="icon" type="image/svg+xml" href="./public/favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
 
-    <!-- Print protection: hide everything when printing -->
-    <style media="print">
-        body * {
-            display: none !important;
-        }
-
-        body::after {
-            display: block !important;
-            content: "🚫 Printing is disabled for this content.";
-            font-size: 24px;
-            text-align: center;
-            margin-top: 40vh;
-        }
-    </style>
-
     <style>
-        *,
-        *::before,
-        *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
         body {
             font-family: 'Poppins', system-ui, sans-serif;
             background: #111;
             min-height: 100vh;
-            overflow-x: hidden;
-
-            /* Security: disable text selection */
-            user-select: none;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-        }
-
-        /* ── Top bar ───────────────────────────── */
-        .viewer-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 100;
-            height: 56px;
-            background: linear-gradient(135deg, #1a0a00, #3d1a00);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            display: flex;
-            align-items: center;
-            padding: 0 12px;
-            gap: 10px;
-        }
-
-        .back-btn {
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            margin: 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
-            color: white;
-            flex-shrink: 0;
-            transition: background 0.2s;
-        }
-
-        .back-btn:hover {
-            background: rgba(255, 255, 255, 0.18);
-        }
-
-        .back-btn svg {
-            width: 20px;
-            height: 20px;
-        }
-
-        .pdf-title {
-            flex: 1;
-            font-size: 14px;
-            font-weight: 600;
-            color: white;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .page-info {
-            font-size: 12px;
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.6);
-            white-space: nowrap;
-            background: rgba(255, 255, 255, 0.08);
-            padding: 4px 10px;
-            border-radius: 8px;
-        }
-
-        /* ── Canvas container ─────────────────── */
-        .canvas-scroll {
-            position: fixed;
-            top: 56px;
-            left: 0;
-            right: 0;
-            bottom: 56px;
-            overflow-y: auto;
-            overflow-x: hidden;
-            background: #1a1a1a;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        /* Security: transparent overlay blocks right-click and drag */
-        .security-overlay {
-            position: fixed;
-            top: 56px;
-            left: 0;
-            right: 0;
-            bottom: 56px;
-            z-index: 50;
-            pointer-events: all;
-            /* transparent — just captures events */
-            background: transparent;
-        }
-
-        .pages-wrap {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 16px 0 24px;
-            gap: 12px;
-        }
-
-        .page-canvas-wrap {
-            position: relative;
-            display: inline-block;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-        }
-
-        .page-canvas-wrap canvas {
-            display: block;
-            max-width: 100%;
-        }
-
-        /* Watermark per page */
-        .page-canvas-wrap::after {
-            content: 'JKSSB Drivers Academy — Protected';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(-35deg);
-            font-size: 22px;
-            font-weight: 700;
-            color: rgba(200, 93, 16, 0.1);
-            white-space: nowrap;
-            pointer-events: none;
-            font-family: 'Poppins', sans-serif;
-            letter-spacing: 1px;
-        }
-
-        /* ── Bottom nav bar ───────────────────── */
-        .bottom-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 56px;
-            background: linear-gradient(135deg, #1a0a00, #3d1a00);
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 16px;
-            z-index: 100;
-        }
-
-        .nav-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: white;
-            transition: all 0.2s;
-        }
-
-        .nav-btn:hover:not(:disabled) {
-            background: rgba(200, 93, 16, 0.3);
-            border-color: rgba(200, 93, 16, 0.5);
-        }
-
-        .nav-btn:disabled {
-            opacity: 0.3;
-            cursor: not-allowed;
-        }
-
-        .nav-btn svg {
-            width: 20px;
-            height: 20px;
-        }
-
-        .page-input-wrap {
-            display: flex;
-            align-items: center;
-            gap: 6px;
             color: rgba(255, 255, 255, 0.7);
-            font-size: 13px;
-            font-weight: 600;
-        }
-
-        .page-input {
-            width: 46px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
-            padding: 5px 6px;
-            color: white;
-            font-family: 'Poppins', sans-serif;
-            font-size: 13px;
-            font-weight: 600;
-            text-align: center;
-            outline: none;
-        }
-
-        .page-input:focus {
-            border-color: #c85d10;
-        }
-
-        /* ── Loading ──────────────────────────── */
-        .loading-screen {
-            position: fixed;
-            inset: 0;
-            background: #111;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 16px;
-            z-index: 200;
         }
 
         .spinner {
@@ -268,136 +37,18 @@
                 transform: rotate(360deg);
             }
         }
-
-        .loading-text {
-            font-size: 14px;
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.7);
-        }
-
-        .loading-name {
-            font-size: 16px;
-            font-weight: 700;
-            color: white;
-            max-width: 260px;
-            text-align: center;
-        }
-
-        /* ── Error ────────────────────────────── */
-        .error-screen {
-            position: fixed;
-            inset: 0;
-            background: #111;
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 14px;
-            padding: 32px;
-            text-align: center;
-            z-index: 200;
-        }
-
-        .error-icon {
-            font-size: 48px;
-        }
-
-        .error-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: white;
-        }
-
-        .error-msg {
-            font-size: 13px;
-            color: rgba(255, 255, 255, 0.5);
-            line-height: 1.5;
-        }
-
-        .error-back {
-            margin-top: 8px;
-            padding: 12px 24px;
-            background: linear-gradient(135deg, #e07b2a, #c85d10);
-            color: white;
-            font-weight: 700;
-            font-size: 14px;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            font-family: 'Poppins', sans-serif;
-        }
     </style>
-  <script type="module" crossorigin src="./assets/pdf-viewer-CvYY_j5L.js"></script>
-  <link rel="modulepreload" crossorigin href="./assets/modulepreload-polyfill-B5Qt9EMX.js">
+  <script type="module" crossorigin src="./assets/firebase-config-CsUtaHqz.js"></script>
+  <script type="module" crossorigin src="./assets/global-pdf-viewer-HjeyeNNL.js"></script>
 </head>
 
 <body>
-
-    <!-- Loading screen -->
-    <div class="loading-screen" id="loading">
-        <div class="spinner"></div>
-        <div class="loading-name" id="loading-name">Loading PDF...</div>
-        <div class="loading-text" id="loading-progress">Please wait</div>
+    <div style="text-align: center;">
+        <div class="spinner" style="margin: 0 auto 16px;"></div>
+        <div>Initializing Secure Viewer...</div>
     </div>
 
-    <!-- Error screen -->
-    <div class="error-screen" id="error-screen">
-        <div class="error-icon">📄</div>
-        <div class="error-title">Could not load PDF</div>
-        <div class="error-msg" id="error-msg">The PDF file could not be loaded. It may be unavailable or require access.
-        </div>
-        <button class="error-back" onclick="window.history.back()">← Go Back</button>
-    </div>
-
-    <!-- Top bar -->
-    <div class="viewer-bar">
-        <button class="back-btn" onclick="window.history.back()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <path d="M19 12H5M12 5l-7 7 7 7" />
-            </svg>
-        </button>
-        <div class="pdf-title" id="pdf-title">Loading...</div>
-        <div class="page-info" id="page-info">—</div>
-    </div>
-
-    <!-- Security overlay — blocks right-click and drag on top of canvas -->
-    <div class="security-overlay" id="security-overlay"></div>
-
-    <!-- Scrollable canvas area -->
-    <div class="canvas-scroll" id="canvas-scroll">
-        <div class="pages-wrap" id="pages-wrap"></div>
-    </div>
-
-    <!-- Bottom navigation -->
-    <div class="bottom-bar">
-        <button class="nav-btn" id="btn-first" title="First page">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <path d="m11 17-5-5 5-5" />
-                <path d="m18 17-5-5 5-5" />
-            </svg>
-        </button>
-        <button class="nav-btn" id="btn-prev" title="Previous page">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <path d="m15 18-6-6 6-6" />
-            </svg>
-        </button>
-        <div class="page-input-wrap">
-            <input class="page-input" type="number" id="page-input" min="1" value="1">
-            <span id="total-pages">/ —</span>
-        </div>
-        <button class="nav-btn" id="btn-next" title="Next page">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <path d="m9 18 6-6-6-6" />
-            </svg>
-        </button>
-        <button class="nav-btn" id="btn-last" title="Last page">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <path d="m13 17 5-5-5-5" />
-                <path d="m6 17 5-5-5-5" />
-            </svg>
-        </button>
-    </div>
-
+    <!-- Includes global PDF viewer logic which auto-boots when on this page -->
 </body>
 
 </html>

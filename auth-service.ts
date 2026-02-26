@@ -156,6 +156,10 @@ export const setupSingleDeviceLogin = async (uid: string) => {
     localStorage.setItem(SESSION_TOKEN_KEY, token);
     const userRef = doc(db, 'users', uid);
     await setDoc(userRef, { sessionToken: token }, { merge: true });
+
+    // Explicitly write login time to trigger logout logic universally
+    localStorage.setItem('jkssb_login_time', Date.now().toString());
+
     return token;
   } catch (error) {
     console.error('Failed to setup session token:', error);
@@ -194,11 +198,8 @@ export const initSessionVerifier = (uid: string) => {
     }
   };
 
-  // Run immediately on boot
-  verifyToken();
-
-  // Poll every 30 seconds exactly as requested
-  sessionInterval = setInterval(verifyToken, 30 * 1000);
+  // Poll every 15 seconds exactly as requested for aggressive logout
+  sessionInterval = setInterval(verifyToken, 15 * 1000);
 };
 
 export const stopSessionVerifier = () => {

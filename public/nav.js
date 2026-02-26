@@ -187,84 +187,12 @@
     }
   }
 
-  /* ── Universal PDF Click Interceptor ──────────────────────────── */
-  function interceptPdfs() {
-    document.addEventListener('click', function (e) {
-      var a = e.target.closest ? e.target.closest('a') : null;
-      if (!a) return;
 
-      var href = a.getAttribute('href') || a.href || '';
-      if (!href) return;
-
-      // Detect if the link points to a PDF or Firebase Storage blob
-      var isPdf = href.toLowerCase().indexOf('.pdf') !== -1 || href.indexOf('firebasestorage.googleapis.com') !== -1;
-
-      if (isPdf) {
-        // If it's ALREADY routed through the pdf-viewer, let it pass natively
-        if (href.indexOf('pdf-viewer.html') !== -1) return;
-
-        // Hijack the click
-        e.preventDefault();
-        e.stopPropagation();
-
-        var pdfName = a.textContent ? a.textContent.replace(/[\n\r]+/g, ' ').trim() : 'Document';
-        if (!pdfName || pdfName.length > 40) pdfName = 'Secured Document';
-
-        // Route strictly to the internal viewer
-        var viewerUrl = './pdf-viewer.html?name=' + encodeURIComponent(pdfName) + '&url=' + encodeURIComponent(a.href);
-        window.location.href = viewerUrl;
-      }
-    }, true); // Use capture phase to intercept before React/Vue/Local listeners
-  }
-
-  /* ── Secure App-Locked Downloader ─────────────────────────────── */
-  window.downloadPdfSafely = async function (btnElement, pdfUrl, pdfName) {
-    if (!pdfUrl) return;
-    var originalText = btnElement.innerHTML;
-    try {
-      btnElement.disabled = true;
-      btnElement.innerHTML = '⏳ Downloading...';
-
-      // 1. Fetch raw PDF Blob
-      const response = await fetch(pdfUrl);
-      if (!response.ok) throw new Error('Network response was not ok');
-
-      // 2. We use the exact URL as the cache key.
-      const cache = await window.caches.open('jkssb-pdf-cache-v1');
-      await cache.put(pdfUrl, response.clone());
-
-      // 3. Set the 30-Day Timebomb in pure localStorage
-      const thirtyDaysMs = 30 * 24 * 60 * 60 * 1000;
-      const expiry = Date.now() + thirtyDaysMs;
-
-      const downloads = JSON.parse(localStorage.getItem('jkssb_downloads') || '{}');
-      downloads[pdfUrl] = { name: pdfName, expiresAt: expiry };
-      localStorage.setItem('jkssb_downloads', JSON.stringify(downloads));
-
-      // 4. Update UI
-      btnElement.innerHTML = '✅ Downloaded';
-      btnElement.style.background = '#059669'; // Green success
-
-      // Flash a custom toast if available
-      if (document.getElementById('toast-container')) {
-        showToast('PDF securely downloaded for offline access! Valid for 30 days.', 'success');
-      }
-
-    } catch (e) {
-      console.error('Download failed', e);
-      btnElement.innerHTML = '❌ Failed';
-      setTimeout(() => {
-        btnElement.disabled = false;
-        btnElement.innerHTML = originalText;
-      }, 3000);
-    }
-  };
-
+  // Deprecated downloadPdfSafely removed in favor of FirebaseCacheManager
   /* ── Init ─────────────────────────────────────────────────────── */
   function init() {
     buildNav();
     buildFooter();
-    interceptPdfs();
 
     // Inject the global App-Locked PDF Downloader scanner
     var dlScript = document.createElement('script');
