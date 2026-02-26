@@ -24,7 +24,7 @@ class AdminPurchasesPage {
       }
 
       await this.loadPurchases();
-    });
+    }, true);
   }
 
   private async loadPurchases(): Promise<void> {

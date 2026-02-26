@@ -20,7 +20,7 @@ class AdminDashboard {
       }
 
       await this.loadStats();
-    });
+    }, true);
   }
 
   private async loadStats(): Promise<void> {

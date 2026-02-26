@@ -54,17 +54,17 @@ class AdminPDFsPage {
       this.bindGlobalInputs();
       this.refreshBtn.addEventListener('click', () => this.loadData());
       await this.loadData();
-    });
+    }, true);
   }
 
   // ─── Data Loading ────────────────────────────────────────────────────────────
 
   private async loadData(): Promise<void> {
     this.courseFoldersContainer.innerHTML = `
-      <div style="text-align:center;padding:2rem;">
-        <div class="loading-spinner"></div>
-        <p style="color:#64748B;margin-top:1rem;">Loading course libraries...</p>
-      </div>`;
+      <div class="skeleton-card" style="margin-bottom: var(--spacing-sm); padding: var(--spacing-md);"><div class="skeleton skeleton-title" style="margin-bottom:0;"></div></div>
+      <div class="skeleton-card" style="margin-bottom: var(--spacing-sm); padding: var(--spacing-md);"><div class="skeleton skeleton-title" style="margin-bottom:0;"></div></div>
+      <div class="skeleton-card" style="margin-bottom: var(--spacing-sm); padding: var(--spacing-md);"><div class="skeleton skeleton-title" style="margin-bottom:0;"></div></div>
+    `;
 
     const [coursesRes, pdfsRes] = await Promise.all([getCourses(), getPDFs()]);
     this.allCourses = coursesRes.courses ?? [];

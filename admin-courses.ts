@@ -41,7 +41,7 @@ class AdminCoursesPage {
       this.addPointBtn.addEventListener('click', () => this.addDescriptionPoint());
       this.ensureDescriptionPoints();
       await this.loadCourses();
-    });
+    }, true);
   }
 
   // ─── Description Helpers ─────────────────────────────────────────────────────
@@ -175,6 +175,16 @@ class AdminCoursesPage {
   // ─── Load & Render ───────────────────────────────────────────────────────────
 
   private async loadCourses(): Promise<void> {
+    this.coursesContainer.innerHTML = `
+      <div class="skeleton-card" style="margin-bottom: var(--spacing-sm); flex-direction: row; align-items: center; justify-content: space-between;">
+        <div style="flex:1;"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-text" style="width:50%;"></div></div>
+        <div class="skeleton" style="width: 80px; height: 32px; border-radius: var(--radius-sm);"></div>
+      </div>
+      <div class="skeleton-card" style="margin-bottom: var(--spacing-sm); flex-direction: row; align-items: center; justify-content: space-between;">
+        <div style="flex:1;"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-text" style="width:50%;"></div></div>
+        <div class="skeleton" style="width: 80px; height: 32px; border-radius: var(--radius-sm);"></div>
+      </div>
+    `;
     const result = await getCourses();
     if (result.success && result.courses) {
       this.coursesList = result.courses;
@@ -185,7 +195,7 @@ class AdminCoursesPage {
       this.attachEventListeners();
     } else {
       this.coursesContainer.innerHTML = '<p style="text-align:center;color:#DC2626;padding:2rem;">Failed to load courses.</p>';
-      showToast('Failed to load courses: ' + (result.error ?? 'Unknown error'), 'error');
+      showToast('Failed to load courses: ' + ((result as any).error ?? 'Unknown error'), 'error');
     }
   }
 

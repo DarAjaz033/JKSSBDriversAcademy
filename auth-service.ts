@@ -108,8 +108,18 @@ export const signOut = async () => {
   }
 };
 
-export const onAuthChange = (callback: (user: User | null) => void) => {
+let publicUserCache: typeof auth.currentUser | null = null;
+let hasCheckedAuth = false;
+
+export const onAuthChange = (callback: (user: User | null) => void, isProtected = false) => {
+  // 1. Memory Cache for Public Pages (instant load)
+  if (!isProtected && hasCheckedAuth) {
+    callback(publicUserCache);
+  }
+
   return onAuthStateChanged(auth, (user) => {
+    publicUserCache = user;
+    hasCheckedAuth = true;
     callback(user);
   });
 };

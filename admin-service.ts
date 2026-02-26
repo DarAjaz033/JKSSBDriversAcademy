@@ -21,6 +21,15 @@ import {
   deleteObject
 } from 'firebase/storage';
 
+const COURSES_CACHE_KEY = 'jkssb_courses_cache';
+const PDFS_CACHE_KEY = 'jkssb_pdfs_cache';
+const CACHE_TIME = 10 * 60 * 1000;
+
+export const clearAdminCache = () => {
+  localStorage.removeItem(COURSES_CACHE_KEY);
+  localStorage.removeItem(PDFS_CACHE_KEY);
+};
+
 export interface Course {
   id?: string;
   title: string;
@@ -161,6 +170,7 @@ export const createCourse = async (course: Omit<Course, 'id' | 'createdAt' | 'up
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp()
     });
+    clearAdminCache();
     return { success: true, id: docRef.id };
   } catch (error: any) {
     return { success: false, error: error.message };
@@ -171,6 +181,7 @@ export const updateCourseRank = async (courseId: string, rank: number) => {
   try {
     const courseRef = doc(db, 'courses', courseId);
     await updateDoc(courseRef, { rank, updatedAt: serverTimestamp() });
+    clearAdminCache();
     return { success: true };
   } catch (error: any) {
     return { success: false, error: error.message };
@@ -184,6 +195,7 @@ export const updateCourse = async (courseId: string, updates: Partial<Course>) =
       ...updates,
       updatedAt: serverTimestamp()
     });
+    clearAdminCache();
     return { success: true };
   } catch (error: any) {
     return { success: false, error: error.message };
@@ -193,13 +205,14 @@ export const updateCourse = async (courseId: string, updates: Partial<Course>) =
 export const deleteCourse = async (courseId: string) => {
   try {
     await deleteDoc(doc(db, 'courses', courseId));
+    clearAdminCache();
     return { success: true };
   } catch (error: any) {
     return { success: false, error: error.message };
   }
 };
 
-export const getCourses = async () => {
+const refreshCoursesCache = async () => {
   try {
     const querySnapshot = await getDocs(collection(db, 'courses'));
     const courses: Course[] = [];
@@ -207,7 +220,24 @@ export const getCourses = async () => {
       courses.push({ id: doc.id, ...doc.data() } as Course);
     });
     courses.sort((a, b) => (a.rank ?? 9999) - (b.rank ?? 9999));
+    localStorage.setItem(COURSES_CACHE_KEY, JSON.stringify({ data: courses, timestamp: Date.now() }));
     return { success: true, courses };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+};
+
+export const getCourses = async () => {
+  try {
+    const cached = localStorage.getItem(COURSES_CACHE_KEY);
+    if (cached) {
+      const { data, timestamp } = JSON.parse(cached);
+      if (Date.now() - timestamp < CACHE_TIME) {
+        setTimeout(refreshCoursesCache, 0); // Background refresh
+        return { success: true, courses: data as Course[] };
+      }
+    }
+    return await refreshCoursesCache();
   } catch (error: any) {
     return { success: false, error: error.message };
   }
@@ -247,7 +277,22 @@ export const uploadPDF = async (file: File) => {
       uploadedAt: serverTimestamp()
     });
 
+    clearAdminCache();
     return { success: true, id: pdfDoc.id, url };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+};
+
+const refreshPDFsCache = async () => {
+  try {
+    const querySnapshot = await getDocs(collection(db, 'pdfs'));
+    const pdfs: PDF[] = [];
+    querySnapshot.forEach((doc) => {
+      pdfs.push({ id: doc.id, ...doc.data() } as PDF);
+    });
+    localStorage.setItem(PDFS_CACHE_KEY, JSON.stringify({ data: pdfs, timestamp: Date.now() }));
+    return { success: true, pdfs };
   } catch (error: any) {
     return { success: false, error: error.message };
   }
@@ -255,12 +300,15 @@ export const uploadPDF = async (file: File) => {
 
 export const getPDFs = async () => {
   try {
-    const querySnapshot = await getDocs(collection(db, 'pdfs'));
-    const pdfs: PDF[] = [];
-    querySnapshot.forEach((doc) => {
-      pdfs.push({ id: doc.id, ...doc.data() } as PDF);
-    });
-    return { success: true, pdfs };
+    const cached = localStorage.getItem(PDFS_CACHE_KEY);
+    if (cached) {
+      const { data, timestamp } = JSON.parse(cached);
+      if (Date.now() - timestamp < CACHE_TIME) {
+        setTimeout(refreshPDFsCache, 0); // Background refresh
+        return { success: true, pdfs: data as PDF[] };
+      }
+    }
+    return await refreshPDFsCache();
   } catch (error: any) {
     return { success: false, error: error.message };
   }
@@ -271,6 +319,7 @@ export const deletePDF = async (pdfId: string, url: string) => {
     const storageRef = ref(storage, url);
     await deleteObject(storageRef);
     await deleteDoc(doc(db, 'pdfs', pdfId));
+    clearAdminCache();
     return { success: true };
   } catch (error: any) {
     return { success: false, error: error.message };

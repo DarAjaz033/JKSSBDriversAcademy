@@ -54,6 +54,12 @@ class HomePage {
   private async loadCourses(): Promise<void> {
     if (!this.coursesContainer) return;
 
+    this.coursesContainer.innerHTML = `
+      <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div style="padding-top:12px;"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-text"></div><div class="skeleton skeleton-text" style="width:50%;"></div></div></div>
+      <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div style="padding-top:12px;"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-text"></div><div class="skeleton skeleton-text" style="width:50%;"></div></div></div>
+      <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div style="padding-top:12px;"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-text"></div><div class="skeleton skeleton-text" style="width:50%;"></div></div></div>
+    `;
+
     try {
       let html = '';
 

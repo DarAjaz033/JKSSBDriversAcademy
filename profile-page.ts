@@ -24,7 +24,7 @@ class ProfilePage {
         this.showGuest();
       }
       this.refreshIcons();
-    });
+    }, true);
 
     // Fallback timeout: if onAuthChange never fires, check synchronously
     // (can happen in some offline / cached scenarios)
@@ -118,7 +118,7 @@ class ProfilePage {
   private setPhoto(url: string): void {
     const inner = document.getElementById('avatar-inner');
     if (!inner) return;
-    inner.innerHTML = `<img src="${url}" alt="Profile" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.style.display='none'">`;
+    inner.innerHTML = `<img src="${url}" alt="Profile" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.style.display='none'" loading="lazy">`;
   }
 
   private setInitial(name: string): void {

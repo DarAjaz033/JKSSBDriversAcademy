@@ -126,7 +126,21 @@ class App {
     this.setupFAQ();
     this.updateCopyrightYear();
     this.setupAuth();
+    this.registerServiceWorker();
   }
+
+  private registerServiceWorker(): void {
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').then((registration) => {
+          console.log('[Service Worker] Registered with scope:', registration.scope);
+        }).catch((error) => {
+          console.warn('[Service Worker] Registration failed:', error);
+        });
+      });
+    }
+  }
+
 
   private updateCopyrightYear(): void {
     const yearElement = document.getElementById('copyright-year');
@@ -310,13 +324,13 @@ class App {
     if (!titleElement) return;
 
     const titles: Record<string, string> = {
-      home: 'JKSSB Academy',
+      home: 'JKSSB Drivers Academy',
       courses: 'Courses',
       learning: 'My Learning',
       more: 'More'
     };
 
-    titleElement.textContent = titles[pageName] || 'JKSSB Academy';
+    titleElement.textContent = titles[pageName] || 'JKSSB Drivers Academy';
   }
 
   private setupPageTitle(): void {
@@ -371,7 +385,7 @@ class App {
           // Show mini circular photo in header
           const existing = profileBtn.querySelector('img');
           if (!existing) {
-            profileBtn.innerHTML = `<img src="${user.photoURL}" alt="Profile" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:2px solid #B45309;">`;
+            profileBtn.innerHTML = `<img src="${user.photoURL}" alt="Profile" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:2px solid #B45309;" loading="lazy">`;
           }
         }
       } else {

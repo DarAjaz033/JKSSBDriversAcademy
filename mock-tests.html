@@ -316,23 +316,6 @@
       color: #9ca3af;
       flex-shrink: 0;
     }
-
-    /* ── Loading spinner inline ── */
-    .cd-spinner {
-      width: 28px;
-      height: 28px;
-      border: 2.5px solid rgba(180, 83, 9, 0.15);
-      border-top-color: #b45309;
-      border-radius: 50%;
-      animation: cdSpin .8s linear infinite;
-      margin: 0 auto;
-    }
-
-    @keyframes cdSpin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
   </style>
 </head>
 
@@ -363,9 +346,6 @@
             My Enrolled Courses
           </div>
           <div id="cd-enrolled-grid" class="cd-enrolled-grid">
-            <div style="grid-column:1/-1;text-align:center;padding:20px 0;">
-              <div class="cd-spinner"></div>
-            </div>
           </div>
         </section>
 
@@ -376,9 +356,6 @@
             Available Courses
           </div>
           <div id="cd-avail-list" style="display:flex;flex-direction:column;gap:10px;">
-            <div style="text-align:center;padding:20px 0;">
-              <div class="cd-spinner"></div>
-            </div>
           </div>
         </section>
 

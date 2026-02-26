@@ -1,32 +1,4 @@
-import './public/global-pdf-viewer';
-import { onAuthChange } from './auth-service';
-import {
-  getUserCoursesWithDetails,
-  getPDFs,
-  getCourseQuizzes,
-  Course,
-  PDF,
-  PracticeTest
-} from './admin-service';
-
-let _uid = 0;
-function uid() { return ++_uid; }
-
-class MyCoursesPage {
-  private coursesContainer: HTMLElement;
-
-  constructor() {
-    this.coursesContainer = document.querySelector('#courses-content') as HTMLElement;
-    this.injectStyles();
-    this.init();
-  }
-
-  /* ─── Styles ──────────────────────────────────────────────────────────── */
-  private injectStyles(): void {
-    if (document.getElementById('mc-styles')) return;
-    const s = document.createElement('style');
-    s.id = 'mc-styles';
-    s.textContent = `
+import"./firebase-config-BMA5n-tq.js";/* empty css               */import"./global-pdf-viewer-C4iBXmF9.js";import{o as u}from"./auth-service-BxFBpYMV.js";import{g,b as m,f}from"./admin-service-DzNgPl0W.js";let x=0;function b(){return++x}class v{constructor(){this.coursesContainer=document.querySelector("#courses-content"),this.injectStyles(),this.init()}injectStyles(){if(document.getElementById("mc-styles"))return;const e=document.createElement("style");e.id="mc-styles",e.textContent=`
       /* page wrapper — 1 col stack */
       #courses-content {
         display: flex;
@@ -293,99 +265,44 @@ class MyCoursesPage {
 
       /* loading / empty spans full */
       .mc-full { width: 100%; }
-    `;
-    document.head.appendChild(s);
-  }
-
-  /* ─── Auth ────────────────────────────────────────────────────────────── */
-  private async init(): Promise<void> {
-    onAuthChange(async (user) => {
-      if (user) {
-        await this.loadUserCourses(user.uid);
-      } else {
-        this.showEmptyState(
-          'Please Sign In',
-          'You need to sign in to view your courses.',
-          'Go to Home', './index.html'
-        );
+      .mc-loading {
+        text-align:center; padding:52px 24px;
       }
-    }, true);
-  }
-
-  /* ─── Load purchased courses ──────────────────────────────────────────── */
-  private async loadUserCourses(userId: string): Promise<void> {
-    this.coursesContainer.innerHTML = `
-      <div class="skeleton-card" style="margin-bottom: var(--spacing-md);"><div class="skeleton skeleton-img"></div><div style="padding-top:12px;"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-text"></div></div></div>
-      <div class="skeleton-card" style="margin-bottom: var(--spacing-md);"><div class="skeleton skeleton-img"></div><div style="padding-top:12px;"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-text"></div></div></div>
-    `;
-
-    const result = await getUserCoursesWithDetails(userId) as any;
-
-    if (result.success && result.courses && result.courses.length > 0) {
-      const pdfsRes = await getPDFs();
-      const allPDFs: PDF[] = (pdfsRes.success && pdfsRes.pdfs) ? pdfsRes.pdfs : [];
-
-      const cards: string[] = [];
-      const views: string[] = [];
-      for (const course of result.courses as Course[]) {
-        const coursePDFs = allPDFs.filter(p => course.pdfIds?.includes(p.id!));
-        const quizzesRes = await getCourseQuizzes(course.id!);
-        const courseQuizzes: PracticeTest[] = (quizzesRes.success && quizzesRes.tests) ? quizzesRes.tests : [];
-
-        const cardData = this.buildCardWithViews(course, coursePDFs, courseQuizzes);
-        cards.push(cardData.card);
-        views.push(cardData.views);
+      .mc-spinner {
+        width:40px; height:40px;
+        border:3px solid rgba(180,83,9,0.15);
+        border-top-color:#b45309;
+        border-radius:50%;
+        animation:mcSpin .8s linear infinite;
+        margin:0 auto 14px;
       }
-
-      this.coursesContainer.innerHTML = `
+      @keyframes mcSpin { to{transform:rotate(360deg);} }
+    `,document.head.appendChild(e)}async init(){u(async e=>{e?await this.loadUserCourses(e.uid):this.showEmptyState("Please Sign In","You need to sign in to view your courses.","Go to Home","./index.html")})}async loadUserCourses(e){this.coursesContainer.innerHTML=`
+      <div class="mc-wrapper">
+        <div class="mc-courses-list" id="mc-list">
+        </div>
+      </div>`;const t=await g(e);if(t.success&&t.courses&&t.courses.length>0){const i=await m(),n=i.success&&i.pdfs?i.pdfs:[],s=[],r=[];for(const a of t.courses){const p=n.filter(o=>{var l;return(l=a.pdfIds)==null?void 0:l.includes(o.id)}),c=await f(a.id),h=c.success&&c.tests?c.tests:[],d=this.buildCardWithViews(a,p,h);s.push(d.card),r.push(d.views)}this.coursesContainer.innerHTML=`
         <div class="mc-wrapper">
           <div class="mc-courses-list" id="mc-courses-list">
-            ${cards.join('')}
+            ${s.join("")}
           </div>
-          ${views.join('')}
+          ${r.join("")}
         </div>
-      `;
-      this.attachListeners();
-    } else {
-      this.showEmptyState(
-        'No Courses Yet',
-        "You haven't enrolled in any courses yet. Browse and start learning today!",
-        'Browse Courses', './index.html'
-      );
-    }
-  }
-
-  /* ─── Build card + dedicated sliding views ─────────────────────────────────── */
-  private buildCardWithViews(course: Course, pdfs: PDF[], quizzes: PracticeTest[]): { card: string, views: string } {
-    const id = uid();
-    const pdfViewId = `mc-view-pdf-${id}`;
-    const quizViewId = `mc-view-quiz-${id}`;
-
-    /* Category icon */
-    const iconSvg = this.categoryIcon(course.category);
-
-    /* PDF list body */
-    const pdfBody = pdfs.length > 0
-      ? pdfs.map(pdf => `
-          <a href="./pdf-viewer.html?name=${encodeURIComponent(pdf.name)}&url=${encodeURIComponent(pdf.url)}" class="mc-item">
+      `,this.attachListeners()}else this.showEmptyState("No Courses Yet","You haven't enrolled in any courses yet. Browse and start learning today!","Browse Courses","./index.html")}buildCardWithViews(e,t,i){const n=b(),s=`mc-view-pdf-${n}`,r=`mc-view-quiz-${n}`,a=this.categoryIcon(e.category),p=t.length>0?t.map(o=>`
+          <a href="./pdf-viewer.html?name=${encodeURIComponent(o.name)}&url=${encodeURIComponent(o.url)}" class="mc-item">
             <span class="mc-ico-pdf">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
                 <polyline points="14 2 14 8 20 8"/>
               </svg>
             </span>
-            <span class="mc-item-txt">${pdf.name}</span>
+            <span class="mc-item-txt">${o.name}</span>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
               <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
               <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
             </svg>
-          </a>`).join('')
-      : `<p class="mc-none">No PDFs available for this course yet.</p>`;
-
-    /* Quiz list body */
-    const quizBody = quizzes.length > 0
-      ? quizzes.map(q => `
-          <a href="./practice-test.html?id=${q.id}" class="mc-item">
+          </a>`).join(""):'<p class="mc-none">No PDFs available for this course yet.</p>',c=i.length>0?i.map(o=>{var l;return`
+          <a href="./practice-test.html?id=${o.id}" class="mc-item">
             <span class="mc-ico-quiz">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="12" r="10"/>
@@ -393,29 +310,25 @@ class MyCoursesPage {
                 <line x1="12" y1="17" x2="12.01" y2="17"/>
               </svg>
             </span>
-            <span class="mc-item-txt">${q.title}</span>
-            <span class="mc-item-badge">${q.questions?.length ?? 0}Q · ${q.duration}m</span>
+            <span class="mc-item-txt">${o.title}</span>
+            <span class="mc-item-badge">${((l=o.questions)==null?void 0:l.length)??0}Q · ${o.duration}m</span>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d1d5db" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="9 18 15 12 9 6"/>
             </svg>
-          </a>`).join('')
-      : `<p class="mc-none">No quizzes available for this course yet.</p>`;
-
-
-    const card = `
+          </a>`}).join(""):'<p class="mc-none">No quizzes available for this course yet.</p>',h=`
       <div class="mc-card">
         <!-- Gradient square face -->
         <div class="mc-face">
           <span class="mc-enrolled">✓ Enrolled</span>
 
           <div>
-            <div class="mc-icon">${iconSvg}</div>
-            <div class="mc-title">${course.title}</div>
+            <div class="mc-icon">${a}</div>
+            <div class="mc-title">${e.title}</div>
           </div>
 
           <div class="mc-btns">
             <!-- PDFs btn -->
-            <button class="mc-btn" data-target="${pdfViewId}">
+            <button class="mc-btn" data-target="${s}">
               <span class="mc-btn-icon-pdf">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
@@ -429,7 +342,7 @@ class MyCoursesPage {
             </button>
 
             <!-- Quiz btn -->
-            <button class="mc-btn" data-target="${quizViewId}">
+            <button class="mc-btn" data-target="${r}">
               <span class="mc-btn-icon-quiz">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M18 6H5a2 2 0 0 0-2 2v3a2 2 0 0 1 0 4v3a2 2 0 0 0 2 2h13l4-3.5L18 6Z"/>
@@ -443,94 +356,38 @@ class MyCoursesPage {
             </button>
           </div>
         </div>
-      </div>`;
-
-    const views = `
+      </div>`,d=`
       <!-- PDFs View -->
-      <div class="mc-content-view" id="${pdfViewId}">
+      <div class="mc-content-view" id="${s}">
         <div class="mc-view-header">
           <button class="mc-btn-back">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
           </button>
-          <h3 class="mc-view-title">${course.title} - PDFs</h3>
+          <h3 class="mc-view-title">${e.title} - PDFs</h3>
         </div>
-        <div class="mc-view-list">${pdfBody}</div>
+        <div class="mc-view-list">${p}</div>
       </div>
 
       <!-- Quiz View -->
-      <div class="mc-content-view" id="${quizViewId}">
+      <div class="mc-content-view" id="${r}">
         <div class="mc-view-header">
           <button class="mc-btn-back">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
           </button>
-          <h3 class="mc-view-title">${course.title} - Quizzes</h3>
+          <h3 class="mc-view-title">${e.title} - Quizzes</h3>
         </div>
-        <div class="mc-view-list">${quizBody}</div>
+        <div class="mc-view-list">${c}</div>
       </div>
-    `;
-
-    return { card, views };
-  }
-
-  /* ─── View sliding logic ──────────────────────────────────────────── */
-  private attachListeners(): void {
-    const listContainer = this.coursesContainer.querySelector('.mc-courses-list') as HTMLElement;
-
-    // Open views
-    this.coursesContainer.querySelectorAll<HTMLButtonElement>('.mc-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const targetId = btn.getAttribute('data-target')!;
-        const targetView = document.getElementById(targetId)!;
-
-        // Hide list, show view
-        listContainer.classList.add('hidden');
-        targetView.classList.add('active');
-
-        // Scroll to top automatically
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      });
-    });
-
-    // Back buttons
-    this.coursesContainer.querySelectorAll<HTMLButtonElement>('.mc-btn-back').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const view = (e.currentTarget as HTMLElement).closest('.mc-content-view') as HTMLElement;
-
-        // Hide view, show list
-        view.classList.remove('active');
-        listContainer.classList.remove('hidden');
-      });
-    });
-  }
-
-  /* ─── Category icon helper ────────────────────────────────────────────── */
-  private categoryIcon(category: string): string {
-    const icons: Record<string, string> = {
-      'Complete Package': `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>`,
-      'Traffic Rules': `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`,
-      'MV Act': `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`,
-      'Mechanical': `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.34 19.66l-1.41 1.41M20 12h2M2 12h2M19.07 19.07l-1.41-1.41M4.34 4.34L2.93 2.93M12 20v2M12 2v2"/></svg>`,
-    };
-    return icons[category] ?? `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>`;
-  }
-
-  /* ─── Empty / guest state ─────────────────────────────────────────────── */
-  private showEmptyState(title: string, message: string, btnText: string, btnLink: string): void {
-    this.coursesContainer.innerHTML = `
+    `;return{card:h,views:d}}attachListeners(){const e=this.coursesContainer.querySelector(".mc-courses-list");this.coursesContainer.querySelectorAll(".mc-btn").forEach(t=>{t.addEventListener("click",()=>{const i=t.getAttribute("data-target"),n=document.getElementById(i);e.classList.add("hidden"),n.classList.add("active"),window.scrollTo({top:0,behavior:"smooth"})})}),this.coursesContainer.querySelectorAll(".mc-btn-back").forEach(t=>{t.addEventListener("click",i=>{i.currentTarget.closest(".mc-content-view").classList.remove("active"),e.classList.remove("hidden")})})}categoryIcon(e){return{"Complete Package":'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>',"Traffic Rules":'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>',"MV Act":'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>',Mechanical:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.34 19.66l-1.41 1.41M20 12h2M2 12h2M19.07 19.07l-1.41-1.41M4.34 4.34L2.93 2.93M12 20v2M12 2v2"/></svg>'}[e]??'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>'}showEmptyState(e,t,i,n){var s;this.coursesContainer.innerHTML=`
       <div class="mc-full info-card" style="text-align:center;margin:8px 0;">
         <div class="info-icon" style="margin:0 auto var(--spacing-lg);">
           <i data-lucide="book-open" style="width:48px;height:48px;"></i>
         </div>
-        <h2 style="font-size:21px;font-weight:700;color:var(--text-primary);margin-bottom:var(--spacing-md);">${title}</h2>
-        <p style="font-size:14px;color:var(--text-secondary);margin-bottom:var(--spacing-lg);line-height:1.6;">${message}</p>
-        <a href="${btnLink}" class="btn-primary"
+        <h2 style="font-size:21px;font-weight:700;color:var(--text-primary);margin-bottom:var(--spacing-md);">${e}</h2>
+        <p style="font-size:14px;color:var(--text-secondary);margin-bottom:var(--spacing-lg);line-height:1.6;">${t}</p>
+        <a href="${n}" class="btn-primary"
            style="display:inline-flex;width:auto;padding:13px 26px;font-size:14px;font-weight:600;text-decoration:none;">
-          <span>${btnText}</span>
+          <span>${i}</span>
           <i data-lucide="arrow-right" style="width:18px;height:18px;"></i>
         </a>
-      </div>`;
-    (window as any).lucide?.createIcons();
-  }
-}
-
-new MyCoursesPage();
+      </div>`,(s=window.lucide)==null||s.createIcons()}}new v;

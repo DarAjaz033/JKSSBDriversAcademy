@@ -44,7 +44,7 @@ class AdminTestsPage {
       this.downloadTemplateBtn.addEventListener('click', () => downloadExcelTemplate());
       await this.loadTests();
       await this.loadCourses();
-    });
+    }, true);
   }
 
   private setupUploadArea(): void {

@@ -12,6 +12,11 @@ import { app } from '../firebase-config'; // Need standard firebase app init
 document.addEventListener('click', async (e: MouseEvent) => {
     const target = e.target as HTMLElement;
 
+    // Skip interception if clicking the download button
+    if (target.closest('.secure-download-btn') || target.closest('.dl-btn-container')) {
+        return;
+    }
+
     const a = target.closest('a');
 
     if (!a) return;
@@ -301,6 +306,167 @@ async function bootSecurePdfViewer(pdfUrl: string) {
 
     document.body.appendChild(master);
 
+    // --- ZOOM LOGIC ---
+    let currentZoom = 1;
+    const MIN_ZOOM = 1;
+    const MAX_ZOOM = 3;
+
+    const zoomControls = document.createElement('div');
+    zoomControls.style.cssText = `
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        z-index: 2147483648;
+        display: flex;
+        gap: 8px;
+        background: rgba(15, 23, 42, 0.85);
+        padding: 6px 10px;
+        border-radius: 20px;
+        border: 1px solid rgba(255,255,255,0.2);
+        backdrop-filter: blur(4px);
+    `;
+
+    const zoomOutBtn = document.createElement('button');
+    zoomOutBtn.innerHTML = '−';
+    zoomOutBtn.style.cssText = `
+        background: transparent;
+        color: white;
+        border: none;
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        border-radius: 50%;
+    `;
+
+    const zoomInBtn = document.createElement('button');
+    zoomInBtn.innerHTML = '+';
+    zoomInBtn.style.cssText = zoomOutBtn.style.cssText;
+
+    zoomOutBtn.disabled = true;
+    zoomOutBtn.style.opacity = '0.5';
+
+    zoomControls.appendChild(zoomOutBtn);
+    zoomControls.appendChild(zoomInBtn);
+    master.appendChild(zoomControls);
+
+    const updateZoom = () => {
+        if (currentZoom < MIN_ZOOM) currentZoom = MIN_ZOOM;
+        if (currentZoom > MAX_ZOOM) currentZoom = MAX_ZOOM;
+
+        const wraps = canvasContainer.querySelectorAll('.pdf-page-wrap');
+        wraps.forEach((wrap: any) => {
+            const baseW = wrap.dataset.baseWidth;
+            const baseH = wrap.dataset.baseHeight;
+            if (baseW && baseH) {
+                const newW = parseFloat(baseW) * currentZoom;
+                const newH = parseFloat(baseH) * currentZoom;
+                wrap.style.width = `${newW}px`;
+                wrap.style.height = `${newH}px`;
+                const canvas = wrap.querySelector('canvas');
+                if (canvas) {
+                    canvas.style.width = `${newW}px`;
+                    canvas.style.height = `${newH}px`;
+                }
+            }
+        });
+
+        zoomOutBtn.disabled = currentZoom <= MIN_ZOOM;
+        zoomOutBtn.style.opacity = currentZoom <= MIN_ZOOM ? '0.5' : '1';
+        zoomInBtn.disabled = currentZoom >= MAX_ZOOM;
+        zoomInBtn.style.opacity = currentZoom >= MAX_ZOOM ? '0.5' : '1';
+    };
+
+    zoomOutBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        currentZoom -= 0.5;
+        updateZoom();
+    });
+
+    zoomInBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        currentZoom += 0.5;
+        updateZoom();
+    });
+
+    master.addEventListener('wheel', (e) => {
+        if (e.ctrlKey || e.metaKey) {
+            e.preventDefault();
+            const zoomAmount = e.deltaY * -0.01;
+            currentZoom += zoomAmount;
+            updateZoom();
+        }
+    }, { passive: false });
+
+    master.addEventListener('dblclick', () => {
+        currentZoom = 1;
+        updateZoom();
+    });
+
+    let initialPinchDistance = -1;
+    let initialZoom = 1;
+    let lastTap = 0;
+
+    master.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 2) {
+            initialPinchDistance = Math.hypot(
+                e.touches[0].clientX - e.touches[1].clientX,
+                e.touches[0].clientY - e.touches[1].clientY
+            );
+            initialZoom = currentZoom;
+        }
+    });
+
+    master.addEventListener('touchmove', (e) => {
+        if (e.touches.length === 2) {
+            e.preventDefault();
+            const currentDistance = Math.hypot(
+                e.touches[0].clientX - e.touches[1].clientX,
+                e.touches[0].clientY - e.touches[1].clientY
+            );
+            if (initialPinchDistance > 0) {
+                const scale = currentDistance / initialPinchDistance;
+                let targetZoom = initialZoom * scale;
+                if (targetZoom < MIN_ZOOM) {
+                    targetZoom = MIN_ZOOM;
+                    initialPinchDistance = currentDistance;
+                    initialZoom = MIN_ZOOM;
+                } else if (targetZoom > MAX_ZOOM) {
+                    targetZoom = MAX_ZOOM;
+                    initialPinchDistance = currentDistance;
+                    initialZoom = MAX_ZOOM;
+                }
+                currentZoom = targetZoom;
+                updateZoom();
+            }
+        }
+    }, { passive: false });
+
+    master.addEventListener('touchend', (e) => {
+        if (e.touches.length < 2) {
+            initialPinchDistance = -1;
+        }
+
+        if (e.changedTouches.length === 1) {
+            const currentTime = new Date().getTime();
+            const tapLength = currentTime - lastTap;
+            if (tapLength < 500 && tapLength > 0) {
+                currentZoom = 1;
+                updateZoom();
+                e.preventDefault();
+            }
+            lastTap = currentTime;
+        }
+    });
+    // --- END ZOOM LOGIC ---
+
     // TRIGGER FULLSCREEN IMMEDIATELY AFTER MOUNT
     triggerStrictFullscreen(master);
 
@@ -436,10 +602,7 @@ async function loadPdfJsIntoMemory(): Promise<void> {
 // We load the PDF fully into Canvas nodes.
 async function renderPdfToCanvasList(url: string, container: HTMLElement) {
     try {
-        // Show loading state securely inside the overlay
         const loadingDiv = document.createElement('div');
-        loadingDiv.style.cssText = 'color: white; margin-top: 40vh; font-family: Poppins, sans-serif; font-size: 16px;';
-        loadingDiv.innerHTML = 'Loading Document Securely...';
         container.appendChild(loadingDiv);
 
         const lib = (window as any).pdfjsLib;
@@ -490,7 +653,7 @@ async function renderPdfToCanvasList(url: string, container: HTMLElement) {
         if (!pdfData) {
             try {
                 const res = await fetch(finalUrlToFetch, { mode: 'cors' });
-                if (!res.ok) throw new Error(`Network response was not ok (${res.status})`);
+                if (!res.ok) throw new Error(`Network response was not ok(${res.status})`);
                 const buffer = await res.arrayBuffer();
                 pdfData = new Uint8Array(buffer);
             } catch (fetchErr) {
@@ -525,14 +688,17 @@ async function renderPdfToCanvasList(url: string, container: HTMLElement) {
             viewport = page.getViewport({ scale });
 
             const wrap = document.createElement('div');
+            wrap.className = 'pdf-page-wrap';
+            wrap.dataset.baseWidth = viewport.width.toString();
+            wrap.dataset.baseHeight = viewport.height.toString();
             wrap.style.cssText = `
                 position: relative;
-                margin-bottom: 8px;
+                margin - bottom: 8px;
                 background: white;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-                border-radius: 4px;
+                box - shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+                border - radius: 4px;
                 overflow: hidden;
-            `;
+                `;
 
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d')!;
@@ -540,8 +706,8 @@ async function renderPdfToCanvasList(url: string, container: HTMLElement) {
             // Higher resolution backing store
             canvas.width = viewport.width * pixelRatio;
             canvas.height = viewport.height * pixelRatio;
-            canvas.style.width = `${viewport.width}px`;
-            canvas.style.height = `${viewport.height}px`;
+            canvas.style.width = `${viewport.width} px`;
+            canvas.style.height = `${viewport.height} px`;
             canvas.style.display = 'block';
 
             ctx.scale(pixelRatio, pixelRatio);
@@ -557,12 +723,12 @@ async function renderPdfToCanvasList(url: string, container: HTMLElement) {
         console.error('PDF Render Error', e);
         const errDesc = e?.message || e?.name || String(e);
         container.innerHTML = `
-            <div style="color:#ef4444; margin-top:30vh; font-family:Poppins; text-align:center; padding: 0 20px;">
-                <h3>Failed to load document</h3>
-                <p style="font-size: 13px; opacity: 0.8; word-break: break-all;">Error Details: ${errDesc}</p>
-                <p style="font-size: 12px; margin-top:20px;">(If this says "Network response was not ok" or "Failed to fetch", your Firebase Storage bucket is actively blocking this website. You must apply the CORS rules in Google Cloud Shell).</p>
+                    < div style = "color:#ef4444; margin-top:30vh; font-family:Poppins; text-align:center; padding: 0 20px;" >
+                        <h3>Failed to load document </h3>
+                            < p style = "font-size: 13px; opacity: 0.8; word-break: break-all;" > Error Details: ${errDesc} </p>
+                                < p style = "font-size: 12px; margin-top:20px;" > (If this says "Network response was not ok" or "Failed to fetch", your Firebase Storage bucket is actively blocking this website.You must apply the CORS rules in Google Cloud Shell).</p>
             </div>
-        `;
+                `;
     }
 }
 

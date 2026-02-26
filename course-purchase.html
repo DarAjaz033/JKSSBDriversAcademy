@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -14,6 +15,7 @@
       max-width: 800px;
       margin: 0 auto;
     }
+
     .course-header {
       background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
       padding: var(--spacing-xl);
@@ -21,17 +23,20 @@
       color: white;
       margin-bottom: var(--spacing-lg);
     }
+
     .course-title {
       font-size: 24px;
       font-weight: 700;
       margin-bottom: var(--spacing-sm);
     }
+
     .course-meta {
       display: flex;
       gap: var(--spacing-md);
       font-size: 14px;
       opacity: 0.9;
     }
+
     .course-body {
       background: white;
       padding: var(--spacing-lg);
@@ -39,18 +44,21 @@
       margin-bottom: var(--spacing-md);
       box-shadow: var(--shadow-sm);
     }
+
     .section-title {
       font-size: 18px;
       font-weight: 600;
       color: var(--text-primary);
       margin-bottom: var(--spacing-md);
     }
+
     .course-description {
       font-size: 14px;
       line-height: 1.6;
       color: var(--text-secondary);
       margin-bottom: var(--spacing-lg);
     }
+
     .price-card {
       background: #FEF3C7;
       padding: var(--spacing-lg);
@@ -58,16 +66,19 @@
       text-align: center;
       margin-bottom: var(--spacing-lg);
     }
+
     .price-label {
       font-size: 14px;
       color: var(--text-secondary);
       margin-bottom: var(--spacing-xs);
     }
+
     .price-amount {
       font-size: 36px;
       font-weight: 700;
       color: var(--primary);
     }
+
     .purchase-btn {
       width: 100%;
       background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
@@ -80,14 +91,17 @@
       cursor: pointer;
       transition: all 0.2s ease;
     }
+
     .purchase-btn:hover {
       transform: translateY(-1px);
       box-shadow: 0 4px 12px rgba(180, 83, 9, 0.3);
     }
+
     .purchase-btn:disabled {
       opacity: 0.6;
       cursor: not-allowed;
     }
+
     .already-purchased {
       background: #DCFCE7;
       color: #16A34A;
@@ -99,6 +113,7 @@
     }
   </style>
 </head>
+
 <body>
   <div id="app">
     <header class="app-bar">
@@ -115,7 +130,7 @@
 
     <main class="page-container">
       <div class="page-content course-detail-container" id="course-content">
-        <div style="text-align: center; padding: var(--spacing-xl);">Loading course...</div>
+        <div style="text-align: center; padding: var(--spacing-xl);"></div>
       </div>
     </main>
   </div>
@@ -125,4 +140,5 @@
     lucide.createIcons();
   </script>
 </body>
+
 </html>
