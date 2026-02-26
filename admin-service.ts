@@ -34,9 +34,11 @@ export interface Course {
   id?: string;
   title: string;
   description: string;
+  syllabus?: string;
   price: number;
   duration: string;
-  category: string;
+  category?: string;
+  paymentLink?: string;
   rank?: number;
   thumbnailUrl?: string;
   pdfIds: string[];

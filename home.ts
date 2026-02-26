@@ -1,15 +1,156 @@
 import { getCurrentUser, onAuthChange } from './auth-service';
 import { escapeHtml } from './utils/escape-html';
-import { getUserCoursesWithDetails, getCourses, getPDFs, getPracticeTests, Course as AdminCourse } from './admin-service';
+import { getCourses } from './admin-service';
 
 interface Course {
   id: string;
   title: string;
   description: string;
+  syllabus?: string;
   price: number;
   duration: string;
-  category: string;
+  paymentLink?: string;
 }
+
+// ─── Per-user enrolment key ──────────────────────────────────────────────────
+function enrolledKey(userId: string): string {
+  return `jkssb_enrolled_${userId}`;
+}
+
+// ─── Payment Success Handler ───────────────────────────────────────────────
+// 🔁 Replace this body with a real payment gateway call later.
+// The function signature (courseId, userId) must remain the same.
+export function handlePaymentSuccess(courseId: string, userId: string): void {
+  const key = enrolledKey(userId);
+  const existing: string[] = JSON.parse(localStorage.getItem(key) ?? '[]');
+  if (!existing.includes(courseId)) {
+    existing.push(courseId);
+    localStorage.setItem(key, JSON.stringify(existing));
+  }
+  window.location.href = './my-courses.html';
+}
+
+// ─── Modal ───────────────────────────────────────────────────────────────────
+
+function openCourseModal(course: Course): void {
+  // Remove existing modal
+  document.getElementById('course-detail-modal')?.remove();
+
+  const syllabusLines = (course.syllabus ?? '')
+    .split('\n')
+    .map(l => l.trim())
+    .filter(Boolean);
+
+  const descLines: string[] = [];
+  const rawDesc = course.description?.trim() ?? '';
+  const descSegments = rawDesc.split(/\s*\d+\.\s+/).map(s => s.trim()).filter(Boolean);
+  let descHeading = '';
+  if (descSegments.length > 1) {
+    descHeading = descSegments[0];
+    descLines.push(...descSegments.slice(1));
+  } else if (rawDesc) {
+    descLines.push(rawDesc);
+  }
+
+  const syllabusHtml = syllabusLines.length
+    ? `<ul class="cdm-list">${syllabusLines.map(l => `<li>${escapeHtml(l)}</li>`).join('')}</ul>`
+    : '<p style="color:#888;font-style:italic;">No syllabus added yet.</p>';
+
+  const descHtml = descLines.length
+    ? `${descHeading ? `<p class="cdm-desc-heading">${escapeHtml(descHeading)}</p>` : ''}<ul class="cdm-list">${descLines.map(l => `<li>${escapeHtml(l)}</li>`).join('')}</ul>`
+    : rawDesc
+      ? `<p style="color:#ccc;line-height:1.7;">${escapeHtml(rawDesc)}</p>`
+      : '<p style="color:#888;font-style:italic;">No description added yet.</p>';
+
+  const overlay = document.createElement('div');
+  overlay.id = 'course-detail-modal';
+  overlay.className = 'cdm-overlay';
+  overlay.innerHTML = `
+    <div class="cdm-panel" role="dialog" aria-modal="true">
+      <div class="cdm-header">
+        <button class="cdm-close" aria-label="Close">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+        <h2 class="cdm-title">${escapeHtml(course.title)}</h2>
+        <div class="cdm-price">₹${course.price.toLocaleString()}</div>
+      </div>
+
+      <div class="cdm-body">
+        <!-- Syllabus toggle -->
+        <div class="cdm-toggle-bar" data-target="cdm-syllabus">
+          <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> Syllabus</span>
+          <svg class="cdm-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="cdm-section" id="cdm-syllabus" style="display:none;">
+          ${syllabusHtml}
+        </div>
+
+        <!-- Description toggle -->
+        <div class="cdm-toggle-bar" data-target="cdm-description">
+          <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Description</span>
+          <svg class="cdm-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="cdm-section" id="cdm-description" style="display:none;">
+          ${descHtml}
+        </div>
+      </div>
+
+      <div class="cdm-footer">
+        <button class="cdm-buy-btn" id="cdm-buy-btn-trigger">
+          <span>Buy Now</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+  `;
+
+  // Toggle logic — only one open at a time
+  overlay.querySelectorAll<HTMLElement>('.cdm-toggle-bar').forEach(bar => {
+    bar.addEventListener('click', () => {
+      const targetId = bar.dataset.target!;
+      const section = document.getElementById(targetId)!;
+      const arrow = bar.querySelector<SVGElement>('.cdm-arrow')!;
+      const isOpen = section.style.display !== 'none';
+
+      // Close all
+      overlay.querySelectorAll<HTMLElement>('.cdm-section').forEach(s => (s.style.display = 'none'));
+      overlay.querySelectorAll<SVGElement>('.cdm-arrow').forEach(a => a.style.transform = '');
+
+      // Open this one if it was closed
+      if (!isOpen) {
+        section.style.display = 'block';
+        arrow.style.transform = 'rotate(180deg)';
+      }
+    });
+  });
+
+  // Close on overlay click
+  overlay.addEventListener('click', e => {
+    if (e.target === overlay) overlay.remove();
+  });
+
+  // Buy Now: dummy payment flow — requires user to be logged in
+  overlay.querySelector('#cdm-buy-btn-trigger')?.addEventListener('click', () => {
+    const user = getCurrentUser();
+    if (!user) {
+      alert('Please sign in to purchase a course.');
+      return;
+    }
+    const confirmed = window.confirm(
+      `Enroll in "${course.title}" for \u20b9${course.price.toLocaleString()}?\n\n(Demo payment \u2014 no real charge)\n\nClick OK to confirm.`
+    );
+    if (confirmed) {
+      overlay.remove();
+      handlePaymentSuccess(course.id, user.uid);
+    }
+  });
+
+  overlay.querySelector('.cdm-close')?.addEventListener('click', () => overlay.remove());
+
+  document.body.appendChild(overlay);
+}
+
+// ─── HomePage ────────────────────────────────────────────────────────────────
 
 class HomePage {
   private coursesContainer: HTMLElement | null;
@@ -25,21 +166,17 @@ class HomePage {
     document.addEventListener('click', (e) => {
       const btn = (e.target as HTMLElement).closest('.expand-more-topics-btn');
       if (!btn) return;
-
       e.preventDefault();
       e.stopPropagation();
-
       const button = btn as HTMLButtonElement;
       const card = button.closest('.course-description-card');
       const extra = card?.querySelector('.course-topics-extra');
       if (!extra) return;
-
       const isHidden = getComputedStyle(extra as HTMLElement).display === 'none';
       (extra as HTMLElement).style.display = isHidden ? 'block' : 'none';
       button.textContent = isHidden
         ? (button.dataset.lessText || 'Show less')
         : (button.dataset.moreText || '+ more topics');
-
       (window as any).lucide?.createIcons();
     });
   }
@@ -55,30 +192,19 @@ class HomePage {
     if (!this.coursesContainer) return;
 
     this.coursesContainer.innerHTML = `
-      <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div style="padding-top:12px;"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-text"></div><div class="skeleton skeleton-text" style="width:50%;"></div></div></div>
-      <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div style="padding-top:12px;"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-text"></div><div class="skeleton skeleton-text" style="width:50%;"></div></div></div>
-      <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div style="padding-top:12px;"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-text"></div><div class="skeleton skeleton-text" style="width:50%;"></div></div></div>
+      <div class="glass-card skeleton-glass"></div>
+      <div class="glass-card skeleton-glass"></div>
+      <div class="glass-card skeleton-glass"></div>
     `;
 
     try {
-      let html = '';
-
-      if (this.currentUser) {
-        const userCoursesResult = await getUserCoursesWithDetails(this.currentUser.uid);
-        if (userCoursesResult.success && 'courses' in userCoursesResult && userCoursesResult.courses && userCoursesResult.courses.length > 0) {
-          html += await this.renderMyCoursesSection(userCoursesResult.courses as AdminCourse[]);
-        }
-      }
-
       const coursesResult = await getCourses();
       const allCourses = coursesResult.success && 'courses' in coursesResult && coursesResult.courses ? coursesResult.courses : [];
 
-      if (allCourses.length === 0 && !html) {
+      if (allCourses.length === 0) {
         this.coursesContainer.innerHTML = `
-          <div class="alert-card info" style="grid-column: 1/-1;">
-            <div class="alert-icon">
-              <i data-lucide="info"></i>
-            </div>
+          <div class="alert-card info" style="grid-column:1/-1;">
+            <div class="alert-icon"><i data-lucide="info"></i></div>
             <div class="alert-content">
               <h3>No Courses Available</h3>
               <p>Courses are being prepared. Check back soon!</p>
@@ -89,218 +215,103 @@ class HomePage {
         return;
       }
 
+      const enrolledIds: string[] = this.currentUser
+        ? ((): string[] => {
+          try { return JSON.parse(localStorage.getItem(`jkssb_enrolled_${this.currentUser.uid}`) ?? '[]'); }
+          catch { return []; }
+        })()
+        : [];
+
       const courses: Course[] = allCourses.map(c => ({
         id: c.id!,
         title: c.title,
         description: c.description,
+        syllabus: c.syllabus,
         price: c.price,
         duration: c.duration,
-        category: c.category
+        paymentLink: c.paymentLink
       }));
 
-      if (html) {
-        html += '<div style="grid-column: 1/-1; height: 1px; background: var(--border); margin: var(--spacing-lg) 0;"></div>';
-        html += `<div style="grid-column: 1/-1; margin-bottom: var(--spacing-md);"><h3 style="font-size: 20px; font-weight: 700; color: var(--text-primary);">All Courses</h3><p style="color: var(--text-secondary); font-size: 14px; margin-top: 4px;">Browse our complete course catalog</p></div>`;
-      }
-
-      html += courses.map((course, index) =>
-        this.renderCourseCard(course, !html && index === 0)
+      this.coursesContainer.innerHTML = courses.map(course =>
+        this.renderCourseCard(course, enrolledIds.includes(course.id))
       ).join('');
 
-      this.coursesContainer.innerHTML = html;
+      // Enrolled cards → redirect directly to My Courses
+      this.coursesContainer.querySelectorAll<HTMLButtonElement>('.btn-enrolled').forEach(btn => {
+        btn.addEventListener('click', () => {
+          window.location.href = './my-courses.html';
+        });
+      });
 
-      (window as any).lucide.createIcons();
+      // Unenrolled cards → open modal
+      this.coursesContainer.querySelectorAll<HTMLButtonElement>('.btn-enroll').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = btn.dataset.courseId!;
+          const course = courses.find(c => c.id === id);
+          if (course) openCourseModal(course);
+        });
+      });
+
+      (window as any).lucide?.createIcons();
     } catch (error) {
       console.error('Error loading courses:', error);
       if (this.coursesContainer) {
         this.coursesContainer.innerHTML = `
-          <div class="alert-card error" style="grid-column: 1/-1;">
-            <div class="alert-icon">
-              <i data-lucide="alert-circle"></i>
-            </div>
+          <div class="alert-card error" style="grid-column:1/-1;">
+            <div class="alert-icon"><i data-lucide="alert-circle"></i></div>
             <div class="alert-content">
               <h3>Error Loading Courses</h3>
               <p>Unable to load courses. Please refresh the page.</p>
             </div>
           </div>
         `;
-        (window as any).lucide.createIcons();
+        (window as any).lucide?.createIcons();
       }
     }
   }
 
-  private async renderMyCoursesSection(courses: AdminCourse[]): Promise<string> {
-    let html = `<div style="grid-column: 1/-1; margin-bottom: var(--spacing-md);"><h3 style="font-size: 20px; font-weight: 700; color: var(--text-primary);">My Courses</h3><p style="color: var(--text-secondary); font-size: 14px; margin-top: 4px;">Continue your learning journey</p></div>`;
-
-    for (const course of courses) {
-      html += await this.renderPurchasedCourseCard(course);
-    }
-
-    return html;
-  }
-
-  private async renderPurchasedCourseCard(course: AdminCourse): Promise<string> {
-    const pdfsResult = await getPDFs();
-    const testsResult = await getPracticeTests();
-
-    const coursePDFs = pdfsResult.success && pdfsResult.pdfs
-      ? pdfsResult.pdfs.filter(pdf => course.pdfIds.includes(pdf.id!))
-      : [];
-
-    const courseTests = testsResult.success && testsResult.tests
-      ? testsResult.tests.filter(test => course.practiceTestIds.includes(test.id!))
-      : [];
-
-    const categoryIcon = this.getCategoryIcon(course.category);
-
-    return `
-      <div class="course-card purchased" style="background: linear-gradient(135deg, rgba(180, 83, 9, 0.05) 0%, rgba(217, 119, 6, 0.05) 100%); border: 2px solid var(--primary); position: relative; overflow: hidden;">
-        <div style="position: absolute; top: 12px; right: 12px; background: var(--gradient-primary); color: white; padding: 6px 14px; border-radius: var(--radius-full); font-size: 12px; font-weight: 700; box-shadow: 0 2px 8px rgba(180, 83, 9, 0.3);">
-          ENROLLED
-        </div>
-        <div class="course-header">
-          <div class="course-icon" style="background: var(--gradient-primary); color: white;"><i data-lucide="${categoryIcon}"></i></div>
-          <h3>${escapeHtml(course.title)}</h3>
-        </div>
-        <div class="course-description-wrapper" style="margin: var(--spacing-sm) 0;">
-          ${this.renderDescriptionForCard(course.description)}
-        </div>
-        <div style="display: flex; gap: 12px; margin-top: var(--spacing-md); padding-top: var(--spacing-md); border-top: 1px solid rgba(180, 83, 9, 0.15);">
-          <div style="flex: 1; display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: linear-gradient(135deg, rgba(217, 119, 6, 0.08) 0%, rgba(251, 146, 60, 0.08) 100%); border-radius: var(--radius-md); border: 1px solid rgba(217, 119, 6, 0.2);">
-            <div style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%); border-radius: var(--radius-sm); box-shadow: 0 2px 8px rgba(217, 119, 6, 0.25); flex-shrink: 0;">
-              <i data-lucide="file-text" style="width: 18px; height: 18px; color: white;"></i>
-            </div>
-            <div style="flex: 1; min-width: 0;">
-              <div style="font-size: 22px; font-weight: 700; color: var(--primary); line-height: 1; margin-bottom: 2px;">${coursePDFs.length}</div>
-              <div style="font-size: 12px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">${coursePDFs.length === 1 ? 'PDF' : 'PDFs'}</div>
-            </div>
-          </div>
-          <div style="flex: 1; display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: linear-gradient(135deg, rgba(217, 119, 6, 0.08) 0%, rgba(251, 146, 60, 0.08) 100%); border-radius: var(--radius-md); border: 1px solid rgba(217, 119, 6, 0.2);">
-            <div style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%); border-radius: var(--radius-sm); box-shadow: 0 2px 8px rgba(217, 119, 6, 0.25); flex-shrink: 0;">
-              <i data-lucide="clipboard-check" style="width: 18px; height: 18px; color: white;"></i>
-            </div>
-            <div style="flex: 1; min-width: 0;">
-              <div style="font-size: 22px; font-weight: 700; color: var(--primary); line-height: 1; margin-bottom: 2px;">${courseTests.length}</div>
-              <div style="font-size: 12px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">${courseTests.length === 1 ? 'Test' : 'Tests'}</div>
-            </div>
-          </div>
-        </div>
-        <button class="btn-enroll" style="background: var(--gradient-primary); color: white; margin-top: var(--spacing-md);" onclick="window.location.href='./my-courses.html'">
-          Continue Learning
-        </button>
-      </div>
-    `;
-  }
-
-  private formatDescriptionForCard(description: string): { title?: string; points: string[]; isList: boolean } {
-    const trimmed = description.trim();
-    const segments = trimmed.split(/\s*\d+\.\s+/).map((s) => s.trim()).filter(Boolean);
-    if (segments.length > 1) {
-      return { title: segments[0], points: segments.slice(1), isList: true };
-    }
-    return { title: undefined, points: [trimmed], isList: false };
-  }
-
-  private renderTopicItem(point: string): string {
-    return `
-      <li style="display: flex; align-items: flex-start; gap: 10px; min-height: 20px;">
-        <span style="width: 18px; height: 18px; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; margin-top: 2px;">
-          <i data-lucide="check" style="width: 14px; height: 14px; color: var(--primary); stroke-width: 3;"></i>
-        </span>
-        <span style="flex: 1; color: var(--text-secondary); line-height: 1.5; padding-top: 0;">${escapeHtml(point)}</span>
-      </li>
-    `;
-  }
-
-  private renderDescriptionForCard(description: string): string {
-    const { title, points, isList } = this.formatDescriptionForCard(description);
-    if (isList && points.length > 0) {
-      const maxPreview = 4;
-      const previewPoints = points.slice(0, maxPreview);
-      const extraPoints = points.slice(maxPreview);
-      const remaining = extraPoints.length;
+  private renderCourseCard(course: Course, isEnrolled = false): string {
+    if (isEnrolled) {
       return `
-        <div class="course-description-card" style="font-size: 14px; color: var(--text-secondary);">
-          ${title ? `<div style="font-weight: 600; color: var(--text-primary); margin-bottom: 10px; font-size: 15px;">${escapeHtml(title)}</div>` : ''}
-          <ul class="course-topics-visible" style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px;">
-            ${previewPoints.map((p) => this.renderTopicItem(p)).join('')}
-          </ul>
-          ${remaining > 0 ? `
-            <div class="course-topics-extra" style="display: none; margin-top: 8px;">
-              <ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px;">
-                ${extraPoints.map((p) => this.renderTopicItem(p)).join('')}
-              </ul>
+        <div class="glass-card glass-card--enrolled">
+          <div class="glass-card-glow glass-card-glow--enrolled"></div>
+          <div class="glass-card-inner">
+            <div class="glass-card-icon glass-card-icon--enrolled">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+              </svg>
             </div>
-            <button type="button" class="expand-more-topics-btn" style="font-size: 13px; color: var(--primary); font-weight: 600; margin-top: 8px; padding: 6px 0; background: none; border: none; cursor: pointer; text-align: left; font-family: inherit; display: block; width: 100%; -webkit-tap-highlight-color: transparent; touch-action: manipulation;" data-more-text="+ ${remaining} more topics" data-less-text="Show less">
-              + ${remaining} more topics
+            <h3 class="glass-card-title">${escapeHtml(course.title)}</h3>
+            <button class="btn-enrolled glass-enrolled-btn" data-course-id="${course.id}">
+              🎉 Enrolled
             </button>
-          ` : ''}
+            <span class="glass-card-hint">Click to view your course</span>
+          </div>
         </div>
       `;
     }
-    return `<p class="course-description" style="font-size: 14px; color: var(--text-secondary); line-height: 1.6; margin: 0;">${escapeHtml(description)}</p>`;
-  }
-
-  private renderCourseCard(course: Course, isFeatured: boolean = false): string {
-    const categoryIcon = this.getCategoryIcon(course.category);
 
     return `
-      <div class="course-card ${isFeatured ? 'featured' : ''}" style="position: relative; overflow: hidden;">
-        ${isFeatured ? '<div class="course-badge">Best Value</div>' : ''}
-        <div class="course-header">
-          <div class="course-icon" style="background: var(--gradient-primary); color: white; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: var(--radius-md); box-shadow: 0 4px 12px rgba(180, 83, 9, 0.25);"><i data-lucide="${categoryIcon}" style="width: 24px; height: 24px;"></i></div>
-          <h3>${escapeHtml(course.title)}</h3>
-        </div>
-        <div style="display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, rgba(217, 119, 6, 0.1) 0%, rgba(251, 146, 60, 0.1) 100%); padding: 8px 16px; border-radius: var(--radius-full); border: 1px solid rgba(217, 119, 6, 0.25); margin: var(--spacing-md) 0;">
-          <i data-lucide="indian-rupee" style="width: 16px; height: 16px; color: var(--primary);"></i>
-          <span style="font-size: 24px; font-weight: 700; color: var(--primary);">${course.price.toLocaleString()}</span>
-        </div>
-        <div class="course-description-wrapper" style="margin: var(--spacing-sm) 0;">
-          ${this.renderDescriptionForCard(course.description)}
-        </div>
-        <div style="display: flex; gap: 12px; margin-top: var(--spacing-md); padding-top: var(--spacing-md); border-top: 1px solid var(--border);">
-          <div style="flex: 1; display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: linear-gradient(135deg, rgba(180, 83, 9, 0.08) 0%, rgba(217, 119, 6, 0.08) 100%); border-radius: var(--radius-md); border: 1px solid rgba(180, 83, 9, 0.2);">
-            <div style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: var(--gradient-primary); border-radius: var(--radius-sm); box-shadow: 0 2px 8px rgba(180, 83, 9, 0.25); flex-shrink: 0;">
-              <i data-lucide="clock" style="width: 18px; height: 18px; color: white;"></i>
-            </div>
-            <div style="flex: 1; min-width: 0;">
-              <div style="font-size: 13px; font-weight: 700; background: var(--gradient-primary); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; line-height: 1.3; margin-bottom: 2px;">${escapeHtml(course.duration)}</div>
-              <div style="font-size: 11px; font-weight: 600; background: var(--gradient-primary); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; text-transform: uppercase; letter-spacing: 0.5px;">Duration</div>
-            </div>
+      <div class="glass-card">
+        <div class="glass-card-glow"></div>
+        <div class="glass-card-inner">
+          <div class="glass-card-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
+            </svg>
           </div>
-          <div style="flex: 1; display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: linear-gradient(135deg, rgba(180, 83, 9, 0.08) 0%, rgba(217, 119, 6, 0.08) 100%); border-radius: var(--radius-md); border: 1px solid rgba(180, 83, 9, 0.2);">
-            <div style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: var(--gradient-primary); border-radius: var(--radius-sm); box-shadow: 0 2px 8px rgba(180, 83, 9, 0.25); flex-shrink: 0;">
-              <i data-lucide="tag" style="width: 18px; height: 18px; color: white;"></i>
-            </div>
-            <div style="flex: 1; min-width: 0;">
-              <div style="font-size: 13px; font-weight: 700; background: var(--gradient-primary); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; line-height: 1.3; margin-bottom: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${escapeHtml(course.category)}</div>
-              <div style="font-size: 11px; font-weight: 600; background: var(--gradient-primary); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; text-transform: uppercase; letter-spacing: 0.5px;">Category</div>
-            </div>
-          </div>
+          <h3 class="glass-card-title">${escapeHtml(course.title)}</h3>
+          <div class="glass-card-price">\u20B9${course.price.toLocaleString()}</div>
+          <button class="btn-enroll glass-enroll-btn" data-course-id="${course.id}">
+            View Details &amp; Enroll
+          </button>
         </div>
-        <button class="btn-enroll" style="margin-top: var(--spacing-md);" onclick="window.location.href='./course-details.html?id=${course.id}'">
-          View Details
-        </button>
       </div>
     `;
   }
-
-  private getCategoryIcon(category: string): string {
-    const iconMap: { [key: string]: string } = {
-      'Traffic Rules': 'traffic-cone',
-      'MV Act': 'clipboard-list',
-      'Mechanical': 'wrench',
-      'Complete Package': 'graduation-cap',
-      'Full Course': 'graduation-cap',
-      'Part I': 'traffic-cone',
-      'Part II': 'clipboard-list',
-      'Part III': 'wrench'
-    };
-    return iconMap[category] || 'book-open';
-  }
 }
 
-// Initialize only if we're on the home page
+// Initialize only if we're on a page with course-cards
 if (document.querySelector('.course-cards')) {
   new HomePage();
 }

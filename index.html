@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -11,7 +11,17 @@
   <title>JKSSB Drivers Academy</title>
   <link rel="icon" type="image/png" href="./favicon.svg">
   <link rel="stylesheet" href="./styles.css">
-  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Preconnect & Preload Fonts for Instant 0-Lag Text Rendering -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload"
+    href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Rajdhani:wght@400;600;700&display=swap"
+    as="style">
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Rajdhani:wght@400;600;700&display=swap">
+
+  <script src="https://unpkg.com/lucide@latest" defer></script>
   <style>
     /* Stop original unav-footer from rendering behind fixed containers */
     body>#unav-footer {
@@ -24,18 +34,681 @@
       padding: 12px 16px 10px !important;
       text-align: center !important;
       font-family: "Poppins", system-ui, sans-serif !important;
-      /* Force full viewport width ignoring any parent padding */
       width: 100vw !important;
       max-width: 100vw !important;
       margin-left: calc(50% - 50vw) !important;
       margin-right: 0 !important;
-      /* Pull down through parent padding to touch the nav */
       margin-bottom: calc(-1 * var(--spacing-xl)) !important;
-      /* Adjust top margin for spacing */
       margin-top: var(--spacing-lg) !important;
       border-radius: 0 !important;
       box-sizing: border-box !important;
     }
+
+    /* ═══════════════ AJAZ 3D CAROUSEL HERO ═══════════════ */
+
+    :root {
+      --ajaz-orange: #ff6b00;
+      --ajaz-amber: #ff9a00;
+      --ajaz-yellow: #ffd700;
+      --ajaz-card-w: 280px;
+      --ajaz-card-h: 380px;
+    }
+
+    @media (max-width: 768px) {
+      :root {
+        --ajaz-card-w: 240px;
+        --ajaz-card-h: 340px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      :root {
+        --ajaz-card-w: 210px;
+        --ajaz-card-h: 310px;
+      }
+    }
+
+    /* Wrapper replaces old hpc-wrap and blends completely */
+    .ajaz-hero {
+      position: relative;
+      width: 100%;
+      min-height: 440px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 0 0px;
+      overflow: hidden;
+      background: transparent;
+    }
+
+    @media (max-width: 480px) {
+      .ajaz-hero {
+        min-height: 380px;
+        padding: 16px 0 0px;
+      }
+    }
+
+    /* ── SCENE ── */
+    .ajaz-scene {
+      width: var(--ajaz-card-w);
+      height: var(--ajaz-card-h);
+      perspective: 900px;
+      perspective-origin: 50% 44%;
+      position: relative;
+      z-index: 10;
+      overflow: visible;
+    }
+
+    .ajaz-carousel {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      overflow: visible;
+    }
+
+    /* ── CARDS ── */
+    .ajaz-card {
+      position: absolute;
+      inset: 0;
+      width: var(--ajaz-card-w);
+      height: var(--ajaz-card-h);
+      border-radius: 24px;
+      cursor: pointer;
+      transition:
+        transform 0.9s cubic-bezier(0.34, 1.15, 0.64, 1),
+        opacity 0.9s ease,
+        filter 0.9s ease,
+        box-shadow 0.45s ease;
+      transform-style: preserve-3d;
+      will-change: transform, opacity, filter, z-index;
+      user-select: none;
+      /* Hardware Acceleration */
+      backface-visibility: hidden;
+      transform: translate3d(0, 0, 0);
+    }
+
+    .ajaz-card.behind {
+      filter: blur(6px) brightness(0.75) saturate(0.7);
+    }
+
+    .ajaz-card.active {
+      filter: blur(0px) brightness(1) saturate(1.1);
+      box-shadow:
+        0 0 0 1.5px rgba(255, 154, 0, 0.7),
+        0 0 30px rgba(255, 107, 0, 0.55),
+        0 0 70px rgba(255, 107, 0, 0.22),
+        0 25px 60px rgba(0, 0, 0, 0.25);
+    }
+
+    .ajaz-card:not(.active):not(.behind) {
+      filter: blur(3px) brightness(0.82) saturate(0.8);
+    }
+
+    /* ── ICE FROST GLASS CARD FACE ── */
+    .ajaz-card-face {
+      position: absolute;
+      inset: 0;
+      border-radius: 24px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.62);
+      backdrop-filter: blur(52px) saturate(200%) brightness(1.22);
+      -webkit-backdrop-filter: blur(52px) saturate(200%) brightness(1.22);
+      border-top: 2px solid rgba(255, 255, 255, 1);
+      border-left: 1.5px solid rgba(255, 255, 255, 0.9);
+      border-right: 1px solid rgba(255, 255, 255, 0.55);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.45);
+      box-shadow:
+        inset 0 2px 0 rgba(255, 255, 255, 1),
+        inset 0 -1px 0 rgba(255, 150, 50, 0.08),
+        0 8px 40px rgba(100, 40, 0, 0.15),
+        0 2px 12px rgba(255, 255, 255, 0.7);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 20px 18px 16px;
+    }
+
+    .ajaz-card:nth-child(1) .ajaz-card-face {
+      background: rgba(255, 248, 240, 0.65);
+    }
+
+    .ajaz-card:nth-child(2) .ajaz-card-face {
+      background: rgba(255, 255, 255, 0.68);
+    }
+
+    .ajaz-card:nth-child(3) .ajaz-card-face {
+      background: rgba(255, 252, 242, 0.63);
+    }
+
+    .ajaz-card:nth-child(4) .ajaz-card-face {
+      background: rgba(255, 255, 255, 0.66);
+    }
+
+    .ajaz-card:nth-child(5) .ajaz-card-face {
+      background: rgba(255, 250, 240, 0.64);
+    }
+
+    /* Top frost highlight */
+    .ajaz-card-face::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 45%;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.09) 0%, transparent 100%);
+      border-radius: 24px 24px 0 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Shimmer on active */
+    .ajaz-card-face::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(108deg,
+          transparent 25%,
+          rgba(255, 255, 255, 0.07) 46%,
+          rgba(255, 220, 150, 0.06) 52%,
+          transparent 72%);
+      transform: translateX(-100%) skewX(-12deg);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .ajaz-card.active .ajaz-card-face::after {
+      animation: ajazShimmer 2.8s ease-in-out infinite;
+    }
+
+    @keyframes ajazShimmer {
+      0% {
+        transform: translateX(-120%) skewX(-12deg);
+      }
+
+      100% {
+        transform: translateX(220%) skewX(-12deg);
+      }
+    }
+
+    /* ── CARD CONTENT ── */
+    .ajaz-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.61rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #000;
+      border: 1px solid rgba(0, 0, 0, 0.2);
+      border-radius: 20px;
+      padding: 4px 11px;
+      background: rgba(255, 107, 0, 0.12);
+      backdrop-filter: blur(6px);
+      width: fit-content;
+      position: relative;
+      z-index: 3;
+    }
+
+    .ajaz-card-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      gap: 5px;
+      position: relative;
+      z-index: 3;
+    }
+
+    .ajaz-course-label {
+      font-size: 0.66rem;
+      font-weight: 700;
+      letter-spacing: 2.5px;
+      color: #000;
+      text-transform: uppercase;
+    }
+
+    .ajaz-course-name {
+      font-family: 'Black Ops One', cursive;
+      font-size: clamp(2rem, 5.5vw, 2.85rem);
+      line-height: 1.08;
+      background: linear-gradient(175deg, #7a1e00 0%, #c43b00 40%, #ff6b00 80%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 1px 6px rgba(255, 107, 0, 0.3));
+    }
+
+    .ajaz-subtitle {
+      font-size: 0.66rem;
+      letter-spacing: 2px;
+      color: #000;
+      text-transform: uppercase;
+    }
+
+    .ajaz-features {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-top: 10px;
+      width: 100%;
+    }
+
+    .ajaz-feature {
+      font-size: 0.77rem;
+      color: #000;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      justify-content: center;
+      font-weight: 600;
+    }
+
+    .ajaz-feature::before {
+      content: '◆';
+      color: #ff6b00;
+      font-size: 0.42rem;
+      flex-shrink: 0;
+    }
+
+    .ajaz-price-section {
+      text-align: center;
+      position: relative;
+      z-index: 3;
+    }
+
+    .ajaz-original-price {
+      font-size: 0.79rem;
+      color: rgba(180, 30, 30, 0.75);
+      text-decoration: line-through;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+    }
+
+    .ajaz-offer-badge {
+      font-size: 0.61rem;
+      color: #000;
+      letter-spacing: 1px;
+      margin: 2px 0;
+      opacity: 0.85;
+      font-weight: 700;
+    }
+
+    .ajaz-final-price {
+      font-family: 'Black Ops One', cursive;
+      font-size: 1.7rem;
+      background: linear-gradient(90deg, #c43b00, #ff6b00);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 0 8px rgba(255, 107, 0, 0.35));
+    }
+
+    .ajaz-enroll-btn {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 14px;
+      font-family: 'Black Ops One', cursive;
+      font-size: 0.88rem;
+      letter-spacing: 2px;
+      color: #fff;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(90deg, #c43b00, #ff6b00, #ff9a00);
+      transition: transform 0.22s, box-shadow 0.22s;
+      margin-top: 10px;
+      z-index: 3;
+      box-shadow: 0 4px 18px rgba(255, 107, 0, 0.35);
+      text-decoration: none;
+      display: block;
+      text-align: center;
+    }
+
+    .ajaz-enroll-btn::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -80%;
+      width: 55%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.32), transparent);
+      transform: skewX(-20deg);
+      animation: ajazBtnShine 4s ease-in-out infinite;
+    }
+
+    .ajaz-enroll-btn:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 8px 28px rgba(255, 107, 0, 0.55);
+    }
+
+    @keyframes ajazBtnShine {
+      0% {
+        left: -80%;
+      }
+
+      30% {
+        left: 120%;
+      }
+
+      100% {
+        left: 120%;
+      }
+    }
+
+    /* Controls styling removed because visual arrows and dots are now gone */
+
+    /* Particles */
+    .ajaz-particle {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0;
+      animation: ajazFloat var(--dur) ease-in infinite;
+      animation-delay: var(--delay);
+      left: var(--x);
+      bottom: -8px;
+      pointer-events: none;
+    }
+
+    @keyframes ajazFloat {
+      0% {
+        opacity: 0;
+        transform: translateY(0) scale(1) rotate(0deg);
+      }
+
+      15% {
+        opacity: 0.55;
+      }
+
+      85% {
+        opacity: 0.12;
+      }
+
+      100% {
+        opacity: 0;
+        transform: translateY(-520px) scale(0.2) rotate(360deg);
+      }
+    }
+
+    /* Ripple */
+    .ajaz-ripple {
+      position: absolute;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 154, 0, 0.22) 0%, transparent 70%);
+      transform: scale(0);
+      animation: ajazRippleOut 0.95s ease-out forwards;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    @keyframes ajazRippleOut {
+      to {
+        transform: scale(5);
+        opacity: 0;
+      }
+    }
+
+    /* hide old hpc-wrap if it still exists */
+    .hpc-wrap {
+      position: relative;
+      width: calc(100% + 32px);
+      margin: 0 -16px 20px;
+      height: 370px;
+      background: linear-gradient(145deg, #fff7ed 0%, #ffedd5 30%, #fed7aa 60%, #fb923c 100%);
+      border-radius: 24px;
+      overflow: hidden;
+      touch-action: pan-y;
+      /* 3D perspective on the container */
+      perspective: 900px;
+      perspective-origin: 50% 50%;
+    }
+
+    /* Warm orange glow layers on the bg */
+    .hpc-wrap::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 30% 60%, rgba(251, 146, 60, 0.35) 0%, transparent 65%),
+        radial-gradient(ellipse at 75% 30%, rgba(234, 88, 12, 0.22) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Track: holds all portrait cards centered ── */
+    .hpc-track {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 0;
+      height: 0;
+      transform-style: preserve-3d;
+    }
+
+    /* ── Every card: vertical portrait, liquid glass ── */
+    .hpc-slide {
+      position: absolute;
+      width: 190px;
+      height: 290px;
+      top: -145px;
+      left: -95px;
+      border-radius: 24px;
+      overflow: hidden;
+      /* liquid glass bg */
+      background: linear-gradient(160deg,
+          rgba(255, 255, 255, 0.72) 0%,
+          rgba(255, 237, 213, 0.55) 50%,
+          rgba(255, 200, 130, 0.35) 100%);
+      backdrop-filter: blur(22px) saturate(200%) brightness(1.08);
+      -webkit-backdrop-filter: blur(22px) saturate(200%) brightness(1.08);
+      border: 1px solid rgba(255, 255, 255, 0.75);
+      box-shadow:
+        0 2px 0 rgba(255, 255, 255, 0.9) inset,
+        /* top gloss line */
+        0 8px 32px rgba(180, 83, 9, 0.18),
+        0 2px 8px rgba(0, 0, 0, 0.08);
+      cursor: pointer;
+      /* 3D transition */
+      transition: transform 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        opacity 0.55s ease,
+        box-shadow 0.3s ease;
+      transform-style: preserve-3d;
+      backface-visibility: hidden;
+      will-change: transform, opacity;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    /* Glossy top-shine pseudo */
+    .hpc-slide::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 45%;
+      background: linear-gradient(180deg,
+          rgba(255, 255, 255, 0.55) 0%,
+          rgba(255, 255, 255, 0.0) 100%);
+      border-radius: 24px 24px 0 0;
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    /* Liquid glow blob */
+    .hpc-liquid {
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(251, 146, 60, 0.35) 0%, transparent 70%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      transition: top 0.35s ease, left 0.35s ease, opacity 0.25s;
+      pointer-events: none;
+      opacity: 0;
+      filter: blur(18px);
+      z-index: 0;
+    }
+
+    .hpc-slide:hover .hpc-liquid {
+      opacity: 1;
+    }
+
+    /* ── Content inside each card ── */
+    .hpc-body {
+      position: relative;
+      z-index: 2;
+      height: 100%;
+      padding: 18px 14px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      text-align: center;
+    }
+
+    .hpc-url {
+      font-size: 9px;
+      letter-spacing: 1.2px;
+      color: rgba(120, 53, 15, 0.55);
+      text-transform: uppercase;
+      margin: 0;
+    }
+
+    .hpc-brand {
+      font-size: clamp(18px, 5vw, 24px);
+      font-weight: 900;
+      line-height: 1.1;
+      background: linear-gradient(135deg, #c2410c, #ea580c);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+      margin: 0;
+      letter-spacing: -0.3px;
+    }
+
+    .hpc-brand-sub {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+    }
+
+    .hpc-tagline {
+      font-size: 11px;
+      color: rgba(92, 40, 0, 0.75);
+      line-height: 1.4;
+      margin: 0;
+    }
+
+    .hpc-tagline strong {
+      color: #c2410c;
+    }
+
+    .hpc-features {
+      list-style: none;
+      padding: 0;
+      margin: 2px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .hpc-features li {
+      font-size: 11px;
+      color: rgba(60, 20, 0, 0.7);
+    }
+
+    .hpc-contact {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      font-size: 10px;
+      color: #92400e;
+      margin: 0;
+    }
+
+    .hpc-tag {
+      display: inline-block;
+      background: rgba(234, 88, 12, 0.1);
+      border: 1px solid rgba(234, 88, 12, 0.3);
+      color: #c2410c;
+      font-size: 9.5px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      padding: 3px 10px;
+      border-radius: 99px;
+    }
+
+    .hpc-pkg-label {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      color: rgba(92, 40, 0, 0.55);
+      text-transform: uppercase;
+      margin: 0;
+    }
+
+    .hpc-syllabus {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      color: #c2410c;
+      margin: 0;
+    }
+
+    .hpc-part-name {
+      font-size: clamp(28px, 9vw, 46px);
+      font-weight: 900;
+      line-height: 1;
+      margin: 0;
+      background: linear-gradient(135deg, #ea580c 0%, #fb923c 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+      letter-spacing: 1.5px;
+    }
+
+    .hpc-full {
+      font-size: clamp(20px, 6vw, 30px);
+      letter-spacing: 1px;
+    }
+
+    .hpc-price-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+
+    .hpc-old-price {
+      font-size: 13px;
+      color: #ef4444;
+      text-decoration: line-through;
+      font-weight: 600;
+    }
+
+    .hpc-offer-tag {
+      font-size: 9px;
+      font-weight: 700;
+      color: #fff;
+      background: rgba(239, 68, 68, 0.8);
+      border-radius: 99px;
+      padding: 2px 8px;
+    }
+
+    /* legacy hpc styles removed */
   </style>
 </head>
 
@@ -70,74 +743,261 @@
     <main class="pages-container">
       <div class="page active" data-page="home">
         <div class="page-content">
-          <div class="hero-carousel">
-            <div class="hero-card hero-slide active">
-              <div class="hero-gradient hero-gradient-1"></div>
-              <div class="hero-content">
-                <div class="hero-icon">
-                  <i data-lucide="shield-check" width="48" height="48"></i>
-                </div>
-                <h1 class="hero-title">Master Your<br>Driver Exam</h1>
-                <p class="hero-subtitle">Complete preparation for JKSSB Driver recruitment</p>
-                <button class="btn-primary" data-navigate="courses">
-                  <span>Explore Courses</span>
-                  <i data-lucide="arrow-right" width="20" height="20"></i>
-                </button>
-              </div>
-            </div>
+          <!-- ═══════════════ AJAZ 3D CAROUSEL HERO ═══════════════ -->
+          <div class="ajaz-hero" id="ajazHero">
 
-            <div class="hero-card hero-slide">
-              <div class="hero-gradient hero-gradient-2"></div>
-              <div class="hero-content">
-                <div class="hero-icon">
-                  <i data-lucide="book-open" width="48" height="48"></i>
-                </div>
-                <h1 class="hero-title">2500+ Practice<br>Questions</h1>
-                <p class="hero-subtitle">Comprehensive MCQs with detailed explanations</p>
-                <button class="btn-primary" data-navigate="courses">
-                  <span>Start Practicing</span>
-                  <i data-lucide="arrow-right" width="20" height="20"></i>
-                </button>
-              </div>
-            </div>
+            <!-- Floating particles injected by JS -->
 
-            <div class="hero-card hero-slide">
-              <div class="hero-gradient hero-gradient-3"></div>
-              <div class="hero-content">
-                <div class="hero-icon">
-                  <i data-lucide="target" width="48" height="48"></i>
-                </div>
-                <h1 class="hero-title">Guaranteed<br>Success</h1>
-                <p class="hero-subtitle">Join 10,000+ students who cleared their exam</p>
-                <button class="btn-primary" data-navigate="courses">
-                  <span>View Success Stories</span>
-                  <i data-lucide="arrow-right" width="20" height="20"></i>
-                </button>
-              </div>
-            </div>
+            <div class="ajaz-scene">
+              <div class="ajaz-carousel" id="ajazCarousel">
 
-            <div class="hero-card hero-slide">
-              <div class="hero-gradient hero-gradient-4"></div>
-              <div class="hero-content">
-                <div class="hero-icon">
-                  <i data-lucide="zap" width="48" height="48"></i>
+                <!-- CARD 1 — Full Course -->
+                <div class="ajaz-card" data-index="0">
+                  <div class="ajaz-card-face">
+                    <div class="ajaz-badge">🎯 Limited Welcome Offer</div>
+                    <div class="ajaz-card-body">
+                      <div class="ajaz-course-label">JKSSB Driver Course Package</div>
+                      <div class="ajaz-course-name">FULL<br>COURSE</div>
+                      <div class="ajaz-subtitle">100% Syllabus Covered</div>
+                      <div class="ajaz-features">
+                        <div class="ajaz-feature">Full Course Material</div>
+                        <div class="ajaz-feature">Weekly Mock Tests</div>
+                        <div class="ajaz-feature">Toppers Handwritten Notes</div>
+                      </div>
+                    </div>
+                    <div class="ajaz-price-section">
+                      <div class="ajaz-original-price">Original Price Rs 1999</div>
+                      <div class="ajaz-offer-badge">42% OFF — Limited Offer</div>
+                      <div class="ajaz-final-price">Rs 1149</div>
+                    </div>
+                    <a href="http://localhost:3001/course-details.html" class="ajaz-enroll-btn">ENROLL NOW</a>
+                  </div>
                 </div>
-                <h1 class="hero-title">Learn Faster<br>Score Higher</h1>
-                <p class="hero-subtitle">Smart learning system adapts to your pace</p>
-                <button class="btn-primary" data-navigate="courses">
-                  <span>Get Started</span>
-                  <i data-lucide="arrow-right" width="20" height="20"></i>
-                </button>
-              </div>
-            </div>
 
-            <div class="carousel-indicators">
-              <span class="indicator active" data-slide="0"></span>
-              <span class="indicator" data-slide="1"></span>
-              <span class="indicator" data-slide="2"></span>
-              <span class="indicator" data-slide="3"></span>
-            </div>
-          </div>
+                <!-- CARD 2 — Part I -->
+                <div class="ajaz-card" data-index="1">
+                  <div class="ajaz-card-face">
+                    <div class="ajaz-badge">🔥 Limited Welcome Offer</div>
+                    <div class="ajaz-card-body">
+                      <div class="ajaz-course-label">JKSSB Driver Course Package</div>
+                      <div class="ajaz-course-name">PART I</div>
+                      <div class="ajaz-subtitle">100% Syllabus Covered</div>
+                    </div>
+                    <div class="ajaz-price-section">
+                      <div class="ajaz-original-price">Original Price Rs 499</div>
+                      <div class="ajaz-offer-badge">20% OFF — Limited Offer</div>
+                      <div class="ajaz-final-price">Rs 399</div>
+                    </div>
+                    <a href="http://localhost:3001/course-details.html" class="ajaz-enroll-btn">ENROLL NOW</a>
+                  </div>
+                </div>
+
+                <!-- CARD 3 — Part II -->
+                <div class="ajaz-card" data-index="2">
+                  <div class="ajaz-card-face">
+                    <div class="ajaz-badge">🔥 Limited Welcome Offer</div>
+                    <div class="ajaz-card-body">
+                      <div class="ajaz-course-label">JKSSB Driver Course Package</div>
+                      <div class="ajaz-course-name">PART II</div>
+                      <div class="ajaz-subtitle">100% Syllabus Covered</div>
+                    </div>
+                    <div class="ajaz-price-section">
+                      <div class="ajaz-original-price">Original Price Rs 499</div>
+                      <div class="ajaz-offer-badge">20% OFF — Limited Offer</div>
+                      <div class="ajaz-final-price">Rs 399</div>
+                    </div>
+                    <a href="http://localhost:3001/course-details.html" class="ajaz-enroll-btn">ENROLL NOW</a>
+                  </div>
+                </div>
+
+                <!-- CARD 4 — Part III -->
+                <div class="ajaz-card" data-index="3">
+                  <div class="ajaz-card-face">
+                    <div class="ajaz-badge">🔥 Limited Welcome Offer</div>
+                    <div class="ajaz-card-body">
+                      <div class="ajaz-course-label">JKSSB Driver Course Package</div>
+                      <div class="ajaz-course-name">PART III</div>
+                      <div class="ajaz-subtitle">100% Syllabus Covered</div>
+                    </div>
+                    <div class="ajaz-price-section">
+                      <div class="ajaz-original-price">Original Price Rs 499</div>
+                      <div class="ajaz-offer-badge">20% OFF — Limited Offer</div>
+                      <div class="ajaz-final-price">Rs 399</div>
+                    </div>
+                    <a href="http://localhost:3001/course-details.html" class="ajaz-enroll-btn">ENROLL NOW</a>
+                  </div>
+                </div>
+
+                <!-- CARD 5 — Contact -->
+                <div class="ajaz-card" data-index="4">
+                  <div class="ajaz-card-face">
+                    <div class="ajaz-badge">📞 Contact Us</div>
+                    <div class="ajaz-card-body">
+                      <div class="ajaz-course-label">www.jkssbdriversacademy.co.in</div>
+                      <div class="ajaz-course-name" style="font-size:1.45rem;line-height:1.25">
+                        JKSSB<br>DRIVERS<br>ACADEMY</div>
+                      <div class="ajaz-features" style="margin-top:14px">
+                        <div class="ajaz-feature">WhatsApp/Call: 7006139763</div>
+                        <div class="ajaz-feature">Telegram: JKSSB DRIVERS ACADEMY</div>
+                      </div>
+                    </div>
+                    <div class="ajaz-price-section">
+                      <div class="ajaz-offer-badge" style="font-size:0.7rem;color:#ff9a00">J&amp;K's Only JKSSB Driver
+                        Platform</div>
+                    </div>
+                    <a href="http://localhost:3001/course-details.html" class="ajaz-enroll-btn">ENROLL NOW</a>
+                  </div>
+                </div>
+
+              </div><!-- /ajaz-carousel -->
+            </div><!-- /ajaz-scene -->
+
+          </div><!-- /ajaz-hero -->
+
+          <script>
+            (function () {
+              // Particles
+              const hero = document.getElementById('ajazHero');
+              const pColors = ['#ff6b00', '#ff9a00', '#ffd700', '#ffb347', '#ff8c00'];
+              for (let i = 0; i < 22; i++) {
+                const p = document.createElement('div');
+                p.className = 'ajaz-particle';
+                p.style.setProperty('--x', Math.random() * 100 + '%');
+                p.style.setProperty('--dur', (7 + Math.random() * 10) + 's');
+                p.style.setProperty('--delay', (Math.random() * 12) + 's');
+                const sz = (1.5 + Math.random() * 2.5) + 'px';
+                p.style.width = sz; p.style.height = sz;
+                p.style.background = pColors[Math.floor(Math.random() * pColors.length)];
+                hero.appendChild(p);
+              }
+
+              const carousel = document.getElementById('ajazCarousel');
+              const cards = [...carousel.querySelectorAll('.ajaz-card')];
+              const N = cards.length;
+              let current = 0;
+              let autoTimer = null;
+              let busy = false;
+
+              function positionCards() {
+                requestAnimationFrame(() => {
+                  const w = window.innerWidth;
+                  const SPREAD = w < 480 ? 32 : w < 768 ? 38 : 42;
+                  const DEPTH = w < 480 ? 140 : w < 768 ? 180 : 220;
+                  const XSHIFT = w < 480 ? 110 : w < 768 ? 140 : 170;
+                  cards.forEach((card, i) => {
+                    let off = i - current;
+                    if (off > N / 2) off -= N;
+                    if (off < -N / 2) off += N;
+                    const rotY = off * SPREAD;
+                    const tx = off * XSHIFT;
+                    const tz = -Math.abs(off) * DEPTH;
+                    const sc = off === 0 ? 1.06 : Math.max(0.62, 0.86 - Math.abs(off) * 0.12);
+                    const op = off === 0 ? 1 : Math.max(0.22, 0.6 - Math.abs(off) * 0.17);
+
+                    // Hardware accelerated 3d translate matrix
+                    card.style.transform = `translate3d(${tx}px, 0, ${tz}px) rotateY(${rotY}deg) scale(${sc})`;
+                    card.style.opacity = op;
+                    card.style.zIndex = off === 0 ? 20 : Math.max(1, 10 - Math.abs(off) * 3);
+
+                    if (off === 0) {
+                      card.classList.add('active');
+                      card.style.pointerEvents = 'auto';
+                    } else {
+                      card.classList.remove('active');
+                      card.style.pointerEvents = 'none';
+                    }
+
+                    if (Math.abs(off) >= 2) {
+                      card.classList.add('behind');
+                    } else {
+                      card.classList.remove('behind');
+                    }
+                  });
+                });
+              }
+
+              window.addEventListener('resize', positionCards);
+
+              function goTo(i) {
+                if (busy) return;
+                busy = true;
+                current = ((i % N) + N) % N;
+                positionCards();
+                setTimeout(() => { busy = false; }, 920);
+              }
+
+              const next = () => goTo(current + 1);
+              const prev = () => goTo(current - 1);
+
+              function startAuto() {
+                if (!autoTimer) autoTimer = setInterval(next, 3800);
+              }
+              function stopAuto() {
+                if (autoTimer) {
+                  clearInterval(autoTimer);
+                  autoTimer = null;
+                }
+              }
+
+              // Pause instantly on interaction
+              let tx0 = 0;
+              carousel.addEventListener('touchstart', e => {
+                stopAuto();
+                tx0 = e.touches[0].clientX;
+              }, { passive: true });
+
+              carousel.addEventListener('touchend', e => {
+                const d = tx0 - e.changedTouches[0].clientX;
+                if (Math.abs(d) > 40) d > 0 ? next() : prev();
+                startAuto();
+              });
+              carousel.addEventListener('touchcancel', () => startAuto());
+
+              let mx0 = 0, dragging = false;
+              carousel.addEventListener('mousedown', e => {
+                stopAuto();
+                mx0 = e.clientX;
+                dragging = true;
+              });
+
+              const handleMouseUp = e => {
+                if (!dragging) return;
+                const d = mx0 - e.clientX;
+                if (Math.abs(d) > 55) d > 0 ? next() : prev();
+                dragging = false;
+                startAuto();
+              };
+
+              document.addEventListener('mouseup', handleMouseUp);
+
+              // End drag and resume auto if cursor leaves carousel
+              carousel.addEventListener('mouseleave', () => {
+                if (dragging) {
+                  dragging = false;
+                  startAuto();
+                }
+              });
+
+              // Ripple on active card click
+              cards.forEach(card => {
+                card.addEventListener('click', function (e) {
+                  if (!this.classList.contains('active')) return;
+                  const face = this.querySelector('.ajaz-card-face');
+                  const r = face.getBoundingClientRect();
+                  const rpl = document.createElement('div');
+                  rpl.className = 'ajaz-ripple';
+                  const sz = Math.max(r.width, r.height) * 1.6;
+                  rpl.style.cssText = `width:${sz}px;height:${sz}px;left:${e.clientX - r.left - sz / 2}px;top:${e.clientY - r.top - sz / 2}px`;
+                  face.appendChild(rpl);
+                  setTimeout(() => rpl.remove(), 950);
+                });
+              });
+
+              positionCards();
+              startAuto();
+            })();
+          </script>
+
 
           <div class="stats-row">
             <div class="stat-item">
@@ -564,7 +1424,8 @@
           <div class="cta-card">
             <h3>Ready to Start?</h3>
             <p>Join thousands preparing for JKSSB Driver exam</p>
-            <button class="btn-secondary" data-navigate="courses">View All Courses</button>
+            <button class="btn-secondary" onclick="window.location.href='./course-details.html'">View All
+              Courses</button>
           </div>
 
 
@@ -906,6 +1767,58 @@
         }
       }, 50);
     });
+  </script>
+
+  <!-- HPC Carousel Script -->
+  <script>
+    (function () {
+      const track = document.getElementById('hpcTrack');
+      const dots = document.querySelectorAll('.hpc-dot');
+      const slides = document.querySelectorAll('.hpc-slide');
+      const prevBtn = document.getElementById('hpcPrev');
+      const nextBtn = document.getElementById('hpcNext');
+      if (!track || !slides.length) return;
+
+      let current = 0;
+      let timer;
+      const total = slides.length;
+
+      function goTo(n) {
+        current = (n + total) % total;
+        track.style.transform = `translateX(-${current * 100}%)`;
+        dots.forEach((d, i) => d.classList.toggle('active', i === current));
+      }
+
+      function startTimer() {
+        clearInterval(timer);
+        timer = setInterval(() => goTo(current + 1), 4000);
+      }
+
+      prevBtn?.addEventListener('click', () => { goTo(current - 1); startTimer(); });
+      nextBtn?.addEventListener('click', () => { goTo(current + 1); startTimer(); });
+      dots.forEach(d => d.addEventListener('click', () => { goTo(+d.dataset.i); startTimer(); }));
+
+      // Touch / swipe
+      let tx = 0;
+      track.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
+      track.addEventListener('touchend', e => {
+        const dx = tx - e.changedTouches[0].clientX;
+        if (Math.abs(dx) > 40) { goTo(dx > 0 ? current + 1 : current - 1); startTimer(); }
+      });
+
+      // Liquid glow follows mouse
+      slides.forEach(slide => {
+        const glow = slide.querySelector('.hpc-liquid');
+        slide.addEventListener('mousemove', e => {
+          if (!glow) return;
+          const r = slide.getBoundingClientRect();
+          glow.style.left = (e.clientX - r.left) + 'px';
+          glow.style.top = (e.clientY - r.top) + 'px';
+        });
+      });
+
+      startTimer();
+    })();
   </script>
 </body>
 

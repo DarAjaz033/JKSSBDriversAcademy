@@ -19,10 +19,11 @@
     'jkssb-updates.html', 'profile.html'].indexOf(page) !== -1;
   var isLearning = ['mock-tests.html', 'practice-test.html', 'gk-pdfs.html',
     'demo-pdfs.html'].indexOf(page) !== -1;
-  var isCourses = ['my-courses.html', 'course-details.html', 'full-course.html',
+  var isCourseDetails = ['course-details.html'].indexOf(page) !== -1;
+  var isCourses = ['my-courses.html', 'full-course.html',
     'course-purchase.html', 'part-1.html', 'part-2.html',
     'part-3.html'].indexOf(page) !== -1;
-  var isHome = !isMore && !isLearning && !isCourses;
+  var isHome = !isMore && !isLearning && !isCourses && !isCourseDetails;
 
   /* ── Inline SVGs (no Lucide = no flash) ──────────────────────── */
   var SVG = {
@@ -128,7 +129,7 @@
     nav.innerHTML =
       '<a href="./index.html"' + (isHome ? ' class="active"' : '') + '>' + SVG.home + '<span>Home</span></a>' +
       '<a href="./my-courses.html"' + (isCourses ? ' class="active"' : '') + '>' + SVG.book + '<span>Courses</span></a>' +
-      '<a href="./mock-tests.html"' + (isLearning ? ' class="active"' : '') + '>' + SVG.grad + '<span>Course Details</span></a>' +
+      '<a href="./course-details.html"' + (isCourseDetails ? ' class="active"' : '') + '>' + SVG.grad + '<span>Course Details</span></a>' +
       '<a href="./profile.html"' + (isMore ? ' class="active"' : '') + '>' + SVG.more + '<span>More</span></a>';
 
     /* Use View Transition navigate when supported */

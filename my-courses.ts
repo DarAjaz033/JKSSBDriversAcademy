@@ -1,13 +1,24 @@
 import './public/global-pdf-viewer';
 import { onAuthChange } from './auth-service';
 import {
-  getUserCoursesWithDetails,
   getPDFs,
   getCourseQuizzes,
+  getCourses,
   Course,
   PDF,
   PracticeTest
 } from './admin-service';
+
+// ─── Per-user enrolment key (mirrors home.ts) ───────────────────────────
+function enrolledKey(userId: string): string {
+  return `jkssb_enrolled_${userId}`;
+}
+
+function getEnrolledIds(userId: string): string[] {
+  try {
+    return JSON.parse(localStorage.getItem(enrolledKey(userId)) ?? '[]') as string[];
+  } catch { return []; }
+}
 
 let _uid = 0;
 function uid() { return ++_uid; }
@@ -301,58 +312,77 @@ class MyCoursesPage {
   private async init(): Promise<void> {
     onAuthChange(async (user) => {
       if (user) {
-        await this.loadUserCourses(user.uid);
+        await this.loadEnrolledCourses(user.uid);
       } else {
         this.showEmptyState(
-          'Please Sign In',
-          'You need to sign in to view your courses.',
+          'Sign In Required',
+          'Please sign in to view your enrolled courses.',
           'Go to Home', './index.html'
         );
       }
     }, true);
   }
 
-  /* ─── Load purchased courses ──────────────────────────────────────────── */
-  private async loadUserCourses(userId: string): Promise<void> {
+  /* ─── Single-source enrolment loader ────────────────────────────────── */
+  // 🔁 When swapping to real gateway: replace getEnrolledIds() to read from Firebase instead
+  private async loadEnrolledCourses(userId: string): Promise<void> {
     this.coursesContainer.innerHTML = `
       <div class="skeleton-card" style="margin-bottom: var(--spacing-md);"><div class="skeleton skeleton-img"></div><div style="padding-top:12px;"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-text"></div></div></div>
       <div class="skeleton-card" style="margin-bottom: var(--spacing-md);"><div class="skeleton skeleton-img"></div><div style="padding-top:12px;"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-text"></div></div></div>
     `;
 
-    const result = await getUserCoursesWithDetails(userId) as any;
+    // 1. Read this user's purchased course IDs
+    const enrolledIds = getEnrolledIds(userId);
 
-    if (result.success && result.courses && result.courses.length > 0) {
-      const pdfsRes = await getPDFs();
-      const allPDFs: PDF[] = (pdfsRes.success && pdfsRes.pdfs) ? pdfsRes.pdfs : [];
-
-      const cards: string[] = [];
-      const views: string[] = [];
-      for (const course of result.courses as Course[]) {
-        const coursePDFs = allPDFs.filter(p => course.pdfIds?.includes(p.id!));
-        const quizzesRes = await getCourseQuizzes(course.id!);
-        const courseQuizzes: PracticeTest[] = (quizzesRes.success && quizzesRes.tests) ? quizzesRes.tests : [];
-
-        const cardData = this.buildCardWithViews(course, coursePDFs, courseQuizzes);
-        cards.push(cardData.card);
-        views.push(cardData.views);
-      }
-
-      this.coursesContainer.innerHTML = `
-        <div class="mc-wrapper">
-          <div class="mc-courses-list" id="mc-courses-list">
-            ${cards.join('')}
-          </div>
-          ${views.join('')}
-        </div>
-      `;
-      this.attachListeners();
-    } else {
+    if (enrolledIds.length === 0) {
       this.showEmptyState(
-        'No Courses Yet',
-        "You haven't enrolled in any courses yet. Browse and start learning today!",
-        'Browse Courses', './index.html'
+        'No Enrolled Courses',
+        'You have no enrolled courses yet. Browse courses to get started.',
+        'Browse Courses', './course-details.html'
       );
+      return;
     }
+
+    // 2. Fetch ALL courses from admin (single source of truth)
+    const coursesRes = await getCourses();
+    const allCourses: Course[] = (coursesRes.success && 'courses' in coursesRes && coursesRes.courses) ? coursesRes.courses : [];
+
+    // 3. Filter to only purchased ones — matched by course ID
+    const enrolledCourses = allCourses.filter(c => c.id && enrolledIds.includes(c.id));
+
+    if (enrolledCourses.length === 0) {
+      this.showEmptyState(
+        'No Enrolled Courses',
+        'No enrolled courses found. Course data may have changed — browse to find new courses.',
+        'Browse Courses', './course-details.html'
+      );
+      return;
+    }
+
+    // 4. Fetch PDFs + quizzes and render cards
+    const pdfsRes = await getPDFs();
+    const allPDFs: PDF[] = (pdfsRes.success && pdfsRes.pdfs) ? pdfsRes.pdfs : [];
+
+    const cards: string[] = [];
+    const views: string[] = [];
+    for (const course of enrolledCourses) {
+      const coursePDFs = allPDFs.filter(p => course.pdfIds?.includes(p.id!));
+      const quizzesRes = await getCourseQuizzes(course.id!);
+      const courseQuizzes: PracticeTest[] = (quizzesRes.success && quizzesRes.tests) ? quizzesRes.tests : [];
+      const cardData = this.buildCardWithViews(course, coursePDFs, courseQuizzes);
+      cards.push(cardData.card);
+      views.push(cardData.views);
+    }
+
+    this.coursesContainer.innerHTML = `
+      <div class="mc-wrapper">
+        <div class="mc-courses-list" id="mc-courses-list">
+          ${cards.join('')}
+        </div>
+        ${views.join('')}
+      </div>
+    `;
+    this.attachListeners();
   }
 
   /* ─── Build card + dedicated sliding views ─────────────────────────────────── */
@@ -362,7 +392,7 @@ class MyCoursesPage {
     const quizViewId = `mc-view-quiz-${id}`;
 
     /* Category icon */
-    const iconSvg = this.categoryIcon(course.category);
+    const iconSvg = this.categoryIcon(course.category ?? '');
 
     /* PDF list body */
     const pdfBody = pdfs.length > 0

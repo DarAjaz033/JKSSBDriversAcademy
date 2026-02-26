@@ -10,8 +10,6 @@ class AdminCoursesPage {
   private editingCourseId: string | null = null;
   private coursesList: Course[] = [];
 
-  private categorySelect: HTMLSelectElement;
-  private newCategoryInput: HTMLInputElement;
   private descriptionPointsContainer: HTMLElement;
   private addPointBtn: HTMLButtonElement;
 
@@ -20,8 +18,6 @@ class AdminCoursesPage {
     this.submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
     this.cancelBtn = document.getElementById('cancel-btn') as HTMLButtonElement;
     this.coursesContainer = document.getElementById('courses-container') as HTMLElement;
-    this.categorySelect = document.getElementById('category') as HTMLSelectElement;
-    this.newCategoryInput = document.getElementById('new-category') as HTMLInputElement;
     this.descriptionPointsContainer = document.getElementById('description-points-container') as HTMLElement;
     this.addPointBtn = document.getElementById('add-point-btn') as HTMLButtonElement;
     this.init();
@@ -37,7 +33,6 @@ class AdminCoursesPage {
 
       this.form.addEventListener('submit', (e) => this.handleSubmit(e));
       this.cancelBtn.addEventListener('click', () => this.cancelEdit());
-      this.categorySelect.addEventListener('change', () => this.toggleNewCategoryInput());
       this.addPointBtn.addEventListener('click', () => this.addDescriptionPoint());
       this.ensureDescriptionPoints();
       await this.loadCourses();
@@ -50,7 +45,7 @@ class AdminCoursesPage {
     const heading = (document.getElementById('description-heading') as HTMLInputElement).value.trim();
     const inputs = this.descriptionPointsContainer.querySelectorAll<HTMLInputElement>('.description-point-input');
     const lines = Array.from(inputs).map(inp => inp.value.trim()).filter(Boolean);
-    if (lines.length === 0 && !heading) throw new Error('Please add at least a description heading or one point');
+    if (lines.length === 0 && !heading) return '';
     const numbered = lines.map((l, i) => `${i + 1}. ${l}`);
     return heading ? [heading, ...numbered].join(' ') : numbered.join(' ');
   }
@@ -109,47 +104,30 @@ class AdminCoursesPage {
     }
   }
 
-  private getSelectedCategory(): string {
-    const value = this.categorySelect.value;
-    if (value === '__new__') {
-      const newCat = this.newCategoryInput.value.trim();
-      if (!newCat) { this.newCategoryInput.focus(); throw new Error('Please enter the new category name'); }
-      return newCat;
-    }
-    if (!value) { this.categorySelect.focus(); throw new Error('Please select or create a category'); }
-    return value;
-  }
-
-  private toggleNewCategoryInput(): void {
-    const isNew = this.categorySelect.value === '__new__';
-    this.newCategoryInput.style.display = isNew ? 'block' : 'none';
-    this.newCategoryInput.required = isNew;
-    this.newCategoryInput.value = '';
-    if (isNew) this.newCategoryInput.focus();
-  }
-
   // ─── Form Submit ─────────────────────────────────────────────────────────────
 
   private async handleSubmit(e: Event): Promise<void> {
     e.preventDefault();
-    let category: string, description: string;
-    try {
-      category = this.getSelectedCategory();
-      description = this.buildDescriptionFromForm();
-    } catch (err) {
-      showToast(err instanceof Error ? err.message : 'Please fill in all required fields', 'warning');
-      return;
-    }
 
-    const courseData = {
-      title: (document.getElementById('title') as HTMLInputElement).value,
+    const description = this.buildDescriptionFromForm();
+    const syllabus = (document.getElementById('syllabus') as HTMLTextAreaElement).value.trim();
+    const paymentLink = (document.getElementById('payment-link') as HTMLInputElement).value.trim();
+
+    const courseData: Partial<Course> = {
+      title: (document.getElementById('title') as HTMLInputElement).value.trim(),
       description,
+      syllabus,
       price: parseInt((document.getElementById('price') as HTMLInputElement).value),
-      duration: (document.getElementById('duration') as HTMLInputElement).value,
-      category,
+      duration: (document.getElementById('duration') as HTMLInputElement).value.trim(),
+      paymentLink,
       pdfIds: [],
       practiceTestIds: []
     };
+
+    if (!courseData.title) {
+      showToast('Please enter a course title', 'warning');
+      return;
+    }
 
     this.submitBtn.disabled = true;
     const originalText = this.submitBtn.textContent!;
@@ -157,7 +135,7 @@ class AdminCoursesPage {
 
     const result = this.editingCourseId
       ? await updateCourse(this.editingCourseId, courseData)
-      : await createCourse(courseData);
+      : await createCourse(courseData as Course);
 
     if (result.success) {
       showToast(this.editingCourseId ? 'Course updated successfully!' : 'Course created successfully!', 'success');
@@ -176,19 +154,18 @@ class AdminCoursesPage {
 
   private async loadCourses(): Promise<void> {
     this.coursesContainer.innerHTML = `
-      <div class="skeleton-card" style="margin-bottom: var(--spacing-sm); flex-direction: row; align-items: center; justify-content: space-between;">
+      <div class="skeleton-card" style="margin-bottom:var(--spacing-sm);flex-direction:row;align-items:center;justify-content:space-between;">
         <div style="flex:1;"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-text" style="width:50%;"></div></div>
-        <div class="skeleton" style="width: 80px; height: 32px; border-radius: var(--radius-sm);"></div>
+        <div class="skeleton" style="width:80px;height:32px;border-radius:var(--radius-sm);"></div>
       </div>
-      <div class="skeleton-card" style="margin-bottom: var(--spacing-sm); flex-direction: row; align-items: center; justify-content: space-between;">
+      <div class="skeleton-card" style="margin-bottom:var(--spacing-sm);flex-direction:row;align-items:center;justify-content:space-between;">
         <div style="flex:1;"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-text" style="width:50%;"></div></div>
-        <div class="skeleton" style="width: 80px; height: 32px; border-radius: var(--radius-sm);"></div>
+        <div class="skeleton" style="width:80px;height:32px;border-radius:var(--radius-sm);"></div>
       </div>
     `;
     const result = await getCourses();
     if (result.success && result.courses) {
       this.coursesList = result.courses;
-      this.populateCategoryOptions(result.courses);
       this.coursesContainer.innerHTML = result.courses.length > 0
         ? result.courses.map((c, i) => this.renderCourseItem(c, i)).join('')
         : '<p style="text-align:center;color:#64748B;padding:2rem;">No courses yet. Create one using the form.</p>';
@@ -199,19 +176,6 @@ class AdminCoursesPage {
     }
   }
 
-  private populateCategoryOptions(courses: Course[]): void {
-    const existing = new Set(Array.from(this.categorySelect.options).map(o => o.value));
-    courses.forEach(c => {
-      if (c.category && c.category !== '__new__' && !existing.has(c.category)) {
-        existing.add(c.category);
-        const opt = document.createElement('option');
-        opt.value = c.category;
-        opt.textContent = c.category;
-        this.categorySelect.insertBefore(opt, this.categorySelect.lastElementChild);
-      }
-    });
-  }
-
   private renderCourseItem(course: Course, index: number): string {
     const rank = index + 1;
     const canUp = index > 0;
@@ -219,11 +183,11 @@ class AdminCoursesPage {
     return `
       <div class="course-card" data-id="${course.id}">
         <div class="course-info">
-          <div class="course-badge">${course.category}</div>
           <h3>${course.title}</h3>
           <div class="course-meta">
-            <div class="meta-item"><i data-lucide="indian-rupee" width="13" height="13"></i> ${course.price}</div>
+            <div class="meta-item"><i data-lucide="indian-rupee" width="13" height="13"></i> ₹${course.price}</div>
             <div class="meta-item"><i data-lucide="clock" width="13" height="13"></i> ${course.duration}</div>
+            ${course.paymentLink ? '<div class="meta-item" style="color:#16A34A;"><i data-lucide="link" width="13" height="13"></i> Payment Link ✓</div>' : ''}
             <div class="meta-item"><i data-lucide="hash" width="13" height="13"></i> Rank #${rank}</div>
           </div>
         </div>
@@ -335,19 +299,11 @@ class AdminCoursesPage {
 
     this.editingCourseId = courseId;
     (document.getElementById('title') as HTMLInputElement).value = course.title;
-    this.parseDescriptionToForm(course.description);
     (document.getElementById('price') as HTMLInputElement).value = course.price.toString();
     (document.getElementById('duration') as HTMLInputElement).value = course.duration;
-
-    const catOpt = Array.from(this.categorySelect.options).find(o => o.value === course.category);
-    if (catOpt) {
-      this.categorySelect.value = course.category;
-      this.newCategoryInput.style.display = 'none';
-    } else {
-      this.categorySelect.value = '__new__';
-      this.newCategoryInput.style.display = 'block';
-      this.newCategoryInput.value = course.category;
-    }
+    (document.getElementById('payment-link') as HTMLInputElement).value = course.paymentLink ?? '';
+    (document.getElementById('syllabus') as HTMLTextAreaElement).value = course.syllabus ?? '';
+    this.parseDescriptionToForm(course.description);
 
     document.getElementById('form-title')!.textContent = 'Edit Course';
     this.submitBtn.textContent = 'Update Course';
@@ -362,8 +318,6 @@ class AdminCoursesPage {
     (document.getElementById('description-heading') as HTMLInputElement).value = '';
     this.descriptionPointsContainer.innerHTML = '';
     this.ensureDescriptionPoints();
-    this.newCategoryInput.style.display = 'none';
-    this.newCategoryInput.value = '';
     document.getElementById('form-title')!.textContent = 'Create New Course';
     this.submitBtn.textContent = 'Create Course';
     this.cancelBtn.style.display = 'none';

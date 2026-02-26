@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D Carousel - JKSSB Drivers Academy</title>
+<link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0 !important; padding: 0 !important; box-sizing: border-box; }
+
+html {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+:root {
+  --orange: #ff6b00;
+  --amber:  #ff9a00;
+  --yellow: #ffd700;
+  --card-w: 300px;
+  --card-h: 410px;
+  --spread: 42;
+  --depth:  220;
+  --xshift: 170;
+}
+
+/* Tablet */
+@media (max-width: 768px) {
+  :root {
+    --card-w: 260px;
+    --card-h: 370px;
+  }
+}
+
+/* Phone */
+@media (max-width: 480px) {
+  :root {
+    --card-w: 230px;
+    --card-h: 340px;
+  }
+}
+
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Rajdhani', sans-serif;
+  overflow: hidden;
+  position: relative;
+  padding: 0;
+  /* Black, grey and orange gradient */
+  background: linear-gradient(135deg,
+    #0a0a0a 0%,
+    #1a1a1a 22%,
+    #2d2d2d 38%,
+    #5a2800 55%,
+    #c43b00 72%,
+    #ff6b00 88%,
+    #ff9a00 100%
+  );
+}
+
+/* Clean — no blobs, no grid */
+.bg-blob { display: none; }
+
+
+
+/* ── SCENE ── */
+.scene {
+  width: var(--card-w);
+  height: var(--card-h);
+  perspective: 900px;
+  perspective-origin: 50% 44%;
+  position: relative;
+  z-index: 10;
+  overflow: visible;
+}
+
+.carousel {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  overflow: visible;
+}
+
+/* ── CARDS ── */
+.card {
+  position: absolute;
+  inset: 0;
+  width: var(--card-w);
+  height: var(--card-h);
+  border-radius: 24px;
+  cursor: pointer;
+  transition:
+    transform  0.9s cubic-bezier(0.34, 1.15, 0.64, 1),
+    opacity    0.9s ease,
+    filter     0.9s ease,
+    box-shadow 0.45s ease;
+  transform-style: preserve-3d;
+  will-change: transform, opacity, filter;
+  user-select: none;
+}
+
+/* BACK CARDS = BLURRED */
+.card.behind {
+  filter: blur(6px) brightness(0.75) saturate(0.7);
+}
+
+/* FRONT CARD = SHARP */
+.card.active {
+  filter: blur(0px) brightness(1) saturate(1.1);
+  box-shadow:
+    0 0 0 1.5px rgba(255,154,0,0.7),
+    0 0 30px rgba(255,107,0,0.55),
+    0 0 70px rgba(255,107,0,0.22),
+    0 25px 60px rgba(0,0,0,0.25);
+}
+
+.card:not(.active):not(.behind) {
+  filter: blur(3px) brightness(0.82) saturate(0.8);
+}
+
+/* ── WHITE ACRYLIC ICE FROST GLASS ── */
+.card-face {
+  position: absolute;
+  inset: 0;
+  border-radius: 24px;
+  overflow: hidden;
+  /* Stronger white acrylic / ice frost */
+  background: rgba(255, 255, 255, 0.62);
+  backdrop-filter: blur(52px) saturate(200%) brightness(1.22);
+  -webkit-backdrop-filter: blur(52px) saturate(200%) brightness(1.22);
+  border-top: 2px solid rgba(255, 255, 255, 1);
+  border-left: 1.5px solid rgba(255, 255, 255, 0.9);
+  border-right: 1px solid rgba(255, 255, 255, 0.55);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,1),
+    inset 0 -1px 0 rgba(255,150,50,0.08),
+    0 8px 40px rgba(100,40,0,0.15),
+    0 2px 12px rgba(255,255,255,0.7);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 26px 22px 22px !important;
+}
+
+/* All cards stay very icy white */
+.card:nth-child(1) .card-face { background: rgba(255, 248, 240, 0.65); }
+.card:nth-child(2) .card-face { background: rgba(255, 255, 255, 0.68); }
+.card:nth-child(3) .card-face { background: rgba(255, 252, 242, 0.63); }
+.card:nth-child(4) .card-face { background: rgba(255, 255, 255, 0.66); }
+.card:nth-child(5) .card-face { background: rgba(255, 250, 240, 0.64); }
+
+/* Top frosted highlight */
+.card-face::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 45%;
+  background: linear-gradient(180deg, rgba(255,255,255,0.09) 0%, transparent 100%);
+  border-radius: 24px 24px 0 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Moving shimmer on active card */
+.card-face::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    108deg,
+    transparent 25%,
+    rgba(255,255,255,0.07) 46%,
+    rgba(255,220,150,0.06) 52%,
+    transparent 72%
+  );
+  transform: translateX(-100%) skewX(-12deg);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.card.active .card-face::after {
+  animation: shimmer 2.8s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%   { transform: translateX(-120%) skewX(-12deg); }
+  100% { transform: translateX(220%)  skewX(-12deg); }
+}
+
+/* ── CARD CONTENT ── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.61rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #000000;
+  border: 1px solid rgba(0,0,0,0.2);
+  border-radius: 20px;
+  padding: 4px 11px !important;
+  background: rgba(255,107,0,0.12);
+  backdrop-filter: blur(6px);
+  width: fit-content;
+  position: relative;
+  z-index: 3;
+}
+
+.card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: 5px;
+  position: relative;
+  z-index: 3;
+}
+
+.course-label {
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  color: #000000;
+  text-transform: uppercase;
+}
+
+.course-name {
+  font-family: 'Black Ops One', cursive;
+  font-size: clamp(2rem, 5.5vw, 2.85rem);
+  line-height: 1.08;
+  background: linear-gradient(175deg, #7a1e00 0%, #c43b00 40%, #ff6b00 80%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 1px 6px rgba(255,107,0,0.3));
+}
+
+.subtitle {
+  font-size: 0.66rem;
+  letter-spacing: 2px;
+  color: #000000;
+  text-transform: uppercase;
+}
+
+.features {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 10px;
+  width: 100%;
+}
+
+.feature {
+  font-size: 0.77rem;
+  color: #000000;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  justify-content: center;
+  font-weight: 600;
+}
+.feature::before { content: '◆'; color: var(--orange); font-size: 0.42rem; flex-shrink: 0; }
+
+.price-section { text-align: center; position: relative; z-index: 3; }
+
+.original-price {
+  font-size: 0.79rem;
+  color: rgba(180, 30, 30, 0.75);
+  text-decoration: line-through;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.offer-badge {
+  font-size: 0.61rem;
+  color: #000000;
+  letter-spacing: 1px;
+  margin: 2px 0;
+  opacity: 0.85;
+  font-weight: 700;
+}
+
+.final-price {
+  font-family: 'Black Ops One', cursive;
+  font-size: 1.7rem;
+  background: linear-gradient(90deg, #c43b00, #ff6b00);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 8px rgba(255,107,0,0.35));
+}
+
+/* Enroll button */
+.enroll-btn {
+  width: 100%;
+  padding: 12px !important;
+  border: none;
+  border-radius: 14px;
+  font-family: 'Black Ops One', cursive;
+  font-size: 0.88rem;
+  letter-spacing: 2px;
+  color: #ffffff;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(90deg, #c43b00, #ff6b00, #ff9a00);
+  transition: transform 0.22s, box-shadow 0.22s;
+  margin-top: 10px;
+  z-index: 3;
+  box-shadow: 0 4px 18px rgba(255,107,0,0.35);
+}
+
+/* Single shine sweep — plays once every 4s */
+.enroll-btn::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -80%;
+  width: 55%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.32), transparent);
+  transform: skewX(-20deg);
+  animation: btnShineOnce 4s ease-in-out infinite;
+}
+
+.enroll-btn:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 28px rgba(255,107,0,0.55);
+}
+
+@keyframes btnShineOnce {
+  0%   { left: -80%; }
+  30%  { left: 120%; }
+  100% { left: 120%; }
+}
+
+/* ── CONTROLS ── */
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-top: 42px !important;
+  position: relative;
+  z-index: 10;
+}
+
+@media (max-width: 480px) {
+  .controls { margin-top: 28px; gap: 14px; }
+  .card-face { padding: 20px 16px 18px; }
+  .course-name { font-size: 2rem !important; }
+  .final-price { font-size: 1.4rem; }
+  .enroll-btn { font-size: 0.78rem; padding: 10px; }
+  .badge { font-size: 0.55rem; padding: 3px 9px; }
+  .feature { font-size: 0.7rem; }
+}
+
+@media (max-width: 768px) and (min-width: 481px) {
+  .controls { margin-top: 34px; }
+  .card-face { padding: 22px 18px 20px; }
+}
+
+.nav-btn {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255,107,0,0.45);
+  background: rgba(255,107,0,0.1);
+  color: #ff9a00;
+  font-size: 1.1rem;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  transition: all 0.22s;
+  padding: 0 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+.nav-btn:hover {
+  background: rgba(255,107,0,0.28);
+  border-color: #ff6b00;
+  box-shadow: 0 0 18px rgba(255,107,0,0.4);
+  transform: scale(1.12);
+}
+
+.dots { display: flex; gap: 7px; }
+
+.dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: rgba(255,107,0,0.25);
+  cursor: pointer;
+  transition: all 0.38s cubic-bezier(0.34,1.56,0.64,1);
+  border: 1px solid rgba(255,107,0,0.4);
+}
+.dot.active {
+  background: #ff6b00;
+  width: 26px;
+  border-radius: 4px;
+  box-shadow: 0 0 12px rgba(255,107,0,0.6);
+}
+
+/* Particles */
+.particle {
+  position: fixed;
+  border-radius: 50%;
+  opacity: 0;
+  animation: floatUp var(--dur) ease-in infinite;
+  animation-delay: var(--delay);
+  left: var(--x);
+  bottom: -8px;
+  pointer-events: none;
+}
+@keyframes floatUp {
+  0%   { opacity: 0; transform: translateY(0) scale(1) rotate(0deg); }
+  15%  { opacity: 0.55; }
+  85%  { opacity: 0.12; }
+  100% { opacity: 0; transform: translateY(-100vh) scale(0.2) rotate(360deg); }
+}
+
+/* Liquid ripple */
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,154,0,0.22) 0%, transparent 70%);
+  transform: scale(0);
+  animation: rippleOut 0.95s ease-out forwards;
+  pointer-events: none;
+  z-index: 5;
+}
+@keyframes rippleOut { to { transform: scale(5); opacity: 0; } }
+</style>
+</head>
+<body>
+
+<div class="bg-blob"></div>
+<div class="bg-blob"></div>
+<div class="bg-blob"></div>
+
+
+
+<div class="scene">
+  <div class="carousel" id="carousel">
+
+    <div class="card" data-index="0">
+      <div class="card-face">
+        <div class="badge">🎯 Limited Welcome Offer</div>
+        <div class="card-body">
+          <div class="course-label">JKSSB Driver Course Package</div>
+          <div class="course-name">FULL<br>COURSE</div>
+          <div class="subtitle">100% Syllabus Covered</div>
+          <div class="features">
+            <div class="feature">Full Course Material</div>
+            <div class="feature">Weekly Mock Tests</div>
+            <div class="feature">Toppers Handwritten Notes</div>
+          </div>
+        </div>
+        <div class="price-section">
+          <div class="original-price">Original Price Rs 1999</div>
+          <div class="offer-badge">42% OFF — Limited Offer</div>
+          <div class="final-price">Rs 1149</div>
+        </div>
+        <button class="enroll-btn">ENROLL NOW</button>
+      </div>
+    </div>
+
+    <div class="card" data-index="1">
+      <div class="card-face">
+        <div class="badge">🔥 Limited Welcome Offer</div>
+        <div class="card-body">
+          <div class="course-label">JKSSB Driver Course Package</div>
+          <div class="course-name">PART I</div>
+          <div class="subtitle">100% Syllabus Covered</div>
+        </div>
+        <div class="price-section">
+          <div class="original-price">Original Price Rs 499</div>
+          <div class="offer-badge">20% OFF — Limited Offer</div>
+          <div class="final-price">Rs 399</div>
+        </div>
+        <button class="enroll-btn">ENROLL NOW</button>
+      </div>
+    </div>
+
+    <div class="card" data-index="2">
+      <div class="card-face">
+        <div class="badge">🔥 Limited Welcome Offer</div>
+        <div class="card-body">
+          <div class="course-label">JKSSB Driver Course Package</div>
+          <div class="course-name">PART II</div>
+          <div class="subtitle">100% Syllabus Covered</div>
+        </div>
+        <div class="price-section">
+          <div class="original-price">Original Price Rs 499</div>
+          <div class="offer-badge">20% OFF — Limited Offer</div>
+          <div class="final-price">Rs 399</div>
+        </div>
+        <button class="enroll-btn">ENROLL NOW</button>
+      </div>
+    </div>
+
+    <div class="card" data-index="3">
+      <div class="card-face">
+        <div class="badge">🔥 Limited Welcome Offer</div>
+        <div class="card-body">
+          <div class="course-label">JKSSB Driver Course Package</div>
+          <div class="course-name">PART III</div>
+          <div class="subtitle">100% Syllabus Covered</div>
+        </div>
+        <div class="price-section">
+          <div class="original-price">Original Price Rs 499</div>
+          <div class="offer-badge">20% OFF — Limited Offer</div>
+          <div class="final-price">Rs 399</div>
+        </div>
+        <button class="enroll-btn">ENROLL NOW</button>
+      </div>
+    </div>
+
+    <div class="card" data-index="4">
+      <div class="card-face">
+        <div class="badge">📞 Contact Us</div>
+        <div class="card-body">
+          <div class="course-label">www.jkssbdriversacademy.co.in</div>
+          <div class="course-name" style="font-size:1.45rem;line-height:1.25">JKSSB<br>DRIVERS<br>ACADEMY</div>
+          <div class="features" style="margin-top:14px">
+            <div class="feature">WhatsApp/Call: 7006139763</div>
+            <div class="feature">Telegram: JKSSB DRIVERS ACADEMY</div>
+          </div>
+        </div>
+        <div class="price-section">
+          <div class="offer-badge" style="font-size:0.7rem;color:var(--amber)">J&K's Only JKSSB Driver Platform</div>
+        </div>
+        <button class="enroll-btn">ENROLL NOW</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="controls">
+  <button class="nav-btn" id="prev">&#8592;</button>
+  <div class="dots" id="dots"></div>
+  <button class="nav-btn" id="next">&#8594;</button>
+</div>
+
+<script>
+  // Particles
+  const pColors = ['#ff6b00','#ff9a00','#ffd700','#ffb347','#ff8c00'];
+  for (let i = 0; i < 22; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.setProperty('--x',     Math.random() * 100 + 'vw');
+    p.style.setProperty('--dur',   (7 + Math.random() * 10) + 's');
+    p.style.setProperty('--delay', (Math.random() * 12) + 's');
+    const sz = (1.5 + Math.random() * 2.5) + 'px';
+    p.style.width = sz; p.style.height = sz;
+    p.style.background = pColors[Math.floor(Math.random() * pColors.length)];
+    document.body.appendChild(p);
+  }
+
+  const carousel = document.getElementById('carousel');
+  const cards    = [...carousel.querySelectorAll('.card')];
+  const dotsEl   = document.getElementById('dots');
+  const N        = cards.length;
+  let current    = 0;
+  let autoTimer;
+  let busy       = false;
+
+  // Dots
+  cards.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.addEventListener('click', () => goTo(i));
+    dotsEl.appendChild(d);
+  });
+
+  function positionCards() {
+    const w = window.innerWidth;
+    const SPREAD = w < 480 ? 32 : w < 768 ? 38 : 42;
+    const DEPTH  = w < 480 ? 140 : w < 768 ? 180 : 220;
+    const XSHIFT = w < 480 ? 110 : w < 768 ? 140 : 170;
+
+    cards.forEach((card, i) => {
+      let off = i - current;
+      if (off >  N / 2) off -= N;
+      if (off < -N / 2) off += N;
+
+      const rotY = off * SPREAD;
+      const tx   = off * XSHIFT;
+      const tz   = -Math.abs(off) * DEPTH;
+      const sc   = off === 0 ? 1.06 : Math.max(0.62, 0.86 - Math.abs(off) * 0.12);
+      const op   = off === 0 ? 1    : Math.max(0.22, 0.6 - Math.abs(off) * 0.17);
+
+      card.style.transform = `translateX(${tx}px) translateZ(${tz}px) rotateY(${rotY}deg) scale(${sc})`;
+      card.style.opacity   = op;
+      card.style.zIndex    = off === 0 ? 20 : Math.max(1, 10 - Math.abs(off) * 3);
+
+      card.classList.toggle('active', off === 0);
+      card.classList.toggle('behind', Math.abs(off) >= 2);
+
+      card.style.pointerEvents = off === 0 ? 'auto' : 'none';
+    });
+
+    document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === current));
+  }
+
+  // Re-position on resize
+  window.addEventListener('resize', positionCards);
+
+  function goTo(i) {
+    if (busy) return;
+    busy = true;
+    current = ((i % N) + N) % N;
+    positionCards();
+    resetAuto();
+    setTimeout(() => { busy = false; }, 920);
+  }
+
+  const next = () => goTo(current + 1);
+  const prev = () => goTo(current - 1);
+
+  document.getElementById('next').addEventListener('click', next);
+  document.getElementById('prev').addEventListener('click', prev);
+
+  function startAuto() { autoTimer = setInterval(next, 3800); }
+  function resetAuto()  { clearInterval(autoTimer); startAuto(); }
+
+  // Touch swipe
+  let tx0 = 0;
+  carousel.addEventListener('touchstart', e => { tx0 = e.touches[0].clientX; }, { passive: true });
+  carousel.addEventListener('touchend',   e => {
+    const d = tx0 - e.changedTouches[0].clientX;
+    if (Math.abs(d) > 40) d > 0 ? next() : prev();
+  });
+
+  // Mouse drag
+  let mx0 = 0, dragging = false;
+  document.addEventListener('mousedown', e => { mx0 = e.clientX; dragging = true; });
+  document.addEventListener('mouseup',   e => {
+    if (!dragging) return;
+    const d = mx0 - e.clientX;
+    if (Math.abs(d) > 55) d > 0 ? next() : prev();
+    dragging = false;
+  });
+
+  // Keyboard
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight') next();
+    if (e.key === 'ArrowLeft')  prev();
+  });
+
+  // Liquid ripple
+  cards.forEach(card => {
+    card.addEventListener('click', function(e) {
+      if (!this.classList.contains('active')) return;
+      const face = this.querySelector('.card-face');
+      const r    = face.getBoundingClientRect();
+      const rpl  = document.createElement('div');
+      rpl.className = 'ripple';
+      const sz = Math.max(r.width, r.height) * 1.6;
+      rpl.style.cssText = `width:${sz}px;height:${sz}px;left:${e.clientX-r.left-sz/2}px;top:${e.clientY-r.top-sz/2}px`;
+      face.appendChild(rpl);
+      setTimeout(() => rpl.remove(), 950);
+    });
+  });
+
+  positionCards();
+  startAuto();
+</script>
+</body>
+</html>
