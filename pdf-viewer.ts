@@ -102,10 +102,6 @@ const attemptFullscreen = () => {
     }
 };
 
-// Bind to click because it is the most strongly trusted gesture for Fullscreen APIs
-document.addEventListener('click', attemptFullscreen, { once: true });
-document.addEventListener('touchstart', attemptFullscreen, { once: true });
-
 // Floating Exit Button Logic
 let exitBtnTimeout: any;
 const floatingBtn = document.getElementById('floating-exit-btn');
@@ -165,8 +161,6 @@ async function loadPdfJs(): Promise<void> {
         script.onload = () => {
             const pdfjsLib = (window as any).pdfjsLib;
             pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-            // Boost worker thread for background memory rendering
-            pdfjsLib.GlobalWorkerOptions.workerPort = new Worker(pdfjsLib.GlobalWorkerOptions.workerSrc);
             resolve();
         };
         script.onerror = reject;
@@ -355,7 +349,20 @@ function setupNavigation(): void {
 
 // ── Boot ────────────────────────────────────────────────────────────────────
 
-loadPdf();
+const btnOpenPdf = document.getElementById('btn-open-pdf');
+if (btnOpenPdf) {
+    btnOpenPdf.addEventListener('click', () => {
+        // 1. Synchronously execute Fullscreen strictly mapped to this physical click
+        attemptFullscreen();
+
+        // 2. Hide Opening UI, Show Spinner 
+        document.getElementById('open-overlay')!.style.display = 'none';
+        document.getElementById('loading-indicator')!.style.display = 'flex';
+
+        // 3. Initiate PDF Network Load
+        loadPdf();
+    });
+}
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {

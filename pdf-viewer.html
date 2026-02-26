@@ -3,7 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <meta name="theme-color" content="#B45309">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <title>PDF Viewer | JKSSB Drivers Academy</title>
@@ -118,21 +119,9 @@
             right: 0;
             bottom: 56px;
             overflow-y: auto;
-            overflow-x: hidden;
+            overflow-x: auto;
             background: #1a1a1a;
             -webkit-overflow-scrolling: touch;
-        }
-
-        /* Security: transparent overlay blocks right-click and drag */
-        .security-overlay {
-            position: fixed;
-            top: 56px;
-            left: 0;
-            right: 0;
-            bottom: 56px;
-            z-index: 50;
-            pointer-events: all;
-            background: transparent;
         }
 
 
@@ -377,10 +366,24 @@
     </button>
 
     <!-- Loading screen -->
+    <!-- Loading screen & Open Overlay -->
     <div class="loading-screen" id="loading">
-        <div class="spinner"></div>
-        <div class="loading-name" id="loading-name">Loading PDF...</div>
-        <div class="loading-text" id="loading-progress">Please wait</div>
+        <div id="open-overlay" style="display: flex; flex-direction: column; align-items: center; gap: 16px;">
+            <div class="loading-name" id="loading-name">Document</div>
+            <button id="btn-open-pdf"
+                style="padding: 14px 32px; font-size: 16px; font-weight: 700; background: #e07b2a; color: #fff; border: none; border-radius: 24px; cursor: pointer; box-shadow: 0 4px 12px rgba(224, 123, 42, 0.4);">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    style="vertical-align: middle; margin-right: 6px;">
+                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
+                Open Fullscreen
+            </button>
+        </div>
+
+        <div id="loading-indicator" style="display: none; flex-direction: column; align-items: center; gap: 16px;">
+            <div class="spinner"></div>
+            <div class="loading-text" id="loading-progress">Loading please wait...</div>
+        </div>
     </div>
 
     <!-- Error screen -->
@@ -403,9 +406,6 @@
         <div class="pdf-title" id="pdf-title">Loading...</div>
         <div class="page-info" id="page-info">—</div>
     </div>
-
-    <!-- Security overlay — blocks right-click and drag on top of canvas -->
-    <div class="security-overlay" id="security-overlay"></div>
 
     <!-- Scrollable canvas area -->
     <div class="canvas-scroll" id="canvas-scroll">
