@@ -217,11 +217,59 @@
     }, true); // Use capture phase to intercept before React/Vue/Local listeners
   }
 
+  /* ── Secure App-Locked Downloader ─────────────────────────────── */
+  window.downloadPdfSafely = async function (btnElement, pdfUrl, pdfName) {
+    if (!pdfUrl) return;
+    var originalText = btnElement.innerHTML;
+    try {
+      btnElement.disabled = true;
+      btnElement.innerHTML = '⏳ Downloading...';
+
+      // 1. Fetch raw PDF Blob
+      const response = await fetch(pdfUrl);
+      if (!response.ok) throw new Error('Network response was not ok');
+
+      // 2. We use the exact URL as the cache key.
+      const cache = await window.caches.open('jkssb-pdf-cache-v1');
+      await cache.put(pdfUrl, response.clone());
+
+      // 3. Set the 30-Day Timebomb in pure localStorage
+      const thirtyDaysMs = 30 * 24 * 60 * 60 * 1000;
+      const expiry = Date.now() + thirtyDaysMs;
+
+      const downloads = JSON.parse(localStorage.getItem('jkssb_downloads') || '{}');
+      downloads[pdfUrl] = { name: pdfName, expiresAt: expiry };
+      localStorage.setItem('jkssb_downloads', JSON.stringify(downloads));
+
+      // 4. Update UI
+      btnElement.innerHTML = '✅ Downloaded';
+      btnElement.style.background = '#059669'; // Green success
+
+      // Flash a custom toast if available
+      if (document.getElementById('toast-container')) {
+        showToast('PDF securely downloaded for offline access! Valid for 30 days.', 'success');
+      }
+
+    } catch (e) {
+      console.error('Download failed', e);
+      btnElement.innerHTML = '❌ Failed';
+      setTimeout(() => {
+        btnElement.disabled = false;
+        btnElement.innerHTML = originalText;
+      }, 3000);
+    }
+  };
+
   /* ── Init ─────────────────────────────────────────────────────── */
   function init() {
     buildNav();
     buildFooter();
     interceptPdfs();
+
+    // Inject the global App-Locked PDF Downloader scanner
+    var dlScript = document.createElement('script');
+    dlScript.src = './inject-download-buttons.js';
+    document.body.appendChild(dlScript);
 
     // Register Service Worker for heavy caching and offline PDFs
     if ('serviceWorker' in navigator) {

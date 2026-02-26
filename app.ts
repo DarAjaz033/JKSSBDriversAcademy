@@ -12,6 +12,7 @@ import {
   initSessionVerifier,
   stopSessionVerifier
 } from './auth-service';
+import { purgeExpiredDownloads } from './offline-manager';
 
 interface PageState {
   currentPage: string;
@@ -37,6 +38,10 @@ class App {
 
   constructor() {
     this.init();
+
+    // Purge any offline PDF's that have passed their 30-day secure timebomb.
+    // Done here so it executes on every app launch.
+    setTimeout(() => purgeExpiredDownloads(), 1000); // slight delay to prioritize core paint
   }
 
   private init(): void {

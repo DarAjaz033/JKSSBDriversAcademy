@@ -66,26 +66,35 @@ document.getElementById('loading-name')!.textContent = pdfName;
 
 let isExplicitlyExiting = false;
 
-// Strict vendor-prefixed requestFullscreen
-const requestFullscreenStrict = async (element: HTMLElement) => {
+// Strict vendor-prefixed requestFullscreen (Must be synchronous!)
+const requestFullscreenStrict = (element: HTMLElement) => {
     const el = element as any;
     if (el.requestFullscreen) {
-        await el.requestFullscreen();
+        el.requestFullscreen();
     } else if (el.webkitRequestFullscreen) {
-        await el.webkitRequestFullscreen();
+        el.webkitRequestFullscreen();
     } else if (el.mozRequestFullScreen) {
-        await el.mozRequestFullScreen();
+        el.mozRequestFullScreen();
     } else if (el.msRequestFullscreen) {
-        await el.msRequestFullscreen();
+        el.msRequestFullscreen();
+    }
+
+    // iOS Safari workaround: iOS blocking fullscreen on plain DIVs.
+    // Use a hidden video element's webkitEnterFullscreen as a hack payload.
+    const iosHackVideo = document.getElementById('ios-fullscreen-hack') as any;
+    if (iosHackVideo && iosHackVideo.webkitEnterFullscreen) {
+        iosHackVideo.webkitEnterFullscreen();
     }
 };
 
 // Attempt to forcefully enter fullscreen upon the user's first interaction
-const attemptFullscreen = async () => {
+const attemptFullscreen = () => {
     try {
-        const isFullscreen = document.fullscreenElement || (document as any).webkitFullscreenElement || (document as any).mozFullScreenElement || (document as any).msFullscreenElement;
+        const doc = document as any;
+        const isFullscreen = document.fullscreenElement || doc.webkitFullscreenElement || doc.mozFullScreenElement || doc.msFullscreenElement;
+
         if (!isFullscreen) {
-            await requestFullscreenStrict(document.documentElement);
+            requestFullscreenStrict(document.documentElement);
             document.body.classList.add('pdf-active');
         }
     } catch (e) {
@@ -93,9 +102,9 @@ const attemptFullscreen = async () => {
     }
 };
 
-document.addEventListener('pointerdown', attemptFullscreen, { once: true });
+// Bind to click because it is the most strongly trusted gesture for Fullscreen APIs
+document.addEventListener('click', attemptFullscreen, { once: true });
 document.addEventListener('touchstart', attemptFullscreen, { once: true });
-document.addEventListener('keydown', attemptFullscreen, { once: true });
 
 // Floating Exit Button Logic
 let exitBtnTimeout: any;
@@ -154,8 +163,10 @@ async function loadPdfJs(): Promise<void> {
         const script = document.createElement('script');
         script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
         script.onload = () => {
-            (window as any).pdfjsLib.GlobalWorkerOptions.workerSrc =
-                'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+            const pdfjsLib = (window as any).pdfjsLib;
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+            // Boost worker thread for background memory rendering
+            pdfjsLib.GlobalWorkerOptions.workerPort = new Worker(pdfjsLib.GlobalWorkerOptions.workerSrc);
             resolve();
         };
         script.onerror = reject;
@@ -172,43 +183,83 @@ const SCALE = Math.min(window.innerWidth / 600, 1.8);
 
 // ── Render engine ────────────────────────────────────────────────────────────
 
-async function renderPage(pageNum: number): Promise<void> {
-    if (!pdfDoc) return;
-    const page = await pdfDoc.getPage(pageNum);
-    const viewport = page.getViewport({ scale: SCALE });
+const renderedPagesCache = new Map<number, HTMLElement>();
 
-    const wrap = document.createElement('div');
-    wrap.className = 'page-canvas-wrap';
+async function renderPage(pageNum: number, isBackground = false): Promise<HTMLElement | null> {
+    if (!pdfDoc) return null;
 
-    const canvas = document.createElement('canvas');
-    canvas.width = viewport.width;
-    canvas.height = viewport.height;
+    // Return instantly from memory cache if already rendered
+    if (renderedPagesCache.has(pageNum)) {
+        return renderedPagesCache.get(pageNum)!;
+    }
 
-    const ctx = canvas.getContext('2d')!;
-    await page.render({ canvasContext: ctx, viewport }).promise;
+    try {
+        const page = await pdfDoc.getPage(pageNum);
+        const viewport = page.getViewport({ scale: SCALE });
 
-    // Block any potential link overlays that PDF.js sometimes native-renders
-    const annotationLayer = document.createElement('div');
-    annotationLayer.style.position = 'absolute';
-    annotationLayer.style.inset = '0';
-    annotationLayer.style.zIndex = '10';
-    annotationLayer.style.pointerEvents = 'none'; // Ensure canvas grabs events, but links are dead
+        const wrap = document.createElement('div');
+        wrap.className = 'page-canvas-wrap';
+        wrap.id = `pdf-page-${pageNum}`;
 
-    wrap.appendChild(canvas);
-    wrap.appendChild(annotationLayer);
+        const canvas = document.createElement('canvas');
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
 
-    return wrap as any;
+        const ctx = canvas.getContext('2d')!;
+        await page.render({ canvasContext: ctx, viewport }).promise;
+
+        // Block any potential link overlays that PDF.js sometimes native-renders
+        const annotationLayer = document.createElement('div');
+        annotationLayer.style.position = 'absolute';
+        annotationLayer.style.inset = '0';
+        annotationLayer.style.zIndex = '10';
+        annotationLayer.style.pointerEvents = 'none';
+
+        wrap.appendChild(canvas);
+        wrap.appendChild(annotationLayer);
+
+        // Save to fast memory cache
+        renderedPagesCache.set(pageNum, wrap);
+
+        return wrap;
+    } catch (e) {
+        console.warn(`[PDF Render] Failed page ${pageNum}:`, e);
+        return null;
+    }
 }
 
-async function renderAllPages(): Promise<void> {
+async function renderInitialPages(): Promise<void> {
     const container = document.getElementById('pages-wrap')!;
     container.innerHTML = '';
+    renderedPagesCache.clear();
 
     const progress = document.getElementById('loading-progress')!;
-    for (let i = 1; i <= totalPages; i++) {
+
+    // 1. Instantly render and mount the first 3 pages (or total if less)
+    const initialBatch = Math.min(3, totalPages);
+    for (let i = 1; i <= initialBatch; i++) {
         progress.textContent = `Rendering page ${i} of ${totalPages}...`;
-        const wrap = await renderPage(i) as any;
-        container.appendChild(wrap);
+        const wrap = await renderPage(i);
+        if (wrap) container.appendChild(wrap);
+    }
+
+    // 2. Hide loading screen immediately so user can read page 1
+    (document.getElementById('loading') as HTMLElement).style.display = 'none';
+
+    // 3. Lazy-load the remaining pages silently in the background
+    if (totalPages > initialBatch) {
+        lazyLoadRemainingPages(initialBatch + 1, container);
+    }
+}
+
+async function lazyLoadRemainingPages(startPage: number, container: HTMLElement) {
+    for (let i = startPage; i <= totalPages; i++) {
+        // Render silently
+        const wrap = await renderPage(i, true);
+        if (wrap && pdfDoc) {
+            // Append to DOM sequentially so scrolling is unbroken
+            container.appendChild(wrap);
+        }
     }
 }
 
@@ -233,11 +284,8 @@ async function loadPdf(): Promise<void> {
         document.getElementById('page-info')!.textContent = `1 / ${totalPages}`;
         (document.getElementById('page-input') as HTMLInputElement).max = String(totalPages);
 
-        await renderAllPages();
+        await renderInitialPages();
         setupNavigation();
-
-        // Hide loading
-        (document.getElementById('loading') as HTMLElement).style.display = 'none';
 
     } catch (err: any) {
         console.error('[PDFViewer]', err);
