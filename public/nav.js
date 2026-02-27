@@ -119,9 +119,9 @@
       '.njf-links a:hover { opacity:1; }' +
       '.njf-sep { opacity:0.3;font-size:11px; }' +
       '.njf-bottom { border-top:1px solid var(--app-bar-text, #fff);padding-top:6px;opacity:0.8;' +
-      'display:flex;flex-wrap:wrap;justify-content:center;gap:2px 10px; }' +
+      'display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center; }' +
       '.njf-copy,.njf-designed { font-size:10.5px;color:var(--app-bar-text, #fff);opacity:0.8;margin:0; }' +
-      '.njf-designer { font-weight:600;color:var(--app-bar-text, #fff);opacity:1; }' +
+      '.njf-designer { font-weight:600;color:inherit;opacity:1;text-decoration:none;pointer-events:auto; }' +
 
       /* Push body content above fixed bottom nav */
       'body { padding-bottom:calc(62px + env(safe-area-inset-bottom,0px)) !important; }' +
@@ -193,7 +193,7 @@
       '</div>' +
       '<div class="njf-bottom">' +
       '<p class="njf-copy">&copy; ' + yr + ' JKSSB Drivers Academy. All rights reserved.</p>' +
-      '<p class="njf-designed">Designed by <span class="njf-designer">Dar Ajaz</span></p>' +
+      '<p class="njf-designed">Designed by <a href="https://www.facebook.com/darajaz033" target="_blank" class="njf-designer">Dar Ajaz</a></p>' +
       '</div>';
 
     /* Insert footer BEFORE the bottom nav so it appears above it */

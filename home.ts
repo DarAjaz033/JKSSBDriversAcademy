@@ -230,7 +230,13 @@ class HomePage {
         price: c.price,
         duration: c.duration,
         paymentLink: c.paymentLink
-      }));
+      })).sort((a, b) => {
+        const aEnrolled = enrolledIds.includes(a.id);
+        const bEnrolled = enrolledIds.includes(b.id);
+        if (aEnrolled && !bEnrolled) return -1;
+        if (!aEnrolled && bEnrolled) return 1;
+        return 0;
+      });
 
       this.coursesContainer.innerHTML = courses.map(course =>
         this.renderCourseCard(course, enrolledIds.includes(course.id))

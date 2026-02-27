@@ -1,11 +1,11 @@
-import{o as b,g as C}from"./auth-service-BYs2Equ7.js";import{e as d}from"./escape-html-BUkjI-KV.js";import{g as k}from"./admin-service-WdanE3z8.js";function S(r){return`jkssb_enrolled_${r}`}function x(r,t){const l=S(t),e=JSON.parse(localStorage.getItem(l)??"[]");e.includes(r)||(e.push(r),localStorage.setItem(l,JSON.stringify(e))),window.location.href="./my-courses.html"}function E(r){var u,g,p,v;(u=document.getElementById("course-detail-modal"))==null||u.remove();const t=(r.syllabus??"").split(`
-`).map(o=>o.trim()).filter(Boolean),l=[],e=((g=r.description)==null?void 0:g.trim())??"",n=e.split(/\s*\d+\.\s+/).map(o=>o.trim()).filter(Boolean);let a="";n.length>1?(a=n[0],l.push(...n.slice(1))):e&&l.push(e);const c=t.length?`<ul class="cdm-list">${t.map(o=>`<li>${d(o)}</li>`).join("")}</ul>`:'<p style="color:#888;font-style:italic;">No syllabus added yet.</p>',s=l.length?`${a?`<p class="cdm-desc-heading">${d(a)}</p>`:""}<ul class="cdm-list">${l.map(o=>`<li>${d(o)}</li>`).join("")}</ul>`:e?`<p style="color:#ccc;line-height:1.7;">${d(e)}</p>`:'<p style="color:#888;font-style:italic;">No description added yet.</p>',i=document.createElement("div");i.id="course-detail-modal",i.className="cdm-overlay",i.innerHTML=`
+import{o as b,g as C}from"./auth-service-BYs2Equ7.js";import{e as g}from"./escape-html-BUkjI-KV.js";import{g as k}from"./admin-service-WdanE3z8.js";function S(r){return`jkssb_enrolled_${r}`}function x(r,t){const l=S(t),s=JSON.parse(localStorage.getItem(l)??"[]");s.includes(r)||(s.push(r),localStorage.setItem(l,JSON.stringify(s))),window.location.href="./my-courses.html"}function E(r){var c,u,p,v;(c=document.getElementById("course-detail-modal"))==null||c.remove();const t=(r.syllabus??"").split(`
+`).map(o=>o.trim()).filter(Boolean),l=[],s=((u=r.description)==null?void 0:u.trim())??"",a=s.split(/\s*\d+\.\s+/).map(o=>o.trim()).filter(Boolean);let n="";a.length>1?(n=a[0],l.push(...a.slice(1))):s&&l.push(s);const d=t.length?`<ul class="cdm-list">${t.map(o=>`<li>${g(o)}</li>`).join("")}</ul>`:'<p style="color:#888;font-style:italic;">No syllabus added yet.</p>',e=l.length?`${n?`<p class="cdm-desc-heading">${g(n)}</p>`:""}<ul class="cdm-list">${l.map(o=>`<li>${g(o)}</li>`).join("")}</ul>`:s?`<p style="color:#ccc;line-height:1.7;">${g(s)}</p>`:'<p style="color:#888;font-style:italic;">No description added yet.</p>',i=document.createElement("div");i.id="course-detail-modal",i.className="cdm-overlay",i.innerHTML=`
     <div class="cdm-panel" role="dialog" aria-modal="true">
       <div class="cdm-header">
         <button class="cdm-close" aria-label="Close">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
-        <h2 class="cdm-title">${d(r.title)}</h2>
+        <h2 class="cdm-title">${g(r.title)}</h2>
         <div class="cdm-price">₹${r.price.toLocaleString()}</div>
       </div>
 
@@ -16,7 +16,7 @@ import{o as b,g as C}from"./auth-service-BYs2Equ7.js";import{e as d}from"./escap
           <svg class="cdm-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
         <div class="cdm-section" id="cdm-syllabus" style="display:none;">
-          ${c}
+          ${d}
         </div>
 
         <!-- Description toggle -->
@@ -25,7 +25,7 @@ import{o as b,g as C}from"./auth-service-BYs2Equ7.js";import{e as d}from"./escap
           <svg class="cdm-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
         <div class="cdm-section" id="cdm-description" style="display:none;">
-          ${s}
+          ${e}
         </div>
       </div>
 
@@ -40,11 +40,11 @@ import{o as b,g as C}from"./auth-service-BYs2Equ7.js";import{e as d}from"./escap
 
 (Demo payment — no real charge)
 
-Click OK to confirm.`)&&(i.remove(),x(r.id,o.uid))}),(v=i.querySelector(".cdm-close"))==null||v.addEventListener("click",()=>i.remove()),document.body.appendChild(i)}class L{constructor(){this.currentUser=null,this.coursesContainer=document.querySelector(".course-cards"),this.init(),this.setupExpandTopicsDelegation()}setupExpandTopicsDelegation(){document.addEventListener("click",t=>{var s;const l=t.target.closest(".expand-more-topics-btn");if(!l)return;t.preventDefault(),t.stopPropagation();const e=l,n=e.closest(".course-description-card"),a=n==null?void 0:n.querySelector(".course-topics-extra");if(!a)return;const c=getComputedStyle(a).display==="none";a.style.display=c?"block":"none",e.textContent=c?e.dataset.lessText||"Show less":e.dataset.moreText||"+ more topics",(s=window.lucide)==null||s.createIcons()})}async init(){b(async t=>{this.currentUser=t,await this.loadCourses()})}async loadCourses(){var t,l;if(this.coursesContainer){this.coursesContainer.innerHTML=`
+Click OK to confirm.`)&&(i.remove(),x(r.id,o.uid))}),(v=i.querySelector(".cdm-close"))==null||v.addEventListener("click",()=>i.remove()),document.body.appendChild(i)}class L{constructor(){this.currentUser=null,this.coursesContainer=document.querySelector(".course-cards"),this.init(),this.setupExpandTopicsDelegation()}setupExpandTopicsDelegation(){document.addEventListener("click",t=>{var e;const l=t.target.closest(".expand-more-topics-btn");if(!l)return;t.preventDefault(),t.stopPropagation();const s=l,a=s.closest(".course-description-card"),n=a==null?void 0:a.querySelector(".course-topics-extra");if(!n)return;const d=getComputedStyle(n).display==="none";n.style.display=d?"block":"none",s.textContent=d?s.dataset.lessText||"Show less":s.dataset.moreText||"+ more topics",(e=window.lucide)==null||e.createIcons()})}async init(){b(async t=>{this.currentUser=t,await this.loadCourses()})}async loadCourses(){var t,l;if(this.coursesContainer){this.coursesContainer.innerHTML=`
       <div class="glass-card skeleton-glass"></div>
       <div class="glass-card skeleton-glass"></div>
       <div class="glass-card skeleton-glass"></div>
-    `;try{const e=await k(),n=e.success&&"courses"in e&&e.courses?e.courses:[];if(n.length===0){this.coursesContainer.innerHTML=`
+    `;try{const s=await k(),a=s.success&&"courses"in s&&s.courses?s.courses:[];if(a.length===0){this.coursesContainer.innerHTML=`
           <div class="alert-card info" style="grid-column:1/-1;">
             <div class="alert-icon"><i data-lucide="info"></i></div>
             <div class="alert-content">
@@ -52,7 +52,7 @@ Click OK to confirm.`)&&(i.remove(),x(r.id,o.uid))}),(v=i.querySelector(".cdm-cl
               <p>Courses are being prepared. Check back soon!</p>
             </div>
           </div>
-        `,window.lucide.createIcons();return}const a=this.currentUser?(()=>{try{return JSON.parse(localStorage.getItem(`jkssb_enrolled_${this.currentUser.uid}`)??"[]")}catch{return[]}})():[],c=n.map(s=>({id:s.id,title:s.title,description:s.description,syllabus:s.syllabus,price:s.price,duration:s.duration,paymentLink:s.paymentLink}));this.coursesContainer.innerHTML=c.map(s=>this.renderCourseCard(s,a.includes(s.id))).join(""),this.coursesContainer.querySelectorAll(".btn-enrolled").forEach(s=>{s.addEventListener("click",()=>{window.location.href="./my-courses.html"})}),this.coursesContainer.querySelectorAll(".btn-enroll").forEach(s=>{s.addEventListener("click",()=>{const i=s.dataset.courseId,u=c.find(g=>g.id===i);u&&E(u)})}),(t=window.lucide)==null||t.createIcons()}catch(e){console.error("Error loading courses:",e),this.coursesContainer&&(this.coursesContainer.innerHTML=`
+        `,window.lucide.createIcons();return}const n=this.currentUser?(()=>{try{return JSON.parse(localStorage.getItem(`jkssb_enrolled_${this.currentUser.uid}`)??"[]")}catch{return[]}})():[],d=a.map(e=>({id:e.id,title:e.title,description:e.description,syllabus:e.syllabus,price:e.price,duration:e.duration,paymentLink:e.paymentLink})).sort((e,i)=>{const c=n.includes(e.id),u=n.includes(i.id);return c&&!u?-1:!c&&u?1:0});this.coursesContainer.innerHTML=d.map(e=>this.renderCourseCard(e,n.includes(e.id))).join(""),this.coursesContainer.querySelectorAll(".btn-enrolled").forEach(e=>{e.addEventListener("click",()=>{window.location.href="./my-courses.html"})}),this.coursesContainer.querySelectorAll(".btn-enroll").forEach(e=>{e.addEventListener("click",()=>{const i=e.dataset.courseId,c=d.find(u=>u.id===i);c&&E(c)})}),(t=window.lucide)==null||t.createIcons()}catch(s){console.error("Error loading courses:",s),this.coursesContainer&&(this.coursesContainer.innerHTML=`
           <div class="alert-card error" style="grid-column:1/-1;">
             <div class="alert-icon"><i data-lucide="alert-circle"></i></div>
             <div class="alert-content">
@@ -69,7 +69,7 @@ Click OK to confirm.`)&&(i.remove(),x(r.id,o.uid))}),(v=i.querySelector(".cdm-cl
                 <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
               </svg>
             </div>
-            <h3 class="glass-card-title">${d(t.title)}</h3>
+            <h3 class="glass-card-title">${g(t.title)}</h3>
             <button class="btn-enrolled glass-enrolled-btn" data-course-id="${t.id}">
               🎉 Enrolled
             </button>
@@ -85,7 +85,7 @@ Click OK to confirm.`)&&(i.remove(),x(r.id,o.uid))}),(v=i.querySelector(".cdm-cl
               <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
             </svg>
           </div>
-          <h3 class="glass-card-title">${d(t.title)}</h3>
+          <h3 class="glass-card-title">${g(t.title)}</h3>
           <div class="glass-card-price">₹${t.price.toLocaleString()}</div>
           <button class="btn-enroll glass-enroll-btn" data-course-id="${t.id}">
             View Details &amp; Enroll
