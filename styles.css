@@ -62,8 +62,151 @@
   --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
 
   /* App Layout */
-  --app-bar-height: 56px;
+  --app-bar-height: 68px;
   --bottom-nav-height: 64px;
+
+  /* App Bar Variables */
+  --app-bar-bg: linear-gradient(135deg, #B45309 0%, #D97706 50%, #EA580C 100%);
+  --app-bar-text: #FFFFFF;
+}
+
+/* ========================================
+   THEMES
+======================================== */
+
+/* Greenish Theme */
+[data-theme="green"] {
+  --primary: #059669;
+  --primary-dark: #047857;
+  --primary-light: #10B981;
+  --secondary: #16A34A;
+  --secondary-dark: #15803D;
+  --accent: #10B981;
+
+  --gradient-primary: linear-gradient(135deg, #059669 0%, #10B981 100%);
+  --gradient-secondary: linear-gradient(135deg, #16A34A 0%, #22C55E 100%);
+  --gradient-hero: linear-gradient(135deg, #047857 0%, #059669 50%, #10B981 100%);
+  --gradient-liquid: linear-gradient(135deg, rgba(5, 150, 105, 0.9) 0%, rgba(16, 185, 129, 0.8) 50%, rgba(34, 197, 94, 0.9) 100%);
+  --gradient-bg: linear-gradient(180deg, #FFFFFF 0%, #F0FDF4 20%, #DCFCE7 40%, #BBF7D0 60%, #86EFAC 80%, #4ADE80 100%);
+  --gradient-bg-light: linear-gradient(180deg, #FFFFFF 0%, #F0FDF4 30%, #DCFCE7 60%, #BBF7D0 100%);
+
+  --app-bar-bg: linear-gradient(135deg, #047857 0%, #059669 50%, #10B981 100%);
+  --app-bar-text: #FFFFFF;
+}
+
+/* Golden & White Theme */
+[data-theme="golden"] {
+  --primary: #D4AF37;
+  --primary-dark: #AA8A2E;
+  --primary-light: #F3E5AB;
+  --secondary: #B8860B;
+  --secondary-dark: #8B6508;
+  --accent: #FFD700;
+
+  --gradient-primary: linear-gradient(135deg, #D4AF37 0%, #FFD700 100%);
+  --gradient-secondary: linear-gradient(135deg, #B8860B 0%, #D4AF37 100%);
+  --gradient-hero: linear-gradient(135deg, #AA8A2E 0%, #D4AF37 50%, #FFD700 100%);
+  --gradient-liquid: linear-gradient(135deg, rgba(212, 175, 55, 0.9) 0%, rgba(255, 215, 0, 0.8) 50%, rgba(243, 229, 171, 0.9) 100%);
+  --gradient-bg: linear-gradient(180deg, #FFFFFF 0%, #FFFAF0 20%, #FFF8DC 40%, #FFFACD 60%, #FAFAD2 80%, #F0E68C 100%);
+  --gradient-bg-light: linear-gradient(180deg, #FFFFFF 0%, #FFFAF0 30%, #FFF8DC 60%, #FFFACD 100%);
+
+  --app-bar-bg: linear-gradient(135deg, #AA8A2E 0%, #D4AF37 50%, #FFD700 100%);
+  --app-bar-text: #333333;
+}
+
+/* Black Gradient Theme */
+[data-theme="black"] {
+  --primary: #171717;
+  --primary-dark: #0A0A0A;
+  --primary-light: #404040;
+  --secondary: #262626;
+  --secondary-dark: #1F1F1F;
+  --accent: #525252;
+
+  --gradient-primary: linear-gradient(135deg, #171717 0%, #404040 100%);
+  --gradient-secondary: linear-gradient(135deg, #262626 0%, #525252 100%);
+  --gradient-hero: linear-gradient(135deg, #0A0A0A 0%, #171717 50%, #404040 100%);
+  --gradient-liquid: linear-gradient(135deg, rgba(23, 23, 23, 0.9) 0%, rgba(64, 64, 64, 0.8) 50%, rgba(82, 82, 82, 0.9) 100%);
+  --gradient-bg: linear-gradient(180deg, #FFFFFF 0%, #F3F4F6 20%, #E5E7EB 40%, #D1D5DB 60%, #9CA3AF 80%, #6B7280 100%);
+  --gradient-bg-light: linear-gradient(180deg, #FFFFFF 0%, #F9FAFB 30%, #F3F4F6 60%, #E5E7EB 100%);
+
+  --app-bar-bg: linear-gradient(135deg, #0A0A0A 0%, #171717 50%, #404040 100%);
+  --app-bar-text: #FFFFFF;
+}
+
+/* Blue Gradient Theme */
+[data-theme="blue"] {
+  --primary: #2563EB;
+  --primary-dark: #1E40AF;
+  --primary-light: #60A5FA;
+  --secondary: #3B82F6;
+  --secondary-dark: #1D4ED8;
+  --accent: #93C5FD;
+
+  --gradient-primary: linear-gradient(135deg, #2563EB 0%, #60A5FA 100%);
+  --gradient-secondary: linear-gradient(135deg, #3B82F6 0%, #93C5FD 100%);
+  --gradient-hero: linear-gradient(135deg, #1E40AF 0%, #2563EB 50%, #60A5FA 100%);
+  --gradient-liquid: linear-gradient(135deg, rgba(37, 99, 235, 0.9) 0%, rgba(96, 165, 250, 0.8) 50%, rgba(147, 197, 253, 0.9) 100%);
+  --gradient-bg: linear-gradient(180deg, #FFFFFF 0%, #EFF6FF 20%, #DBEAFE 40%, #BFDBFE 60%, #93C5FD 80%, #60A5FA 100%);
+  --gradient-bg-light: linear-gradient(180deg, #FFFFFF 0%, #EFF6FF 30%, #DBEAFE 60%, #BFDBFE 100%);
+
+  --app-bar-bg: linear-gradient(135deg, #1E40AF 0%, #2563EB 50%, #60A5FA 100%);
+  --app-bar-text: #FFFFFF;
+}
+
+/* Dark Mode Theme */
+[data-theme="dark"] {
+  --primary: #4ADE80;
+  --primary-dark: #22C55E;
+  --primary-light: #86EFAC;
+  --secondary: #F43F5E;
+  --secondary-dark: #E11D48;
+  --accent: #60A5FA;
+
+  /* Proper Dark Inversions */
+  --bg-app: #121212;
+  --bg-card: #1E1E1E;
+  --text-primary: #F9FAFB !important;
+  --text-secondary: #D1D5DB !important;
+  --text-tertiary: #9CA3AF !important;
+  --border: #333333;
+  --shadow: rgba(0, 0, 0, 0.6);
+
+  --gradient-primary: linear-gradient(135deg, #22C55E 0%, #4ADE80 100%);
+  --gradient-secondary: linear-gradient(135deg, #E11D48 0%, #F43F5E 100%);
+  --gradient-hero: linear-gradient(135deg, #111111 0%, #1A1A1A 50%, #262626 100%);
+  --gradient-liquid: linear-gradient(135deg, rgba(34, 197, 94, 0.9) 0%, rgba(74, 222, 128, 0.8) 50%, rgba(134, 239, 172, 0.9) 100%);
+
+  --gradient-bg: linear-gradient(180deg, #121212 0%, #181818 20%, #1E1E1E 40%, #242424 60%, #2A2A2A 80%, #303030 100%) !important;
+  --gradient-bg-light: linear-gradient(180deg, #121212 0%, #1A1A1A 30%, #222222 60%, #2A2A2A 100%) !important;
+
+  --app-bar-bg: linear-gradient(135deg, #0A0A0A 0%, #141414 50%, #1E1E1E 100%);
+  --app-bar-text: #F9FAFB;
+}
+
+[data-theme="dark"] body {
+  background: var(--bg-app) !important;
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .info-card,
+[data-theme="dark"] .feature-item,
+[data-theme="dark"] .alert-card,
+[data-theme="dark"] .menu-list {
+  background: rgba(30, 30, 30, 0.7);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .menu-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] h2,
+[data-theme="dark"] h3,
+[data-theme="dark"] p,
+[data-theme="dark"] span,
+[data-theme="dark"] .menu-item {
+  color: var(--text-primary) !important;
 }
 
 html {
@@ -132,13 +275,21 @@ body::before {
   left: 0;
   right: 0;
   height: var(--app-bar-height);
-  background: rgba(255, 255, 255, 0.65);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  background: var(--app-bar-bg);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
   z-index: 1000;
-  backdrop-filter: blur(30px) saturate(180%);
-  -webkit-backdrop-filter: blur(30px) saturate(180%);
-  box-shadow: 0 1px 20px rgba(232, 144, 109, 0.1);
+  box-shadow: 0 4px 15px rgba(180, 83, 9, 0.25);
   animation: slideDown 0.5s ease-out;
+}
+
+.app-bar-title {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-weight: 700;
+  font-size: 20px;
+  color: var(--app-bar-text);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 @keyframes slideDown {
@@ -173,8 +324,8 @@ body::before {
 }
 
 .logo-circle {
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   border-radius: var(--radius-full);
   background: var(--gradient-primary);
   display: flex;
@@ -221,8 +372,8 @@ body::before {
 }
 
 .icon-btn {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: var(--radius-full);
   border: none;
   background: rgba(255, 255, 255, 0.6);
@@ -3463,4 +3614,442 @@ body::before {
   100% {
     background-position: 0% 50%;
   }
+}
+
+/* ========================================
+   THEME OVERRIDES FOR HARDCODED RGBA GRADIENTS
+======================================== */
+
+/* Greenish Theme */
+[data-theme="green"] .course-icon,
+[data-theme="green"] .feature-icon,
+[data-theme="green"] .author-avatar {
+  background: linear-gradient(135deg, rgba(5, 150, 105, 0.15) 0%, rgba(16, 185, 129, 0.15) 100%);
+  box-shadow: 0 4px 15px rgba(5, 150, 105, 0.1);
+}
+
+[data-theme="green"] .course-card:hover .course-icon,
+[data-theme="green"] .feature-item:hover .feature-icon {
+  background: linear-gradient(135deg, rgba(5, 150, 105, 0.25) 0%, rgba(16, 185, 129, 0.25) 100%);
+  box-shadow: 0 6px 20px rgba(5, 150, 105, 0.2);
+}
+
+[data-theme="green"] .alert-icon {
+  background: rgba(5, 150, 105, 0.1);
+}
+
+[data-theme="green"] .course-card,
+[data-theme="green"] .learning-card,
+[data-theme="green"] .feature-item {
+  border-color: rgba(5, 150, 105, 0.2);
+}
+
+[data-theme="green"] .course-card:hover,
+[data-theme="green"] .learning-card:hover,
+[data-theme="green"] .feature-item:hover {
+  border-color: rgba(5, 150, 105, 0.4);
+  box-shadow: 0 15px 50px rgba(5, 150, 105, 0.15);
+}
+
+/* Green Glass Card */
+[data-theme="green"] .glass-card {
+  box-shadow: 0 0 0 1px rgba(5, 150, 105, 0.12), 0 8px 32px rgba(5, 150, 105, 0.1), 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="green"] .glass-card:hover {
+  box-shadow: 0 0 0 1px rgba(5, 150, 105, 0.4), 0 20px 50px rgba(5, 150, 105, 0.15), 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="green"] .glass-card-glow {
+  background: radial-gradient(circle, rgba(5, 150, 105, 0.2) 0%, transparent 70%);
+}
+
+[data-theme="green"] .glass-card-icon {
+  background: linear-gradient(135deg, rgba(5, 150, 105, 0.3) 0%, rgba(16, 185, 129, 0.15) 100%);
+  border-color: rgba(5, 150, 105, 0.35);
+  color: #10b981;
+  box-shadow: 0 4px 16px rgba(5, 150, 105, 0.2);
+}
+
+[data-theme="green"] .glass-card-price {
+  background: linear-gradient(90deg, #059669, #10b981);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+/* Green Modal (CDM) */
+[data-theme="green"] .cdm-toggle-bar:hover {
+  background: rgba(5, 150, 105, 0.08);
+  color: #10b981;
+}
+
+[data-theme="green"] .cdm-arrow {
+  color: #059669;
+}
+
+[data-theme="green"] .cdm-list li::before {
+  background: #059669;
+}
+
+[data-theme="green"] .cdm-buy-btn {
+  background: linear-gradient(135deg, #047857 0%, #059669 40%, #10b981 100%);
+  box-shadow: 0 4px 20px rgba(5, 150, 105, 0.35);
+}
+
+[data-theme="green"] .cdm-buy-btn:hover:not(:disabled) {
+  box-shadow: 0 8px 28px rgba(5, 150, 105, 0.5);
+}
+
+/* Golden Theme */
+[data-theme="golden"] .course-icon,
+[data-theme="golden"] .feature-icon,
+[data-theme="golden"] .author-avatar {
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(255, 215, 0, 0.15) 100%);
+  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.1);
+}
+
+[data-theme="golden"] .course-card:hover .course-icon,
+[data-theme="golden"] .feature-item:hover .feature-icon {
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.25) 0%, rgba(255, 215, 0, 0.25) 100%);
+  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.2);
+}
+
+[data-theme="golden"] .alert-icon {
+  background: rgba(212, 175, 55, 0.1);
+}
+
+[data-theme="golden"] .course-card,
+[data-theme="golden"] .learning-card,
+[data-theme="golden"] .feature-item {
+  border-color: rgba(212, 175, 55, 0.2);
+}
+
+[data-theme="golden"] .course-card:hover,
+[data-theme="golden"] .learning-card:hover,
+[data-theme="golden"] .feature-item:hover {
+  border-color: rgba(212, 175, 55, 0.4);
+  box-shadow: 0 15px 50px rgba(212, 175, 55, 0.15);
+}
+
+/* Golden Glass Card */
+[data-theme="golden"] .glass-card {
+  box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.12), 0 8px 32px rgba(212, 175, 55, 0.1), 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="golden"] .glass-card:hover {
+  box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.4), 0 20px 50px rgba(212, 175, 55, 0.15), 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="golden"] .glass-card-glow {
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.2) 0%, transparent 70%);
+}
+
+[data-theme="golden"] .glass-card-icon {
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.3) 0%, rgba(255, 215, 0, 0.15) 100%);
+  border-color: rgba(212, 175, 55, 0.35);
+  color: #d4af37;
+  box-shadow: 0 4px 16px rgba(212, 175, 55, 0.2);
+}
+
+[data-theme="golden"] .glass-card-price {
+  background: linear-gradient(90deg, #aa8a2e, #d4af37);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+/* Golden Modal (CDM) */
+[data-theme="golden"] .cdm-toggle-bar:hover {
+  background: rgba(212, 175, 55, 0.08);
+  color: #d4af37;
+}
+
+[data-theme="golden"] .cdm-arrow {
+  color: #aa8a2e;
+}
+
+[data-theme="golden"] .cdm-list li::before {
+  background: #aa8a2e;
+}
+
+[data-theme="golden"] .cdm-buy-btn {
+  background: linear-gradient(135deg, #aa8a2e 0%, #d4af37 40%, #ffd700 100%);
+  box-shadow: 0 4px 20px rgba(212, 175, 55, 0.35);
+  color: #333;
+}
+
+[data-theme="golden"] .cdm-buy-btn:hover:not(:disabled) {
+  box-shadow: 0 8px 28px rgba(212, 175, 55, 0.5);
+}
+
+/* Black Theme */
+[data-theme="black"] .course-icon,
+[data-theme="black"] .feature-icon,
+[data-theme="black"] .author-avatar {
+  background: linear-gradient(135deg, rgba(23, 23, 23, 0.15) 0%, rgba(64, 64, 64, 0.15) 100%);
+  box-shadow: 0 4px 15px rgba(23, 23, 23, 0.1);
+}
+
+[data-theme="black"] .course-card:hover .course-icon,
+[data-theme="black"] .feature-item:hover .feature-icon {
+  background: linear-gradient(135deg, rgba(23, 23, 23, 0.25) 0%, rgba(64, 64, 64, 0.25) 100%);
+  box-shadow: 0 6px 20px rgba(23, 23, 23, 0.2);
+}
+
+[data-theme="black"] .alert-icon {
+  background: rgba(23, 23, 23, 0.1);
+}
+
+[data-theme="black"] .course-card,
+[data-theme="black"] .learning-card,
+[data-theme="black"] .feature-item {
+  border-color: rgba(23, 23, 23, 0.2);
+}
+
+[data-theme="black"] .course-card:hover,
+[data-theme="black"] .learning-card:hover,
+[data-theme="black"] .feature-item:hover {
+  border-color: rgba(23, 23, 23, 0.4);
+  box-shadow: 0 15px 50px rgba(23, 23, 23, 0.15);
+}
+
+/* Black Glass Card */
+[data-theme="black"] .glass-card {
+  box-shadow: 0 0 0 1px rgba(23, 23, 23, 0.12), 0 8px 32px rgba(23, 23, 23, 0.1), 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="black"] .glass-card:hover {
+  box-shadow: 0 0 0 1px rgba(23, 23, 23, 0.4), 0 20px 50px rgba(23, 23, 23, 0.15), 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="black"] .glass-card-glow {
+  background: radial-gradient(circle, rgba(23, 23, 23, 0.2) 0%, transparent 70%);
+}
+
+[data-theme="black"] .glass-card-icon {
+  background: linear-gradient(135deg, rgba(23, 23, 23, 0.3) 0%, rgba(64, 64, 64, 0.15) 100%);
+  border-color: rgba(23, 23, 23, 0.35);
+  color: #404040;
+  box-shadow: 0 4px 16px rgba(23, 23, 23, 0.2);
+}
+
+[data-theme="black"] .glass-card-price {
+  background: linear-gradient(90deg, #171717, #404040);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+/* Black Modal (CDM) */
+[data-theme="black"] .cdm-toggle-bar:hover {
+  background: rgba(23, 23, 23, 0.08);
+  color: #404040;
+}
+
+[data-theme="black"] .cdm-arrow {
+  color: #171717;
+}
+
+[data-theme="black"] .cdm-list li::before {
+  background: #171717;
+}
+
+[data-theme="black"] .cdm-buy-btn {
+  background: linear-gradient(135deg, #0a0a0a 0%, #171717 40%, #404040 100%);
+  box-shadow: 0 4px 20px rgba(23, 23, 23, 0.35);
+}
+
+[data-theme="black"] .cdm-buy-btn:hover:not(:disabled) {
+  box-shadow: 0 8px 28px rgba(23, 23, 23, 0.5);
+}
+
+/* Blue Theme */
+[data-theme="blue"] .course-icon,
+[data-theme="blue"] .feature-icon,
+[data-theme="blue"] .author-avatar {
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.15) 0%, rgba(96, 165, 250, 0.15) 100%);
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.1);
+}
+
+[data-theme="blue"] .course-card:hover .course-icon,
+[data-theme="blue"] .feature-item:hover .feature-icon {
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.25) 0%, rgba(96, 165, 250, 0.25) 100%);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.2);
+}
+
+[data-theme="blue"] .alert-icon {
+  background: rgba(37, 99, 235, 0.1);
+}
+
+[data-theme="blue"] .course-card,
+[data-theme="blue"] .learning-card,
+[data-theme="blue"] .feature-item {
+  border-color: rgba(37, 99, 235, 0.2);
+}
+
+[data-theme="blue"] .course-card:hover,
+[data-theme="blue"] .learning-card:hover,
+[data-theme="blue"] .feature-item:hover {
+  border-color: rgba(37, 99, 235, 0.4);
+  box-shadow: 0 15px 50px rgba(37, 99, 235, 0.15);
+}
+
+/* Blue Glass Card */
+[data-theme="blue"] .glass-card {
+  box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.12), 0 8px 32px rgba(37, 99, 235, 0.1), 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="blue"] .glass-card:hover {
+  box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.4), 0 20px 50px rgba(37, 99, 235, 0.15), 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="blue"] .glass-card-glow {
+  background: radial-gradient(circle, rgba(37, 99, 235, 0.2) 0%, transparent 70%);
+}
+
+[data-theme="blue"] .glass-card-icon {
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.3) 0%, rgba(96, 165, 250, 0.15) 100%);
+  border-color: rgba(37, 99, 235, 0.35);
+  color: #3b82f6;
+  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.2);
+}
+
+[data-theme="blue"] .glass-card-price {
+  background: linear-gradient(90deg, #1e40af, #2563eb);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+/* Blue Modal (CDM) */
+[data-theme="blue"] .cdm-toggle-bar:hover {
+  background: rgba(37, 99, 235, 0.08);
+  color: #3b82f6;
+}
+
+[data-theme="blue"] .cdm-arrow {
+  color: #1e40af;
+}
+
+[data-theme="blue"] .cdm-list li::before {
+  background: #1e40af;
+}
+
+[data-theme="blue"] .cdm-buy-btn {
+  background: linear-gradient(135deg, #1e40af 0%, #2563eb 40%, #60a5fa 100%);
+  box-shadow: 0 4px 20px rgba(37, 99, 235, 0.35);
+}
+
+[data-theme="blue"] .cdm-buy-btn:hover:not(:disabled) {
+  box-shadow: 0 8px 28px rgba(37, 99, 235, 0.5);
+}
+
+/* Dark Theme */
+[data-theme="dark"] .course-icon,
+[data-theme="dark"] .feature-icon,
+[data-theme="dark"] .author-avatar {
+  background: linear-gradient(135deg, rgba(74, 222, 128, 0.15) 0%, rgba(34, 197, 94, 0.15) 100%);
+  box-shadow: 0 4px 15px rgba(74, 222, 128, 0.1);
+}
+
+[data-theme="dark"] .course-card:hover .course-icon,
+[data-theme="dark"] .feature-item:hover .feature-icon {
+  background: linear-gradient(135deg, rgba(74, 222, 128, 0.25) 0%, rgba(34, 197, 94, 0.25) 100%);
+  box-shadow: 0 6px 20px rgba(74, 222, 128, 0.2);
+}
+
+[data-theme="dark"] .alert-icon {
+  background: rgba(74, 222, 128, 0.1);
+}
+
+[data-theme="dark"] .course-card,
+[data-theme="dark"] .learning-card,
+[data-theme="dark"] .feature-item {
+  border-color: rgba(74, 222, 128, 0.2);
+}
+
+[data-theme="dark"] .course-card:hover,
+[data-theme="dark"] .learning-card:hover,
+[data-theme="dark"] .feature-item:hover {
+  border-color: rgba(74, 222, 128, 0.4);
+  box-shadow: 0 15px 50px rgba(74, 222, 128, 0.15);
+}
+
+/* Dark Glass Card */
+[data-theme="dark"] .glass-card {
+  background: rgba(30, 30, 30, 0.6);
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05), 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .glass-card:hover {
+  border-color: rgba(74, 222, 128, 0.3);
+  box-shadow: 0 0 0 1px rgba(74, 222, 128, 0.3), 0 20px 50px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .glass-card-glow {
+  background: radial-gradient(circle, rgba(74, 222, 128, 0.15) 0%, transparent 70%);
+}
+
+[data-theme="dark"] .glass-card-icon {
+  background: linear-gradient(135deg, rgba(74, 222, 128, 0.2) 0%, rgba(34, 197, 94, 0.1) 100%);
+  border-color: rgba(74, 222, 128, 0.25);
+  color: #4ade80;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .glass-card-price {
+  background: linear-gradient(90deg, #4ade80, #22c55e);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+[data-theme="dark"] .glass-card-title {
+  color: #f3f4f6 !important;
+}
+
+[data-theme="dark"] .glass-card-hint {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Dark Modal (CDM) */
+[data-theme="dark"] .cdm-panel {
+  background: #1a1a1a;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .cdm-title {
+  color: #f3f4f6 !important;
+}
+
+[data-theme="dark"] .cdm-price {
+  color: #4ade80 !important;
+}
+
+[data-theme="dark"] .cdm-toggle-bar {
+  color: #e5e7eb !important;
+  border-color: rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="dark"] .cdm-toggle-bar:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #4ade80 !important;
+}
+
+[data-theme="dark"] .cdm-arrow {
+  color: #4ade80;
+}
+
+[data-theme="dark"] .cdm-list li {
+  color: #d1d5db !important;
+}
+
+[data-theme="dark"] .cdm-list li::before {
+  background: #4ade80;
+}
+
+[data-theme="dark"] .cdm-buy-btn {
+  background: linear-gradient(135deg, #166534 0%, #15803d 40%, #22c55e 100%);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .cdm-buy-btn:hover:not(:disabled) {
+  box-shadow: 0 8px 28px rgba(34, 197, 94, 0.3);
 }

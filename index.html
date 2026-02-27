@@ -10,8 +10,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>JKSSB Drivers Academy</title>
   <link rel="icon" type="image/png" href="./favicon.svg">
+  <script src="./theme.js"></script>
   <link rel="stylesheet" href="./styles.css">
-
   <!-- Preconnect & Preload Fonts for Instant 0-Lag Text Rendering -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -45,48 +45,64 @@
     }
 
     /* ═══════════════ AJAZ 3D CAROUSEL HERO ═══════════════ */
-
     :root {
       --ajaz-orange: #ff6b00;
       --ajaz-amber: #ff9a00;
       --ajaz-yellow: #ffd700;
-      --ajaz-card-w: 280px;
-      --ajaz-card-h: 380px;
+      --ajaz-card-w: 300px;
+      --ajaz-card-h: 410px;
+      --ajaz-spread: 42;
+      --ajaz-depth: 220;
+      --ajaz-xshift: 170;
     }
 
+    /* Tablet */
     @media (max-width: 768px) {
       :root {
-        --ajaz-card-w: 240px;
+        --ajaz-card-w: 260px;
+        --ajaz-card-h: 370px;
+      }
+    }
+
+    /* Phone */
+    @media (max-width: 480px) {
+      :root {
+        --ajaz-card-w: 230px;
         --ajaz-card-h: 340px;
       }
     }
 
-    @media (max-width: 480px) {
-      :root {
-        --ajaz-card-w: 210px;
-        --ajaz-card-h: 310px;
-      }
-    }
-
-    /* Wrapper replaces old hpc-wrap and blends completely */
     .ajaz-hero {
       position: relative;
       width: 100%;
-      min-height: 440px;
+      height: 440px;
+      /* More compact height */
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 10px 0 0px;
       overflow: hidden;
       background: transparent;
+      /* Seamless Blend */
+      font-family: 'Rajdhani', sans-serif;
+      margin: -20px 0 10px 0;
+      /* Reduced margins to tighten layout */
+      border-radius: 0 0 40px 40px;
     }
 
-    @media (max-width: 480px) {
-      .ajaz-hero {
-        min-height: 380px;
-        padding: 16px 0 0px;
-      }
+    /* Subtle theme-aware radial glow behind the carousel */
+    .ajaz-hero::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 150%;
+      height: 150%;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(circle, var(--primary) 0%, transparent 65%);
+      opacity: 0.12;
+      pointer-events: none;
+      z-index: 1;
     }
 
     /* ── SCENE ── */
@@ -122,17 +138,16 @@
         filter 0.9s ease,
         box-shadow 0.45s ease;
       transform-style: preserve-3d;
-      will-change: transform, opacity, filter, z-index;
+      will-change: transform, opacity, filter;
       user-select: none;
-      /* Hardware Acceleration */
-      backface-visibility: hidden;
-      transform: translate3d(0, 0, 0);
     }
 
+    /* BACK CARDS = BLURRED */
     .ajaz-card.behind {
       filter: blur(6px) brightness(0.75) saturate(0.7);
     }
 
+    /* FRONT CARD = SHARP */
     .ajaz-card.active {
       filter: blur(0px) brightness(1) saturate(1.1);
       box-shadow:
@@ -146,19 +161,21 @@
       filter: blur(3px) brightness(0.82) saturate(0.8);
     }
 
-    /* ── ICE FROST GLASS CARD FACE ── */
+    /* ── WHITE ACRYLIC ICE FROST GLASS ── */
+    /* ── STRONGER WHITE ACRYLIC ICE FROST GLASS ── */
     .ajaz-card-face {
       position: absolute;
       inset: 0;
       border-radius: 24px;
       overflow: hidden;
-      background: rgba(255, 255, 255, 0.62);
-      backdrop-filter: blur(52px) saturate(200%) brightness(1.22);
-      -webkit-backdrop-filter: blur(52px) saturate(200%) brightness(1.22);
-      border-top: 2px solid rgba(255, 255, 255, 1);
-      border-left: 1.5px solid rgba(255, 255, 255, 0.9);
-      border-right: 1px solid rgba(255, 255, 255, 0.55);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.45);
+      /* Increased opacity and blur for better 'Ice Frost' look */
+      background: rgba(255, 255, 255, 0.72);
+      backdrop-filter: blur(65px) saturate(220%) brightness(1.25);
+      -webkit-backdrop-filter: blur(65px) saturate(220%) brightness(1.25);
+      border-top: 2.5px solid rgba(255, 255, 255, 1);
+      border-left: 1.5px solid rgba(255, 255, 255, 0.95);
+      border-right: 1px solid rgba(255, 255, 255, 0.6);
+      border-bottom: 1.5px solid rgba(255, 255, 255, 0.4);
       box-shadow:
         inset 0 2px 0 rgba(255, 255, 255, 1),
         inset 0 -1px 0 rgba(255, 150, 50, 0.08),
@@ -167,7 +184,8 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: 20px 18px 16px;
+      padding: 22px 18px 18px !important;
+      /* Slightly more compact padding */
     }
 
     .ajaz-card:nth-child(1) .ajaz-card-face {
@@ -190,7 +208,6 @@
       background: rgba(255, 250, 240, 0.64);
     }
 
-    /* Top frost highlight */
     .ajaz-card-face::before {
       content: '';
       position: absolute;
@@ -204,7 +221,6 @@
       z-index: 1;
     }
 
-    /* Shimmer on active */
     .ajaz-card-face::after {
       content: '';
       position: absolute;
@@ -233,7 +249,6 @@
       }
     }
 
-    /* ── CARD CONTENT ── */
     .ajaz-badge {
       display: inline-flex;
       align-items: center;
@@ -242,10 +257,10 @@
       font-weight: 700;
       letter-spacing: 1.5px;
       text-transform: uppercase;
-      color: #000;
+      color: #000000;
       border: 1px solid rgba(0, 0, 0, 0.2);
       border-radius: 20px;
-      padding: 4px 11px;
+      padding: 4px 11px !important;
       background: rgba(255, 107, 0, 0.12);
       backdrop-filter: blur(6px);
       width: fit-content;
@@ -269,7 +284,7 @@
       font-size: 0.66rem;
       font-weight: 700;
       letter-spacing: 2.5px;
-      color: #000;
+      color: #000000;
       text-transform: uppercase;
     }
 
@@ -287,7 +302,7 @@
     .ajaz-subtitle {
       font-size: 0.66rem;
       letter-spacing: 2px;
-      color: #000;
+      color: #000000;
       text-transform: uppercase;
     }
 
@@ -301,7 +316,7 @@
 
     .ajaz-feature {
       font-size: 0.77rem;
-      color: #000;
+      color: #000000;
       display: flex;
       align-items: center;
       gap: 7px;
@@ -311,7 +326,7 @@
 
     .ajaz-feature::before {
       content: '◆';
-      color: #ff6b00;
+      color: var(--ajaz-orange);
       font-size: 0.42rem;
       flex-shrink: 0;
     }
@@ -332,7 +347,7 @@
 
     .ajaz-offer-badge {
       font-size: 0.61rem;
-      color: #000;
+      color: #000000;
       letter-spacing: 1px;
       margin: 2px 0;
       opacity: 0.85;
@@ -351,13 +366,15 @@
 
     .ajaz-enroll-btn {
       width: 100%;
-      padding: 12px;
+      padding: 12px !important;
       border: none;
       border-radius: 14px;
       font-family: 'Black Ops One', cursive;
       font-size: 0.88rem;
       letter-spacing: 2px;
-      color: #fff;
+      color: #ffffff !important;
+      text-decoration: none;
+      display: block;
       cursor: pointer;
       position: relative;
       overflow: hidden;
@@ -366,8 +383,6 @@
       margin-top: 10px;
       z-index: 3;
       box-shadow: 0 4px 18px rgba(255, 107, 0, 0.35);
-      text-decoration: none;
-      display: block;
       text-align: center;
     }
 
@@ -380,7 +395,7 @@
       height: 100%;
       background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.32), transparent);
       transform: skewX(-20deg);
-      animation: ajazBtnShine 4s ease-in-out infinite;
+      animation: ajazBtnShineOnce 4s ease-in-out infinite;
     }
 
     .ajaz-enroll-btn:hover {
@@ -388,7 +403,7 @@
       box-shadow: 0 8px 28px rgba(255, 107, 0, 0.55);
     }
 
-    @keyframes ajazBtnShine {
+    @keyframes ajazBtnShineOnce {
       0% {
         left: -80%;
       }
@@ -402,21 +417,114 @@
       }
     }
 
-    /* Controls styling removed because visual arrows and dots are now gone */
+    .ajaz-controls {
+      display: none;
+    }
 
-    /* Particles */
+    /* Navigation buttons removed */
+
+    @media (max-width: 480px) {
+      .ajaz-controls {
+        margin-top: 28px;
+        gap: 14px;
+      }
+
+      .ajaz-card-face {
+        padding: 20px 16px 18px;
+      }
+
+      .ajaz-course-name {
+        font-size: 2rem !important;
+      }
+
+      .ajaz-final-price {
+        font-size: 1.4rem;
+      }
+
+      .ajaz-enroll-btn {
+        font-size: 0.78rem;
+        padding: 10px;
+      }
+
+      .ajaz-badge {
+        font-size: 0.55rem;
+        padding: 3px 9px;
+      }
+
+      .ajaz-feature {
+        font-size: 0.7rem;
+      }
+    }
+
+    @media (max-width: 768px) and (min-width: 481px) {
+      .ajaz-controls {
+        margin-top: 34px;
+      }
+
+      .ajaz-card-face {
+        padding: 22px 18px 20px;
+      }
+    }
+
+    .ajaz-nav-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(255, 107, 0, 0.45);
+      background: rgba(255, 107, 0, 0.1);
+      color: #ff9a00;
+      font-size: 1.1rem;
+      cursor: pointer;
+      backdrop-filter: blur(12px);
+      transition: all 0.22s;
+      padding: 0 !important;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .ajaz-nav-btn:hover {
+      background: rgba(255, 107, 0, 0.28);
+      border-color: #ff6b00;
+      box-shadow: 0 0 18px rgba(255, 107, 0, 0.4);
+      transform: scale(1.12);
+    }
+
+    .ajaz-dots {
+      display: flex;
+      gap: 7px;
+    }
+
+    .ajaz-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: rgba(255, 107, 0, 0.25);
+      cursor: pointer;
+      transition: all 0.38s cubic-bezier(0.34, 1.56, 0.64, 1);
+      border: 1px solid rgba(255, 107, 0, 0.4);
+    }
+
+    .ajaz-dot.active {
+      background: #ff6b00;
+      width: 26px;
+      border-radius: 4px;
+      box-shadow: 0 0 12px rgba(255, 107, 0, 0.6);
+    }
+
     .ajaz-particle {
       position: absolute;
       border-radius: 50%;
       opacity: 0;
-      animation: ajazFloat var(--dur) ease-in infinite;
+      animation: ajazFloatUp var(--dur) ease-in infinite;
       animation-delay: var(--delay);
       left: var(--x);
       bottom: -8px;
       pointer-events: none;
     }
 
-    @keyframes ajazFloat {
+    @keyframes ajazFloatUp {
       0% {
         opacity: 0;
         transform: translateY(0) scale(1) rotate(0deg);
@@ -432,11 +540,10 @@
 
       100% {
         opacity: 0;
-        transform: translateY(-520px) scale(0.2) rotate(360deg);
+        transform: translateY(-100vh) scale(0.2) rotate(360deg);
       }
     }
 
-    /* Ripple */
     .ajaz-ripple {
       position: absolute;
       border-radius: 50%;
@@ -453,262 +560,6 @@
         opacity: 0;
       }
     }
-
-    /* hide old hpc-wrap if it still exists */
-    .hpc-wrap {
-      position: relative;
-      width: calc(100% + 32px);
-      margin: 0 -16px 20px;
-      height: 370px;
-      background: linear-gradient(145deg, #fff7ed 0%, #ffedd5 30%, #fed7aa 60%, #fb923c 100%);
-      border-radius: 24px;
-      overflow: hidden;
-      touch-action: pan-y;
-      /* 3D perspective on the container */
-      perspective: 900px;
-      perspective-origin: 50% 50%;
-    }
-
-    /* Warm orange glow layers on the bg */
-    .hpc-wrap::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(ellipse at 30% 60%, rgba(251, 146, 60, 0.35) 0%, transparent 65%),
-        radial-gradient(ellipse at 75% 30%, rgba(234, 88, 12, 0.22) 0%, transparent 60%);
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    /* ── Track: holds all portrait cards centered ── */
-    .hpc-track {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 0;
-      height: 0;
-      transform-style: preserve-3d;
-    }
-
-    /* ── Every card: vertical portrait, liquid glass ── */
-    .hpc-slide {
-      position: absolute;
-      width: 190px;
-      height: 290px;
-      top: -145px;
-      left: -95px;
-      border-radius: 24px;
-      overflow: hidden;
-      /* liquid glass bg */
-      background: linear-gradient(160deg,
-          rgba(255, 255, 255, 0.72) 0%,
-          rgba(255, 237, 213, 0.55) 50%,
-          rgba(255, 200, 130, 0.35) 100%);
-      backdrop-filter: blur(22px) saturate(200%) brightness(1.08);
-      -webkit-backdrop-filter: blur(22px) saturate(200%) brightness(1.08);
-      border: 1px solid rgba(255, 255, 255, 0.75);
-      box-shadow:
-        0 2px 0 rgba(255, 255, 255, 0.9) inset,
-        /* top gloss line */
-        0 8px 32px rgba(180, 83, 9, 0.18),
-        0 2px 8px rgba(0, 0, 0, 0.08);
-      cursor: pointer;
-      /* 3D transition */
-      transition: transform 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-        opacity 0.55s ease,
-        box-shadow 0.3s ease;
-      transform-style: preserve-3d;
-      backface-visibility: hidden;
-      will-change: transform, opacity;
-      user-select: none;
-      -webkit-user-select: none;
-    }
-
-    /* Glossy top-shine pseudo */
-    .hpc-slide::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 45%;
-      background: linear-gradient(180deg,
-          rgba(255, 255, 255, 0.55) 0%,
-          rgba(255, 255, 255, 0.0) 100%);
-      border-radius: 24px 24px 0 0;
-      pointer-events: none;
-      z-index: 3;
-    }
-
-    /* Liquid glow blob */
-    .hpc-liquid {
-      position: absolute;
-      width: 200px;
-      height: 200px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(251, 146, 60, 0.35) 0%, transparent 70%);
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      transition: top 0.35s ease, left 0.35s ease, opacity 0.25s;
-      pointer-events: none;
-      opacity: 0;
-      filter: blur(18px);
-      z-index: 0;
-    }
-
-    .hpc-slide:hover .hpc-liquid {
-      opacity: 1;
-    }
-
-    /* ── Content inside each card ── */
-    .hpc-body {
-      position: relative;
-      z-index: 2;
-      height: 100%;
-      padding: 18px 14px 16px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 7px;
-      text-align: center;
-    }
-
-    .hpc-url {
-      font-size: 9px;
-      letter-spacing: 1.2px;
-      color: rgba(120, 53, 15, 0.55);
-      text-transform: uppercase;
-      margin: 0;
-    }
-
-    .hpc-brand {
-      font-size: clamp(18px, 5vw, 24px);
-      font-weight: 900;
-      line-height: 1.1;
-      background: linear-gradient(135deg, #c2410c, #ea580c);
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-      color: transparent;
-      margin: 0;
-      letter-spacing: -0.3px;
-    }
-
-    .hpc-brand-sub {
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: 1.5px;
-    }
-
-    .hpc-tagline {
-      font-size: 11px;
-      color: rgba(92, 40, 0, 0.75);
-      line-height: 1.4;
-      margin: 0;
-    }
-
-    .hpc-tagline strong {
-      color: #c2410c;
-    }
-
-    .hpc-features {
-      list-style: none;
-      padding: 0;
-      margin: 2px 0;
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-    }
-
-    .hpc-features li {
-      font-size: 11px;
-      color: rgba(60, 20, 0, 0.7);
-    }
-
-    .hpc-contact {
-      display: flex;
-      flex-direction: column;
-      gap: 1px;
-      font-size: 10px;
-      color: #92400e;
-      margin: 0;
-    }
-
-    .hpc-tag {
-      display: inline-block;
-      background: rgba(234, 88, 12, 0.1);
-      border: 1px solid rgba(234, 88, 12, 0.3);
-      color: #c2410c;
-      font-size: 9.5px;
-      font-weight: 700;
-      letter-spacing: 0.4px;
-      padding: 3px 10px;
-      border-radius: 99px;
-    }
-
-    .hpc-pkg-label {
-      font-size: 9px;
-      font-weight: 700;
-      letter-spacing: 1.2px;
-      color: rgba(92, 40, 0, 0.55);
-      text-transform: uppercase;
-      margin: 0;
-    }
-
-    .hpc-syllabus {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.8px;
-      color: #c2410c;
-      margin: 0;
-    }
-
-    .hpc-part-name {
-      font-size: clamp(28px, 9vw, 46px);
-      font-weight: 900;
-      line-height: 1;
-      margin: 0;
-      background: linear-gradient(135deg, #ea580c 0%, #fb923c 100%);
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-      color: transparent;
-      letter-spacing: 1.5px;
-    }
-
-    .hpc-full {
-      font-size: clamp(20px, 6vw, 30px);
-      letter-spacing: 1px;
-    }
-
-    .hpc-price-row {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: center;
-      gap: 5px;
-    }
-
-    .hpc-old-price {
-      font-size: 13px;
-      color: #ef4444;
-      text-decoration: line-through;
-      font-weight: 600;
-    }
-
-    .hpc-offer-tag {
-      font-size: 9px;
-      font-weight: 700;
-      color: #fff;
-      background: rgba(239, 68, 68, 0.8);
-      border-radius: 99px;
-      padding: 2px 8px;
-    }
-
-    /* legacy hpc styles removed */
   </style>
 </head>
 
@@ -721,6 +572,10 @@
             <img src="./favicon.svg" alt="Logo" style="width: 34px; height: 34px; object-fit: contain;">
           </div>
           <span id="page-title">JKSSB Drivers Academy</span>
+          <button class="icon-btn theme-toggle-nav" id="theme-toggle-nav"
+            style="width: 32px; height: 32px; margin-left: 8px; border: none; background: transparent; backdrop-filter: none; box-shadow: none;">
+            <i data-lucide="palette" style="width: 18px; height: 18px; color: var(--app-bar-text);"></i>
+          </button>
         </div>
         <button class="icon-btn" id="profile-btn">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -743,15 +598,11 @@
     <main class="pages-container">
       <div class="page active" data-page="home">
         <div class="page-content">
-          <!-- ═══════════════ AJAZ 3D CAROUSEL HERO ═══════════════ -->
-          <div class="ajaz-hero" id="ajazHero">
-
-            <!-- Floating particles injected by JS -->
-
+          <!-- ═══════════════ AJAZ 3D HERO ═══════════════ -->
+          <section class="ajaz-hero" id="hero-ajaz">
             <div class="ajaz-scene">
-              <div class="ajaz-carousel" id="ajazCarousel">
+              <div class="ajaz-carousel" id="ajazTrack">
 
-                <!-- CARD 1 — Full Course -->
                 <div class="ajaz-card" data-index="0">
                   <div class="ajaz-card-face">
                     <div class="ajaz-badge">🎯 Limited Welcome Offer</div>
@@ -770,11 +621,10 @@
                       <div class="ajaz-offer-badge">42% OFF — Limited Offer</div>
                       <div class="ajaz-final-price">Rs 1149</div>
                     </div>
-                    <a href="http://localhost:3001/course-details.html" class="ajaz-enroll-btn">ENROLL NOW</a>
+                    <a href="./course-details.html" class="ajaz-enroll-btn">ENROLL NOW</a>
                   </div>
                 </div>
 
-                <!-- CARD 2 — Part I -->
                 <div class="ajaz-card" data-index="1">
                   <div class="ajaz-card-face">
                     <div class="ajaz-badge">🔥 Limited Welcome Offer</div>
@@ -788,11 +638,10 @@
                       <div class="ajaz-offer-badge">20% OFF — Limited Offer</div>
                       <div class="ajaz-final-price">Rs 399</div>
                     </div>
-                    <a href="http://localhost:3001/course-details.html" class="ajaz-enroll-btn">ENROLL NOW</a>
+                    <a href="./course-details.html" class="ajaz-enroll-btn">ENROLL NOW</a>
                   </div>
                 </div>
 
-                <!-- CARD 3 — Part II -->
                 <div class="ajaz-card" data-index="2">
                   <div class="ajaz-card-face">
                     <div class="ajaz-badge">🔥 Limited Welcome Offer</div>
@@ -806,11 +655,10 @@
                       <div class="ajaz-offer-badge">20% OFF — Limited Offer</div>
                       <div class="ajaz-final-price">Rs 399</div>
                     </div>
-                    <a href="http://localhost:3001/course-details.html" class="ajaz-enroll-btn">ENROLL NOW</a>
+                    <a href="./course-details.html" class="ajaz-enroll-btn">ENROLL NOW</a>
                   </div>
                 </div>
 
-                <!-- CARD 4 — Part III -->
                 <div class="ajaz-card" data-index="3">
                   <div class="ajaz-card-face">
                     <div class="ajaz-badge">🔥 Limited Welcome Offer</div>
@@ -824,11 +672,10 @@
                       <div class="ajaz-offer-badge">20% OFF — Limited Offer</div>
                       <div class="ajaz-final-price">Rs 399</div>
                     </div>
-                    <a href="http://localhost:3001/course-details.html" class="ajaz-enroll-btn">ENROLL NOW</a>
+                    <a href="./course-details.html" class="ajaz-enroll-btn">ENROLL NOW</a>
                   </div>
                 </div>
 
-                <!-- CARD 5 — Contact -->
                 <div class="ajaz-card" data-index="4">
                   <div class="ajaz-card-face">
                     <div class="ajaz-badge">📞 Contact Us</div>
@@ -842,180 +689,24 @@
                       </div>
                     </div>
                     <div class="ajaz-price-section">
-                      <div class="ajaz-offer-badge" style="font-size:0.7rem;color:#ff9a00">J&amp;K's Only JKSSB Driver
-                        Platform</div>
+                      <div class="ajaz-offer-badge" style="font-size:0.7rem;color:var(--ajaz-amber)">J&K's Only JKSSB
+                        Driver Platform</div>
                     </div>
-                    <a href="http://localhost:3001/course-details.html" class="ajaz-enroll-btn">ENROLL NOW</a>
+                    <a href="./contact.html" class="ajaz-enroll-btn">ENROLL NOW</a>
                   </div>
                 </div>
 
-              </div><!-- /ajaz-carousel -->
-            </div><!-- /ajaz-scene -->
-
-          </div><!-- /ajaz-hero -->
-
-          <script>
-            (function () {
-              // Particles
-              const hero = document.getElementById('ajazHero');
-              const pColors = ['#ff6b00', '#ff9a00', '#ffd700', '#ffb347', '#ff8c00'];
-              for (let i = 0; i < 22; i++) {
-                const p = document.createElement('div');
-                p.className = 'ajaz-particle';
-                p.style.setProperty('--x', Math.random() * 100 + '%');
-                p.style.setProperty('--dur', (7 + Math.random() * 10) + 's');
-                p.style.setProperty('--delay', (Math.random() * 12) + 's');
-                const sz = (1.5 + Math.random() * 2.5) + 'px';
-                p.style.width = sz; p.style.height = sz;
-                p.style.background = pColors[Math.floor(Math.random() * pColors.length)];
-                hero.appendChild(p);
-              }
-
-              const carousel = document.getElementById('ajazCarousel');
-              const cards = [...carousel.querySelectorAll('.ajaz-card')];
-              const N = cards.length;
-              let current = 0;
-              let autoTimer = null;
-              let busy = false;
-
-              function positionCards() {
-                requestAnimationFrame(() => {
-                  const w = window.innerWidth;
-                  const SPREAD = w < 480 ? 32 : w < 768 ? 38 : 42;
-                  const DEPTH = w < 480 ? 140 : w < 768 ? 180 : 220;
-                  const XSHIFT = w < 480 ? 110 : w < 768 ? 140 : 170;
-                  cards.forEach((card, i) => {
-                    let off = i - current;
-                    if (off > N / 2) off -= N;
-                    if (off < -N / 2) off += N;
-                    const rotY = off * SPREAD;
-                    const tx = off * XSHIFT;
-                    const tz = -Math.abs(off) * DEPTH;
-                    const sc = off === 0 ? 1.06 : Math.max(0.62, 0.86 - Math.abs(off) * 0.12);
-                    const op = off === 0 ? 1 : Math.max(0.22, 0.6 - Math.abs(off) * 0.17);
-
-                    // Hardware accelerated 3d translate matrix
-                    card.style.transform = `translate3d(${tx}px, 0, ${tz}px) rotateY(${rotY}deg) scale(${sc})`;
-                    card.style.opacity = op;
-                    card.style.zIndex = off === 0 ? 20 : Math.max(1, 10 - Math.abs(off) * 3);
-
-                    if (off === 0) {
-                      card.classList.add('active');
-                      card.style.pointerEvents = 'auto';
-                    } else {
-                      card.classList.remove('active');
-                      card.style.pointerEvents = 'none';
-                    }
-
-                    if (Math.abs(off) >= 2) {
-                      card.classList.add('behind');
-                    } else {
-                      card.classList.remove('behind');
-                    }
-                  });
-                });
-              }
-
-              window.addEventListener('resize', positionCards);
-
-              function goTo(i) {
-                if (busy) return;
-                busy = true;
-                current = ((i % N) + N) % N;
-                positionCards();
-                setTimeout(() => { busy = false; }, 920);
-              }
-
-              const next = () => goTo(current + 1);
-              const prev = () => goTo(current - 1);
-
-              function startAuto() {
-                if (!autoTimer) autoTimer = setInterval(next, 3800);
-              }
-              function stopAuto() {
-                if (autoTimer) {
-                  clearInterval(autoTimer);
-                  autoTimer = null;
-                }
-              }
-
-              // Pause instantly on interaction
-              let tx0 = 0;
-              carousel.addEventListener('touchstart', e => {
-                stopAuto();
-                tx0 = e.touches[0].clientX;
-              }, { passive: true });
-
-              carousel.addEventListener('touchend', e => {
-                const d = tx0 - e.changedTouches[0].clientX;
-                if (Math.abs(d) > 40) d > 0 ? next() : prev();
-                startAuto();
-              });
-              carousel.addEventListener('touchcancel', () => startAuto());
-
-              let mx0 = 0, dragging = false;
-              carousel.addEventListener('mousedown', e => {
-                stopAuto();
-                mx0 = e.clientX;
-                dragging = true;
-              });
-
-              const handleMouseUp = e => {
-                if (!dragging) return;
-                const d = mx0 - e.clientX;
-                if (Math.abs(d) > 55) d > 0 ? next() : prev();
-                dragging = false;
-                startAuto();
-              };
-
-              document.addEventListener('mouseup', handleMouseUp);
-
-              // End drag and resume auto if cursor leaves carousel
-              carousel.addEventListener('mouseleave', () => {
-                if (dragging) {
-                  dragging = false;
-                  startAuto();
-                }
-              });
-
-              // Ripple on active card click
-              cards.forEach(card => {
-                card.addEventListener('click', function (e) {
-                  if (!this.classList.contains('active')) return;
-                  const face = this.querySelector('.ajaz-card-face');
-                  const r = face.getBoundingClientRect();
-                  const rpl = document.createElement('div');
-                  rpl.className = 'ajaz-ripple';
-                  const sz = Math.max(r.width, r.height) * 1.6;
-                  rpl.style.cssText = `width:${sz}px;height:${sz}px;left:${e.clientX - r.left - sz / 2}px;top:${e.clientY - r.top - sz / 2}px`;
-                  face.appendChild(rpl);
-                  setTimeout(() => rpl.remove(), 950);
-                });
-              });
-
-              positionCards();
-              startAuto();
-            })();
-          </script>
-
-
-          <div class="stats-row">
-            <div class="stat-item">
-              <div class="stat-icon"><i data-lucide="book-open"></i></div>
-              <div class="stat-value">2500+</div>
-              <div class="stat-label">Questions</div>
+              </div>
             </div>
-            <div class="stat-item">
-              <div class="stat-icon"><i data-lucide="target"></i></div>
-              <div class="stat-value">100%</div>
-              <div class="stat-label">Coverage</div>
+
+            <div class="ajaz-controls">
+              <!-- Removed nav buttons for cleaner gesture-first experience -->
+              <div class="ajaz-dots" id="ajazDots" style="display:none"></div>
             </div>
-            <div class="stat-item">
-              <div class="stat-icon"><i data-lucide="star"></i></div>
-              <div class="stat-value">4.9</div>
-              <div class="stat-label">Rating</div>
-            </div>
-          </div>
+          </section>
+
+
+
 
           <div class="section-header">
             <h2>What You'll Get</h2>
@@ -1112,7 +803,8 @@
               <div class="step-number">1</div>
               <div class="step-content">
                 <h3>Choose Your Course</h3>
-                <p>Select from Part I, Part II, Part III, or the Complete Package based on your preparation needs</p>
+                <p>Select from Part I, Part II, Part III, or the Complete Package based on your preparation needs
+                </p>
               </div>
             </div>
             <div class="step-item">
@@ -1153,7 +845,8 @@
                   <i data-lucide="star" class="star-filled"></i>
                   <i data-lucide="star" class="star-filled"></i>
                 </div>
-                <p class="testimonial-text">"Excellent preparation material! The video lectures were very clear and the
+                <p class="testimonial-text">"Excellent preparation material! The video lectures were very clear and
+                  the
                   MCQs helped me understand every topic thoroughly. I cleared my exam in the first attempt."</p>
                 <div class="testimonial-author">
                   <div class="author-avatar"><i data-lucide="user"></i></div>
@@ -1191,7 +884,8 @@
                   <i data-lucide="star" class="star-filled"></i>
                   <i data-lucide="star" class="star-filled"></i>
                 </div>
-                <p class="testimonial-text">"The mock tests were exactly like the real exam. I was confident during my
+                <p class="testimonial-text">"The mock tests were exactly like the real exam. I was confident during
+                  my
                   exam because I had practiced so much. Thank you JKSSB Drivers Academy!"</p>
                 <div class="testimonial-author">
                   <div class="author-avatar"><i data-lucide="user"></i></div>
@@ -1343,7 +1037,8 @@
               </div>
               <div class="faq-answer">
                 The Complete Package includes all three parts (Traffic Rules, MV Act, and Mechanical Knowledge) with
-                2500+ MCQs, video lectures for every topic, 15 full-length mock tests, PDF study material, and a free MV
+                2500+ MCQs, video lectures for every topic, 15 full-length mock tests, PDF study material, and a
+                free MV
                 Act book. You also get lifetime access to all content and 24/7 support.
               </div>
             </div>
@@ -1357,8 +1052,10 @@
                 <i data-lucide="chevron-down" class="faq-chevron"></i>
               </div>
               <div class="faq-answer">
-                Individual parts (Part I, II, or III) give you 6 months of access. The Complete Package offers lifetime
-                access, meaning you can access all content forever with all future updates included at no extra cost.
+                Individual parts (Part I, II, or III) give you 6 months of access. The Complete Package offers
+                lifetime
+                access, meaning you can access all content forever with all future updates included at no extra
+                cost.
               </div>
             </div>
 
@@ -1372,7 +1069,8 @@
               </div>
               <div class="faq-answer">
                 Yes! Our platform is fully mobile-friendly and works on all devices. You can watch videos, practice
-                MCQs, and take mock tests on your smartphone, tablet, or computer. Offline access is also available for
+                MCQs, and take mock tests on your smartphone, tablet, or computer. Offline access is also available
+                for
                 videos and study material.
               </div>
             </div>
@@ -1401,7 +1099,8 @@
                 <i data-lucide="chevron-down" class="faq-chevron"></i>
               </div>
               <div class="faq-answer">
-                We provide 24/7 doubt support through chat and email. Our expert faculty will answer all your questions
+                We provide 24/7 doubt support through chat and email. Our expert faculty will answer all your
+                questions
                 and help you clear your doubts. You can reach us anytime through the Contact Us section.
               </div>
             </div>
@@ -1415,8 +1114,10 @@
                 <i data-lucide="chevron-down" class="faq-chevron"></i>
               </div>
               <div class="faq-answer">
-                Yes, we regularly update our content based on the latest JKSSB notifications, exam pattern changes, and
-                feedback from students who recently appeared for the exam. All updates are free for enrolled students.
+                Yes, we regularly update our content based on the latest JKSSB notifications, exam pattern changes,
+                and
+                feedback from students who recently appeared for the exam. All updates are free for enrolled
+                students.
               </div>
             </div>
           </div>
@@ -1769,55 +1470,148 @@
     });
   </script>
 
-  <!-- HPC Carousel Script -->
   <script>
     (function () {
-      const track = document.getElementById('hpcTrack');
-      const dots = document.querySelectorAll('.hpc-dot');
-      const slides = document.querySelectorAll('.hpc-slide');
-      const prevBtn = document.getElementById('hpcPrev');
-      const nextBtn = document.getElementById('hpcNext');
-      if (!track || !slides.length) return;
+      // Use theme-aware colors for particles
+      const getThemeColors = () => {
+        const style = getComputedStyle(document.documentElement);
+        return [
+          style.getPropertyValue('--primary').trim() || '#ff6b00',
+          style.getPropertyValue('--accent').trim() || '#ff9a00',
+          style.getPropertyValue('--primary-light').trim() || '#ffd700',
+          '#ffffff'
+        ];
+      };
+
+      const heroEl = document.querySelector('.ajaz-hero');
+      if (heroEl) {
+        const pColors = getThemeColors();
+        for (let i = 0; i < 22; i++) {
+          const p = document.createElement('div');
+          p.className = 'ajaz-particle';
+          p.style.setProperty('--x', Math.random() * 100 + '%');
+          p.style.setProperty('--dur', (7 + Math.random() * 10) + 's');
+          p.style.setProperty('--delay', (Math.random() * 12) + 's');
+          const sz = (1.5 + Math.random() * 2.5) + 'px';
+          p.style.width = sz; p.style.height = sz;
+          p.style.background = pColors[Math.floor(Math.random() * pColors.length)];
+          heroEl.appendChild(p);
+        }
+      }
+
+      const carousel = document.getElementById('ajazTrack');
+      const cards = [...carousel.querySelectorAll('.ajaz-card')];
+      const N = cards.length;
+      if (!carousel || !N) return;
 
       let current = 0;
-      let timer;
-      const total = slides.length;
+      let autoTimer;
+      let busy = false;
 
-      function goTo(n) {
-        current = (n + total) % total;
-        track.style.transform = `translateX(-${current * 100}%)`;
-        dots.forEach((d, i) => d.classList.toggle('active', i === current));
+      function positionCards() {
+        const w = window.innerWidth;
+        // Optimized spread/shift for more compact look on mobile
+        const SPREAD = w < 480 ? 28 : w < 768 ? 34 : 40;
+        const DEPTH = w < 480 ? 120 : w < 768 ? 160 : 200;
+        const XSHIFT = w < 480 ? 95 : w < 768 ? 125 : 160;
+
+        cards.forEach((card, i) => {
+          let off = i - current;
+          if (off > N / 2) off -= N;
+          if (off < -N / 2) off += N;
+
+          const rotY = off * SPREAD;
+          const tx = off * XSHIFT;
+          const tz = -Math.abs(off) * DEPTH;
+          const sc = off === 0 ? 1.05 : Math.max(0.65, 0.88 - Math.abs(off) * 0.12);
+          const op = off === 0 ? 1 : Math.max(0.2, 0.55 - Math.abs(off) * 0.18);
+
+          card.style.transform = `translateX(${tx}px) translateZ(${tz}px) rotateY(${rotY}deg) scale(${sc})`;
+          card.style.opacity = op;
+          card.style.zIndex = off === 0 ? 20 : Math.max(1, 10 - Math.abs(off) * 3);
+
+          card.classList.toggle('active', off === 0);
+          card.classList.toggle('behind', Math.abs(off) >= 2);
+          card.style.pointerEvents = off === 0 ? 'auto' : 'none';
+        });
       }
 
-      function startTimer() {
-        clearInterval(timer);
-        timer = setInterval(() => goTo(current + 1), 4000);
+      window.addEventListener('resize', positionCards);
+
+      function goTo(i) {
+        if (busy) return;
+        busy = true;
+        current = ((i % N) + N) % N;
+        positionCards();
+        resetAuto();
+        setTimeout(() => { busy = false; }, 820);
       }
 
-      prevBtn?.addEventListener('click', () => { goTo(current - 1); startTimer(); });
-      nextBtn?.addEventListener('click', () => { goTo(current + 1); startTimer(); });
-      dots.forEach(d => d.addEventListener('click', () => { goTo(+d.dataset.i); startTimer(); }));
+      const next = () => goTo(current + 1);
+      const prev = () => goTo(current - 1);
 
-      // Touch / swipe
-      let tx = 0;
-      track.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
-      track.addEventListener('touchend', e => {
-        const dx = tx - e.changedTouches[0].clientX;
-        if (Math.abs(dx) > 40) { goTo(dx > 0 ? current + 1 : current - 1); startTimer(); }
+      function startAuto() {
+        clearInterval(autoTimer);
+        autoTimer = setInterval(next, 3500);
+      }
+      function resetAuto() { startAuto(); }
+
+      // Touch swipe - Enhanced sensitivity
+      let tx0 = 0;
+      carousel.addEventListener('touchstart', e => { tx0 = e.touches[0].clientX; }, { passive: true });
+      carousel.addEventListener('touchend', e => {
+        const d = tx0 - e.changedTouches[0].clientX;
+        if (Math.abs(d) > 30) {
+          d > 0 ? next() : prev();
+        }
       });
 
-      // Liquid glow follows mouse
-      slides.forEach(slide => {
-        const glow = slide.querySelector('.hpc-liquid');
-        slide.addEventListener('mousemove', e => {
-          if (!glow) return;
-          const r = slide.getBoundingClientRect();
-          glow.style.left = (e.clientX - r.left) + 'px';
-          glow.style.top = (e.clientY - r.top) + 'px';
+      // Liquid ripple & Instant card selection
+      cards.forEach((card, idx) => {
+        card.addEventListener('click', function (e) {
+          if (!this.classList.contains('active')) {
+            goTo(idx); // Go instantly if someone clicks a side card
+            return;
+          }
+          if (e.target.closest('.ajaz-enroll-btn')) return;
+
+          const face = this.querySelector('.ajaz-card-face');
+          const r = face.getBoundingClientRect();
+          const rpl = document.createElement('div');
+          rpl.className = 'ajaz-ripple';
+          const sz = Math.max(r.width, r.height) * 1.6;
+          rpl.style.cssText = `width:${sz}px;height:${sz}px;left:${e.clientX - r.left - sz / 2}px;top:${e.clientY - r.top - sz / 2}px`;
+          face.appendChild(rpl);
+          setTimeout(() => rpl.remove(), 950);
         });
       });
 
-      startTimer();
+      positionCards();
+      startAuto();
+    })();
+
+    // Theme Switcher Loop Logic
+    (function () {
+      const themes = ['default', 'green', 'blue', 'dark', 'golden', 'black'];
+      const themeBtn = document.getElementById('theme-toggle-nav');
+      if (!themeBtn) return;
+
+      themeBtn.addEventListener('click', function () {
+        const currentTheme = document.documentElement.getAttribute('data-theme') || 'default';
+        let nextIndex = (themes.indexOf(currentTheme) + 1) % themes.length;
+        const nextTheme = themes[nextIndex];
+
+        if (nextTheme === 'default') {
+          document.documentElement.removeAttribute('data-theme');
+          localStorage.setItem('app-theme', 'default');
+        } else {
+          document.documentElement.setAttribute('data-theme', nextTheme);
+          localStorage.setItem('app-theme', nextTheme);
+        }
+
+        // Trigger Lucide refresh in case any SVG colors need updating
+        if (window.lucide) lucide.createIcons();
+      });
     })();
   </script>
 </body>

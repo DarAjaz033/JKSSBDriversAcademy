@@ -44,6 +44,7 @@ class MyCoursesPage {
         flex-direction: column;
         gap: 16px;
         padding: 14px 13px 30px;
+        background: transparent;
       }
       
       /* Wrapper to hold courses + sliding views */
@@ -70,8 +71,10 @@ class MyCoursesPage {
       .mc-card {
         border-radius: 20px;
         overflow: hidden;
-        box-shadow: 0 8px 26px rgba(124,45,18,0.30);
+        box-shadow: var(--shadow-lg);
         animation: mcUp 0.4s cubic-bezier(0.16,1,0.3,1) both;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
       }
       @keyframes mcUp {
         from { opacity:0; transform:translateY(20px) scale(0.96); }
@@ -87,14 +90,8 @@ class MyCoursesPage {
         justify-content: space-between;
         padding: 16px 13px 14px;
         overflow: hidden;
-        /* rich amber-to-orange gradient */
-        background: linear-gradient(148deg,
-          #3d0c02 0%,
-          #7c2d12 28%,
-          #b45309 60%,
-          #f97316 82%,
-          #fbbf24 100%
-        );
+        /* dynamic gradient based on theme */
+        background: var(--gradient-hero, linear-gradient(135deg, #B45309 0%, #D97706 50%, #EA580C 100%));
       }
 
       /* decorative circles */
@@ -112,7 +109,7 @@ class MyCoursesPage {
         position:absolute;
         width:75px; height:75px;
         border-radius:50%;
-        background:rgba(255,190,80,0.14);
+        background:rgba(255,255,255,0.08); /* light circle */
         bottom:-18px; left:-18px;
         pointer-events:none;
       }
@@ -149,11 +146,11 @@ class MyCoursesPage {
 
       /* course title */
       .mc-title {
-        font-size: 13px;
+        font-size: 13.5px;
         font-weight: 700;
         color: #fff;
         line-height: 1.38;
-        text-shadow: 0 1px 6px rgba(0,0,0,0.28);
+        text-shadow: 0 1px 4px rgba(0,0,0,0.2);
         margin: 0 0 13px;
         position: relative; z-index: 1;
         display: -webkit-box;
@@ -192,22 +189,22 @@ class MyCoursesPage {
       .mc-btn:hover  { background:rgba(255,255,255,0.22); border-color:rgba(255,255,255,0.5); }
       .mc-btn:active { transform:scale(0.95); }
       
-      /* Original authentic style icons inside buttons */
+      /* Theme-aware button accents */
       .mc-btn-icon-pdf {
         width: 22px; height: 22px;
-        background: #e11d48;
+        background: #ef4444; /* PDF Red */
         border-radius: 6px;
         display: flex; align-items: center; justify-content: center;
         color: #fff;
-        box-shadow: 0 2px 5px rgba(225,29,72,0.4);
+        box-shadow: 0 2px 5px rgba(239,68,68,0.3);
       }
       .mc-btn-icon-quiz {
         width: 22px; height: 22px;
-        background: #14b8a6;
+        background: #22c55e; /* Quiz Green */
         border-radius: 6px;
         display: flex; align-items: center; justify-content: center;
         color: #fff;
-        box-shadow: 0 2px 5px rgba(20,184,166,0.4);
+        box-shadow: 0 2px 5px rgba(34,197,94,0.3);
       }
 
       .mc-btn-lbl    { flex:1; text-align: left; }
@@ -242,21 +239,21 @@ class MyCoursesPage {
       .mc-btn-back {
         width: 36px; height: 36px;
         border-radius: 50%;
-        background: #fff;
-        border: 1px solid #e5e7eb;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
         display: flex; align-items: center; justify-content: center;
-        color: #4b5563;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        color: var(--text-primary);
+        box-shadow: var(--shadow-sm);
         cursor: pointer;
         padding: 0;
         transition: transform 0.2s, background 0.2s;
       }
-      .mc-btn-back:active { transform: scale(0.9); background: #f3f4f6; }
+      .mc-btn-back:active { transform: scale(0.9); opacity: 0.8; }
       
       .mc-view-title {
         font-size: 16px;
         font-weight: 700;
-        color: #1f2937;
+        color: var(--text-primary);
         margin: 0;
       }
 
@@ -267,43 +264,47 @@ class MyCoursesPage {
         gap: 12px;
         padding: 12px;
         border-radius: 12px;
-        background: #fff;
-        border: 1px solid rgba(180,83,9,0.1);
+        background: var(--bg-card);
+        border: 1px solid var(--border);
         text-decoration: none;
-        color: #1c1917;
+        color: var(--text-primary);
         font-size: 12px;
         font-weight: 500;
         transition: background .14s, border-color .14s, transform .14s;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+        box-shadow: var(--shadow-sm);
         line-height: 1.4;
         margin-bottom: 10px;
       }
-      .mc-item:hover { background:#fff8f0; border-color:#b45309; transform:translateX(2px); }
+      .mc-item:hover { background: var(--bg-app); border-color: var(--primary); transform: translateX(2px); }
 
       .mc-ico-pdf {
-        width:32px; height:32px; border-radius:8px; flex-shrink:0;
-        background:linear-gradient(135deg,#ffe4e6,#e11d48);
-        display:flex; align-items:center; justify-content:center; color:#881337;
+        width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0;
+        background: linear-gradient(135deg, #fee2e2, #ef4444);
+        display: flex; align-items: center; justify-content: center; color: #fff;
       }
       .mc-ico-quiz {
-        width:32px; height:32px; border-radius:8px; flex-shrink:0;
-        background:linear-gradient(135deg,#ccfbf1,#14b8a6);
-        display:flex; align-items:center; justify-content:center; color:#0f766e;
+        width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0;
+        background: linear-gradient(135deg, #dcfce7, #22c55e);
+        display: flex; align-items: center; justify-content: center; color: #fff;
       }
-      .mc-item-txt   { flex:1; word-break:break-word; }
+      .mc-item-txt   { flex: 1; word-break: break-word; }
       .mc-item-badge {
-        font-size:10px; color:#14b8a6; background:#ccfbf1;
-        padding:2px 6px; border-radius:99px; font-weight:600;
-        flex-shrink:0; white-space:nowrap;
+        font-size: 10px; color: #fff; background: var(--primary);
+        padding: 2px 8px; border-radius: 99px; font-weight: 600;
+        flex-shrink: 0; white-space: nowrap;
       }
 
       .mc-none {
-        text-align:center; color:#9ca3af; font-size:13px; padding:24px 0;
-        background: #fff; border-radius: 12px; border: 1px dashed #d1d5db;
+        text-align: center; color: var(--text-tertiary); font-size: 13px; padding: 24px 0;
+        background: var(--bg-card); border-radius: 12px; border: 1px dashed var(--border);
       }
 
       /* loading / empty spans full */
       .mc-full { width: 100%; }
+
+      /* Dark mode specifics for item lists */
+      [data-theme="dark"] .mc-ico-pdf, [data-theme="dark"] .mc-ico-quiz { box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+      [data-theme="dark"] .mc-item { background: rgba(255,255,255,0.05); }
     `;
     document.head.appendChild(s);
   }
