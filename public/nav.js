@@ -240,9 +240,7 @@
   function initThemeSwitcher() {
     var themes = ['default', 'green', 'blue', 'golden', 'black', 'frost'];
     var themeBtn = document.getElementById('theme-toggle-nav');
-    if (!themeBtn) return;
-
-    var themeIcon = themeBtn.querySelector('i');
+    var themeIcon = themeBtn ? themeBtn.querySelector('i') : null;
 
     function updateThemeMeta(theme) {
       const themeColors = {
@@ -250,7 +248,7 @@
         'green': '#047857',
         'blue': '#1E40AF',
         'golden': '#AA8A2E',
-        'black': '#0A0A0A',
+        'black': '#000000',
         'frost': '#E0F2FE'
       };
 
@@ -263,17 +261,24 @@
       }
       meta.content = color;
 
-      if (theme === 'default') {
-        themeBtn.style.background = 'transparent';
-        if (themeIcon) themeIcon.style.color = 'var(--app-bar-text)';
-      } else {
-        themeBtn.style.background = 'rgba(255,255,255,0.1)';
-        if (themeIcon) themeIcon.style.color = '#ffffff';
+      if (themeBtn) {
+        if (theme === 'default') {
+          themeBtn.style.background = 'transparent';
+          if (themeIcon) themeIcon.style.color = 'var(--app-bar-text)';
+        } else if (theme === 'frost') {
+          themeBtn.style.background = 'rgba(0,0,0,0.05)';
+          if (themeIcon) themeIcon.style.color = '#4B5563';
+        } else {
+          themeBtn.style.background = 'rgba(255,255,255,0.1)';
+          if (themeIcon) themeIcon.style.color = '#ffffff';
+        }
       }
     }
 
     var initialTheme = document.documentElement.getAttribute('data-theme') || 'default';
     updateThemeMeta(initialTheme);
+
+    if (!themeBtn) return;
 
     themeBtn.addEventListener('click', function () {
       var currentTheme = document.documentElement.getAttribute('data-theme') || 'default';
