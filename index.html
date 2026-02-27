@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -29,19 +29,19 @@
     })();
   </script>
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
+
+
+
+
+
+
+
 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -606,13 +606,16 @@
   <div id="app">
     <header class="app-bar">
       <div class="app-bar-content">
-        <div class="app-bar-title">
-                    <div class="logo-circle" style="background: none; padding: 0;">
+        <div class="app-bar-title"
+          style="display: flex; align-items: center; justify-content: flex-start; gap: 6px; width: 100%; white-space: nowrap; overflow: hidden;">
+          <div class="logo-circle" style="background: none; padding: 0; flex-shrink: 0;">
             <img src="./favicon.svg" alt="Logo" style="width: 32px; height: 32px; object-fit: contain;">
           </div>
-          <span id="page-title">JKSSB Drivers Academy</span>
+          <span id="page-title"
+            style="flex-shrink: 1; font-size: clamp(15px, 4.2vw, 1.15rem); overflow: hidden; text-overflow: ellipsis;">JKSSB
+            Drivers Academy</span>
           <button class="icon-btn theme-toggle-nav" id="theme-toggle-nav"
-            style="width: 32px; height: 32px; margin-left: auto; border: none; background: transparent; backdrop-filter: none; box-shadow: none; display: flex !important; flex-shrink: 0;">
+            style="width: 32px; height: 32px; border: none; background: transparent; backdrop-filter: none; box-shadow: none; display: flex !important; flex-shrink: 0; margin-left: 2px;">
             <i data-lucide="palette" style="width: 18px; height: 18px; color: var(--app-bar-text);"></i>
           </button>
         </div>
