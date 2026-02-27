@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script>
+  (function() {
+    const savedTheme = localStorage.getItem('siteTheme') || 'default';
+    if(savedTheme !== 'default') {
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    }
+  })();
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>3D Carousel - JKSSB Drivers Academy</title>
@@ -443,8 +451,7 @@ body {
 }
 @keyframes rippleOut { to { transform: scale(5); opacity: 0; } }
 </style>
-  <script src="./theme.js"></script>
-</head>
+  </head>
 <body>
 
 <div class="bg-blob"></div>

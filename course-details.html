@@ -2,6 +2,14 @@
 <html lang="en">
 
 <head>
+<script>
+  (function() {
+    const savedTheme = localStorage.getItem('siteTheme') || 'default';
+    if(savedTheme !== 'default') {
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    }
+  })();
+</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="theme-color" content="#B45309">
@@ -12,8 +20,7 @@
   <link rel="icon" type="image/svg+xml" href="./favicon.svg">
   <link rel="stylesheet" href="./styles.css">
   <script src="https://unpkg.com/lucide@latest"></script>
-  <script src="./theme.js"></script>
-</head>
+  </head>
 
 <body
   style="background: linear-gradient(145deg, #ffffff 0%, #f4f4f4 25%, #ffe8d6 60%, #ff9a00 100%); min-height: 100vh;">
