@@ -2,6 +2,8 @@
 <html lang="en">
 
 <head>
+  <meta name="theme-color" content="#B45309">
+
   <script>
     (function () {
       const savedTheme = localStorage.getItem('siteTheme') || 'default';
@@ -13,20 +15,30 @@
         'green': '#047857',
         'blue': '#1E40AF',
         'golden': '#AA8A2E',
-        'black': '#0A0A0A',
+        'black': '#000000',
         'frost': '#E0F2FE'
       };
-      document.write('<meta name="theme-color" content="' + (themeColors[savedTheme] || '#B45309') + '">');
+      const color = themeColors[savedTheme] || '#B45309';
+      let meta = document.querySelector('meta[name="theme-color"]');
+      if (!meta) {
+        meta = document.createElement('meta');
+        meta.name = 'theme-color';
+        document.head.appendChild(meta);
+      }
+      meta.content = color;
     })();
   </script>
-<script>
-  (function() {
-    const savedTheme = localStorage.getItem('siteTheme') || 'default';
-    if(savedTheme !== 'default') {
-      document.documentElement.setAttribute('data-theme', savedTheme);
-    }
-  })();
-</script>
+
+  
+
+  
+
+  
+
+  
+
+  
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
@@ -687,14 +699,14 @@
       }
     }
   </style>
-    <script type="module" crossorigin src="./assets/admin-pdfs-1vYjq32m.js"></script>
+    <script type="module" crossorigin src="./assets/admin-pdfs-DhMX4WgO.js"></script>
     <link rel="modulepreload" crossorigin href="./assets/firebase-config-CsUtaHqz.js">
     <link rel="modulepreload" crossorigin href="./assets/global-pdf-viewer-PBUvBJhC.js">
     <link rel="modulepreload" crossorigin href="./assets/auth-service-BYs2Equ7.js">
     <link rel="modulepreload" crossorigin href="./assets/admin-service-WdanE3z8.js">
     <link rel="modulepreload" crossorigin href="./assets/excel-parser-DjJFnkkE.js">
     <link rel="modulepreload" crossorigin href="./assets/admin-toast-8NJD7knF.js">
-    <link rel="stylesheet" crossorigin href="./assets/styles-DGwmoWwR.css">
+    <link rel="stylesheet" crossorigin href="./assets/styles-BZAe3nfK.css">
   </head>
 
 <body>

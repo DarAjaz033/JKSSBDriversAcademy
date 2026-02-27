@@ -72,12 +72,13 @@
       'transition: background 0.3s, border-color 0.3s;' +
       '}' +
       '#unav-root a {' +
-      'flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;' +
+      'flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;' +
       'text-decoration:none;color:var(--text-tertiary, #9CA3AF);font-size:10.5px;font-weight:600;' +
-      'font-family:"Poppins",system-ui,sans-serif;' +
-      '-webkit-tap-highlight-color:transparent;transition:color 0.18s;' +
+      'font-family:"Poppins",system-ui,sans-serif; border-radius:12px; margin:4px 2px; padding:4px 0;' +
+      '-webkit-tap-highlight-color:transparent;transition:background 0.2s, color 0.18s;' +
       '}' +
-      '#unav-root a.active,#unav-root a:hover { color:var(--primary, #B45309); }' +
+      '#unav-root a.active { color:#ffffff; background:rgba(255,255,255,0.18); box-shadow:0 2px 8px rgba(0,0,0,0.1); }' +
+      '#unav-root a:hover:not(.active) { color:#ffffff; }' +
       '#unav-root a svg { flex-shrink:0; }' +
 
       /* ── Footer ── */
@@ -244,15 +245,7 @@
     var themeIcon = themeBtn.querySelector('i');
 
     function updateThemeMeta(theme) {
-      if (theme === 'default') {
-        themeBtn.style.background = 'transparent';
-        if (themeIcon) themeIcon.style.color = 'var(--app-bar-text)';
-      } else {
-        themeBtn.style.background = 'var(--primary)';
-        if (themeIcon) themeIcon.style.color = '#ffffff';
-      }
-
-      var themeColors = {
+      const themeColors = {
         'default': '#B45309',
         'green': '#047857',
         'blue': '#1E40AF',
@@ -260,8 +253,23 @@
         'black': '#0A0A0A',
         'frost': '#E0F2FE'
       };
-      var metaTheme = document.querySelector('meta[name="theme-color"]');
-      if (metaTheme) metaTheme.setAttribute('content', themeColors[theme] || '#B45309');
+
+      const color = themeColors[theme] || '#B45309';
+      let meta = document.querySelector('meta[name="theme-color"]');
+      if (!meta) {
+        meta = document.createElement('meta');
+        meta.name = 'theme-color';
+        document.head.appendChild(meta);
+      }
+      meta.content = color;
+
+      if (theme === 'default') {
+        themeBtn.style.background = 'transparent';
+        if (themeIcon) themeIcon.style.color = 'var(--app-bar-text)';
+      } else {
+        themeBtn.style.background = 'rgba(255,255,255,0.1)';
+        if (themeIcon) themeIcon.style.color = '#ffffff';
+      }
     }
 
     var initialTheme = document.documentElement.getAttribute('data-theme') || 'default';

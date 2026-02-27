@@ -187,58 +187,174 @@
 }
 
 /* Dark Mode Theme */
-[data-theme="dark"] {
-  --primary: #4ADE80;
-  --primary-dark: #22C55E;
-  --primary-light: #86EFAC;
-  --secondary: #F43F5E;
-  --secondary-dark: #E11D48;
-  --accent: #60A5FA;
+[data-theme="black"] {
+  --primary: #ffffff;
+  --bg-app: #000000;
+  --bg-card: #0a0a0a;
+  --text-primary: #ffffff !important;
+  --text-secondary: #a3a3a3 !important;
+  --text-tertiary: #737373 !important;
+  --border: #1a1a1a;
+  --shadow: rgba(0, 0, 0, 0.95);
 
-  /* Proper Dark Inversions */
-  --bg-app: #121212;
-  --bg-card: #1E1E1E;
-  --text-primary: #F9FAFB !important;
-  --text-secondary: #D1D5DB !important;
-  --text-tertiary: #9CA3AF !important;
-  --border: #333333;
-  --shadow: rgba(0, 0, 0, 0.6);
-
-  --gradient-primary: linear-gradient(135deg, #22C55E 0%, #4ADE80 100%);
-  --gradient-secondary: linear-gradient(135deg, #E11D48 0%, #F43F5E 100%);
-  --gradient-hero: linear-gradient(135deg, #111111 0%, #1A1A1A 50%, #262626 100%);
-  --gradient-liquid: linear-gradient(135deg, rgba(34, 197, 94, 0.9) 0%, rgba(74, 222, 128, 0.8) 50%, rgba(134, 239, 172, 0.9) 100%);
-
-  --gradient-bg: linear-gradient(180deg, #121212 0%, #181818 20%, #1E1E1E 40%, #242424 60%, #2A2A2A 80%, #303030 100%) !important;
-  --gradient-bg-light: linear-gradient(180deg, #121212 0%, #1A1A1A 30%, #222222 60%, #2A2A2A 100%) !important;
-
-  --app-bar-bg: linear-gradient(135deg, #0A0A0A 0%, #141414 50%, #1E1E1E 100%);
-  --app-bar-text: #F9FAFB;
+  --gradient-bg: #000000 !important;
+  --app-bar-bg: #000000;
+  --app-bar-text: #ffffff;
 }
 
-[data-theme="dark"] body {
-  background: var(--bg-app) !important;
-  color: var(--text-primary) !important;
+/* Pure Black Aesthetic */
+[data-theme="black"] body,
+[data-theme="black"] .ajaz-hero,
+[data-theme="black"] #app {
+  background: #000000 !important;
+  background-image: none !important;
 }
 
-[data-theme="dark"] .info-card,
-[data-theme="dark"] .feature-item,
-[data-theme="dark"] .alert-card,
-[data-theme="dark"] .menu-list {
-  background: rgba(30, 30, 30, 0.7);
-  border-color: rgba(255, 255, 255, 0.1);
+[data-theme="black"] body::before,
+[data-theme="black"] .ajaz-hero::before {
+  display: none !important;
 }
 
-[data-theme="dark"] .menu-item:hover {
-  background: rgba(255, 255, 255, 0.1);
+/* Pure Black Tabs, Cards & Tables */
+[data-theme="black"] .floating-card,
+[data-theme="black"] .menu-item,
+[data-theme="black"] .menu-list,
+[data-theme="black"] .learning-card,
+[data-theme="black"] .course-card,
+[data-theme="black"] .info-card,
+[data-theme="black"] .feature-item,
+[data-theme="black"] .alert-card,
+[data-theme="black"] .auth-container,
+[data-theme="black"] .step-item,
+[data-theme="black"] .testimonial-card,
+[data-theme="black"] .faq-item,
+[data-theme="black"] .comparison-table,
+[data-theme="black"] .comparison-header,
+[data-theme="black"] .comparison-row,
+[data-theme="black"] .comparison-cell {
+  background: #000000 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8) !important;
 }
 
-[data-theme="dark"] h2,
-[data-theme="dark"] h3,
-[data-theme="dark"] p,
-[data-theme="dark"] span,
-[data-theme="dark"] .menu-item {
-  color: var(--text-primary) !important;
+/* Ensure buttons in black theme are readable and have no secondary colors */
+[data-theme="black"] .btn-primary,
+[data-theme="black"] .btn-secondary,
+[data-theme="black"] .btn-auth,
+[data-theme="black"] .btn-enroll {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  backdrop-filter: blur(10px);
+}
+
+/* Ensure text is white on these black elements */
+[data-theme="black"] .step-content h3,
+[data-theme="black"] .step-content p,
+[data-theme="black"] .step-number,
+[data-theme="black"] .testimonial-text,
+[data-theme="black"] .author-name,
+[data-theme="black"] .author-position,
+[data-theme="black"] .faq-question-text,
+[data-theme="black"] .faq-answer,
+[data-theme="black"] .comparison-cell {
+  color: #ffffff !important;
+}
+
+[data-theme="black"] .faq-chevron,
+[data-theme="black"] .feature-content h3,
+[data-theme="black"] .feature-content p,
+[data-theme="black"] .section-header h2,
+[data-theme="black"] .section-header p {
+  color: #ffffff !important;
+}
+
+/* Specific visibility for Ice Frost elements */
+[data-theme="black"] .menu-icon {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+}
+
+/* Watery / Liquid Hover Effect - Global */
+[data-theme="black"] .menu-item:hover,
+[data-theme="black"] .course-card:hover,
+[data-theme="black"] .learning-card:hover,
+[data-theme="black"] .btn-primary:hover,
+[data-theme="black"] .btn-enroll:hover,
+[data-theme="black"] .btn-auth:hover {
+  background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.05) 0%,
+      rgba(255, 255, 255, 0.15) 50%,
+      rgba(255, 255, 255, 0.05) 100%) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.1) !important;
+  transform: translateY(-2px);
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Forced White Text for Visibility in Black Theme */
+[data-theme="black"] h1,
+[data-theme="black"] h2,
+[data-theme="black"] h3,
+[data-theme="black"] p,
+[data-theme="black"] span,
+[data-theme="black"] label,
+[data-theme="black"] .hero-name,
+[data-theme="black"] .info-value,
+[data-theme="black"] .guest-title,
+[data-theme="black"] .menu-item span {
+  color: #ffffff !important;
+}
+
+[data-theme="black"] .hero-email,
+[data-theme="black"] .guest-sub,
+[data-theme="black"] .info-label,
+[data-theme="black"] .menu-badge {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+/* Global Watery Hover Effect (No White Highlights) */
+[data-theme="black"] .menu-item:hover,
+[data-theme="black"] .course-card:hover,
+[data-theme="black"] .learning-card:hover,
+[data-theme="black"] .btn-primary:hover,
+[data-theme="black"] .btn-enroll:hover,
+[data-theme="black"] .btn-auth:hover {
+  background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.05) 0%,
+      rgba(255, 255, 255, 0.15) 50%,
+      rgba(255, 255, 255, 0.05) 100%) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.1) !important;
+  transform: translateY(-2px);
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Reset any involuntary white highlights */
+[data-theme="black"] a:hover,
+[data-theme="black"] button:hover {
+  color: #ffffff !important;
+}
+
+[data-theme="black"] .info-row {
+  border-bottom-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+[data-theme="black"] .hero-email,
+[data-theme="black"] .guest-sub,
+[data-theme="black"] .info-label {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+[data-theme="black"] .menu-icon {
+  background: #1a1a1a !important;
+  color: #ffffff !important;
+}
+
+[data-theme="black"] .btn-signout {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #ff4444 !important;
 }
 
 html {
@@ -317,15 +433,24 @@ body::before {
 .app-bar-title {
   display: flex;
   align-items: center;
-  gap: var(--spacing-sm);
+  gap: 6px;
   font-weight: 700;
   color: var(--app-bar-text);
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-size: clamp(0.75rem, 3.5vw, 1rem);
-  max-width: 55vw;
+  flex: 1;
+}
+
+#page-title {
+  white-space: nowrap;
+  font-size: clamp(14px, 4vw, 1.1rem);
+  flex-shrink: 1;
+}
+
+/* Ensure navbar toggle is never hidden on mobile */
+.theme-toggle-nav {
+  display: flex !important;
+  flex-shrink: 0;
 }
 
 @keyframes slideDown {
