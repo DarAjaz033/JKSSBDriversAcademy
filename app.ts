@@ -100,7 +100,7 @@ class App {
 
   private carouselInterval: number | null = null;
   private currentSlide: number = 0;
-  private totalSlides: number = 4;
+  private totalSlides: number = 5;
 
   private testimonialInterval: number | null = null;
   private currentTestimonial: number = 0;
@@ -115,6 +115,7 @@ class App {
     // Purge any offline PDF's that have passed their 30-day secure timebomb.
     // Done here so it executes on every app launch.
     setTimeout(() => purgeExpiredDownloads(), 1000); // slight delay to prioritize core paint
+    this.checkToasts();
   }
 
   private init(): void {
@@ -127,6 +128,20 @@ class App {
     this.updateCopyrightYear();
     this.setupAuth();
     this.registerServiceWorker();
+  }
+
+  private checkToasts(): void {
+    const msg = sessionStorage.getItem('app_toast_msg');
+    const type = sessionStorage.getItem('app_toast_type') as any || 'info';
+    if (msg) {
+      setTimeout(() => {
+        if ((window as any).showToast) {
+          (window as any).showToast(msg, type);
+        }
+      }, 500); // small delay to ensure UI is ready
+      sessionStorage.removeItem('app_toast_msg');
+      sessionStorage.removeItem('app_toast_type');
+    }
   }
 
   private registerServiceWorker(): void {
@@ -150,11 +165,59 @@ class App {
   }
 
   private initCarousel(): void {
-    this.startCarousel();
-    this.setupCarouselIndicators();
+    const track = document.getElementById('ajazTrack');
+    if (track) {
+      this.positionAjazCards();
+      window.addEventListener('resize', () => this.positionAjazCards());
+      this.startCarousel();
+
+      // Touch swipe support
+      let tx0 = 0;
+      track.addEventListener('touchstart', (e: TouchEvent) => { tx0 = e.touches[0].clientX; }, { passive: true });
+      track.addEventListener('touchend', (e: TouchEvent) => {
+        const d = tx0 - e.changedTouches[0].clientX;
+        if (Math.abs(d) > 40) d > 0 ? this.nextSlide() : this.prevSlide();
+      });
+    } else {
+      this.startCarousel();
+      this.setupCarouselIndicators();
+    }
+  }
+
+  private positionAjazCards(): void {
+    const track = document.getElementById('ajazTrack');
+    const cards = document.querySelectorAll<HTMLElement>('.ajaz-card');
+    if (!track || cards.length === 0) return;
+
+    const N = cards.length;
+    const w = window.innerWidth;
+    const SPREAD = w < 480 ? 32 : w < 768 ? 38 : 42;
+    const DEPTH = w < 480 ? 140 : w < 768 ? 180 : 220;
+    const XSHIFT = w < 480 ? 110 : w < 768 ? 140 : 170;
+
+    cards.forEach((card, i) => {
+      let off = i - this.currentSlide;
+      if (off > N / 2) off -= N;
+      if (off < -N / 2) off += N;
+
+      const rotY = off * SPREAD;
+      const tx = off * XSHIFT;
+      const tz = -Math.abs(off) * DEPTH;
+      const sc = off === 0 ? 1.06 : Math.max(0.62, 0.86 - Math.abs(off) * 0.12);
+      const op = off === 0 ? 1 : Math.max(0.22, 0.6 - Math.abs(off) * 0.17);
+
+      card.style.transform = `translateX(${tx}px) translateZ(${tz}px) rotateY(${rotY}deg) scale(${sc})`;
+      card.style.opacity = op.toString();
+      card.style.zIndex = (off === 0 ? 20 : Math.max(1, 10 - Math.abs(off) * 3)).toString();
+
+      card.classList.toggle('active', off === 0);
+      card.classList.toggle('behind', Math.abs(off) >= 2);
+      card.style.pointerEvents = off === 0 ? 'auto' : 'none';
+    });
   }
 
   private startCarousel(): void {
+    if (this.carouselInterval) return;
     this.carouselInterval = window.setInterval(() => {
       this.nextSlide();
     }, 5000);
@@ -170,16 +233,29 @@ class App {
   private nextSlide(): void {
     this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
     this.updateSlides();
+    this.resetCarouselTimer();
+  }
+
+  private prevSlide(): void {
+    this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+    this.updateSlides();
+    this.resetCarouselTimer();
+  }
+
+  private resetCarouselTimer(): void {
+    this.stopCarousel();
+    this.startCarousel();
   }
 
   private goToSlide(index: number): void {
     this.currentSlide = index;
     this.updateSlides();
-    this.stopCarousel();
-    this.startCarousel();
+    this.resetCarouselTimer();
   }
 
   private updateSlides(): void {
+    this.positionAjazCards();
+
     const slides = document.querySelectorAll<HTMLElement>('.hero-slide');
     const indicators = document.querySelectorAll<HTMLElement>('.indicator');
 

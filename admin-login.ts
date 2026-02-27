@@ -68,6 +68,8 @@ class AdminLoginPage {
       return;
     }
 
+    sessionStorage.setItem('app_toast_msg', 'Admin access granted. Welcome back! 👋');
+    sessionStorage.setItem('app_toast_type', 'success');
     window.location.href = './admin-dashboard.html';
   }
 
@@ -95,6 +97,8 @@ class AdminLoginPage {
       return;
     }
 
+    sessionStorage.setItem('app_toast_msg', 'Admin access granted. Welcome back! 👋');
+    sessionStorage.setItem('app_toast_type', 'success');
     window.location.href = './admin-dashboard.html';
   }
 

@@ -159,6 +159,8 @@ class ProfilePage {
       // Clear Firebase Auth session
       await signOut();
       localStorage.removeItem('jkssb_session_token');
+      sessionStorage.setItem('app_toast_msg', 'Logged out successfully! See you soon 👋');
+      sessionStorage.setItem('app_toast_type', 'success');
       window.location.href = './login.html';
     });
   }

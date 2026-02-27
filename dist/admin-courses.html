@@ -2,6 +2,23 @@
 <html lang="en">
 
 <head>
+  <script>
+    (function () {
+      const savedTheme = localStorage.getItem('siteTheme') || 'default';
+      if (savedTheme !== 'default') {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+      }
+      const themeColors = {
+        'default': '#B45309',
+        'green': '#047857',
+        'blue': '#1E40AF',
+        'golden': '#AA8A2E',
+        'black': '#0A0A0A',
+        'frost': '#E0F2FE'
+      };
+      document.write('<meta name="theme-color" content="' + (themeColors[savedTheme] || '#B45309') + '">');
+    })();
+  </script>
 <script>
   (function() {
     const savedTheme = localStorage.getItem('siteTheme') || 'default';
@@ -12,7 +29,7 @@
 </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#B45309">
+  
   <title>Manage Courses | Admin Panel</title>
   <link rel="icon" type="image/svg+xml" href="./assets/favicon-PcQ0y5Tl.svg">
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -96,7 +113,7 @@
 
     .grid-container {
       display: grid;
-      grid-template-columns: 1fr 400px;
+      grid-template-columns: 1fr 420px;
       gap: 2rem;
     }
 
@@ -138,8 +155,13 @@
       margin-bottom: 0.5rem;
     }
 
+    .form-label span {
+      font-weight: 400;
+      color: #94A3B8;
+      font-size: 0.8rem;
+    }
+
     .form-input,
-    .form-select,
     .form-textarea {
       width: 100%;
       padding: 0.75rem;
@@ -147,14 +169,20 @@
       border-radius: 0.5rem;
       font-size: 0.875rem;
       transition: border-color 0.2s;
+      font-family: inherit;
+      box-sizing: border-box;
     }
 
     .form-input:focus,
-    .form-select:focus,
     .form-textarea:focus {
       outline: none;
       border-color: var(--primary);
       box-shadow: 0 0 0 3px rgba(180, 83, 9, 0.1);
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 100px;
     }
 
     .btn-primary {
@@ -183,7 +211,7 @@
       cursor: pointer;
     }
 
-    /* Course List Styles */
+    /* Course List */
     .course-card {
       background: white;
       border: 1px solid #E2E8F0;
@@ -205,18 +233,7 @@
       font-size: 1rem;
       font-weight: 700;
       color: #1E293B;
-      margin-bottom: 0.5rem;
-    }
-
-    .course-badge {
-      display: inline-block;
-      padding: 0.25rem 0.75rem;
-      border-radius: 9999px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      background: #F1F5F9;
-      color: #475569;
-      margin-bottom: 0.75rem;
+      margin-bottom: 0.4rem;
     }
 
     .course-meta {
@@ -270,6 +287,12 @@
       min-width: 1.5rem;
     }
 
+    .hint {
+      font-size: 0.78rem;
+      color: #94A3B8;
+      margin-top: 0.35rem;
+    }
+
     @media (max-width: 1024px) {
       .grid-container {
         grid-template-columns: 1fr;
@@ -286,13 +309,13 @@
       }
     }
   </style>
-  <script type="module" crossorigin src="./assets/admin-courses-i7N_Ko5m.js"></script>
-  <link rel="modulepreload" crossorigin href="./assets/firebase-config-CsUtaHqz.js">
-  <link rel="modulepreload" crossorigin href="./assets/auth-service-BYs2Equ7.js">
-  <link rel="modulepreload" crossorigin href="./assets/admin-service-CQyGqwJl.js">
-  <link rel="modulepreload" crossorigin href="./assets/admin-toast-8NJD7knF.js">
-  <link rel="stylesheet" crossorigin href="./assets/styles-Dw2jLAD7.css">
-</head>
+    <script type="module" crossorigin src="./assets/admin-courses-CtrYtFak.js"></script>
+    <link rel="modulepreload" crossorigin href="./assets/firebase-config-CsUtaHqz.js">
+    <link rel="modulepreload" crossorigin href="./assets/auth-service-BYs2Equ7.js">
+    <link rel="modulepreload" crossorigin href="./assets/admin-service-WdanE3z8.js">
+    <link rel="modulepreload" crossorigin href="./assets/admin-toast-8NJD7knF.js">
+    <link rel="stylesheet" crossorigin href="./assets/styles-DGwmoWwR.css">
+  </head>
 
 <body>
   <div class="admin-container">
@@ -303,29 +326,23 @@
       </div>
       <nav>
         <a href="./admin-dashboard.html" class="admin-nav-item">
-          <i data-lucide="layout-dashboard" width="20" height="20"></i>
-          Dashboard
+          <i data-lucide="layout-dashboard" width="20" height="20"></i> Dashboard
         </a>
         <a href="./admin-courses.html" class="admin-nav-item active">
-          <i data-lucide="book-open" width="20" height="20"></i>
-          Courses
+          <i data-lucide="book-open" width="20" height="20"></i> Courses
         </a>
         <a href="./admin-pdfs.html" class="admin-nav-item">
-          <i data-lucide="file-text" width="20" height="20"></i>
-          PDFs
+          <i data-lucide="file-text" width="20" height="20"></i> PDFs
         </a>
         <a href="./admin-tests.html" class="admin-nav-item">
-          <i data-lucide="clipboard-list" width="20" height="20"></i>
-          Practice Tests
+          <i data-lucide="clipboard-list" width="20" height="20"></i> Practice Tests
         </a>
         <a href="./admin-purchases.html" class="admin-nav-item">
-          <i data-lucide="shopping-cart" width="20" height="20"></i>
-          Purchases
+          <i data-lucide="shopping-cart" width="20" height="20"></i> Purchases
         </a>
         <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1);">
           <a href="./index.html" class="admin-nav-item">
-            <i data-lucide="home" width="20" height="20"></i>
-            Back to Site
+            <i data-lucide="home" width="20" height="20"></i> Back to Site
           </a>
         </div>
       </nav>
@@ -334,7 +351,7 @@
     <main class="admin-main">
       <div class="page-header">
         <h1>Manage Courses</h1>
-        <p>Create and update educational curriculum.</p>
+        <p>Create and update courses. Changes sync live to the website.</p>
       </div>
 
       <div class="grid-container">
@@ -344,9 +361,7 @@
               <h2>Existing Courses</h2>
             </div>
             <div class="card-body">
-              <div id="courses-container">
-                <!-- Courses loaded here -->
-              </div>
+              <div id="courses-container"><!-- Courses loaded here --></div>
             </div>
           </div>
         </div>
@@ -357,37 +372,17 @@
               <h2 id="form-title">Create New Course</h2>
             </div>
             <div class="card-body">
-              <div id="success-message"
-                style="display: none; padding: 1rem; background: #F0FDF4; color: #16A34A; border-radius: 0.5rem; margin-bottom: 1rem; font-size: 0.875rem;">
-              </div>
-
               <form id="course-form">
                 <input type="hidden" id="course-id" />
 
+                <!-- Title -->
                 <div class="form-group">
                   <label class="form-label">Course Title</label>
-                  <input type="text" id="title" class="form-input" placeholder="e.g. Master Traffic Rules" required />
+                  <input type="text" id="title" class="form-input" placeholder="e.g. Complete Driver Package"
+                    required />
                 </div>
 
-                <div class="form-group">
-                  <label class="form-label">Category</label>
-                  <select id="category" class="form-select">
-                    <option value="">Select category</option>
-                    <option value="full-course">Full Course</option>
-                    <option value="part-1">Part 1</option>
-                    <option value="part-2">Part 2</option>
-                    <option value="part-3">Part 3</option>
-                    <option value="Complete Package">Complete Package</option>
-                    <option value="Traffic Rules">Traffic Rules</option>
-                    <option value="MV Act">MV Act</option>
-                    <option value="Mechanical">Mechanical</option>
-                    <option value="mock-test">Mock Test</option>
-                    <option value="__new__">➕ Create new category...</option>
-                  </select>
-                  <input type="text" id="new-category" class="form-input" placeholder="Type new category..."
-                    style="display: none; margin-top: 0.5rem;" />
-                </div>
-
+                <!-- Price + Duration -->
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                   <div class="form-group">
                     <label class="form-label">Price (₹)</label>
@@ -399,24 +394,39 @@
                   </div>
                 </div>
 
+                <!-- Payment Link -->
+                <div class="form-group">
+                  <label class="form-label">Payment Link</label>
+                  <input type="url" id="payment-link" class="form-input" placeholder="https://rzp.io/l/..." />
+                  <p class="hint">URL that opens when student clicks "Buy Now"</p>
+                </div>
+
+                <!-- Syllabus -->
+                <div class="form-group">
+                  <label class="form-label">Syllabus <span>(one topic per line)</span></label>
+                  <textarea id="syllabus" class="form-textarea" rows="6"
+                    placeholder="Traffic Police hand signals&#10;Basic Road Rules &amp; speed limits&#10;MV Act provisions&#10;Vehicle parts &amp; maintenance"></textarea>
+                  <p class="hint">Each line becomes a bullet point in the course modal</p>
+                </div>
+
+                <!-- Description -->
                 <div class="form-group">
                   <label class="form-label">Description Heading</label>
                   <input type="text" id="description-heading" class="form-input" placeholder="What you'll learn" />
                 </div>
-
                 <div class="form-group">
                   <label class="form-label">Description Points</label>
                   <div id="description-points-container"></div>
                   <button type="button" id="add-point-btn"
-                    style="width: 100%; padding: 0.5rem; background: #F8FAFC; border: 1px dashed #E2E8F0; border-radius: 0.5rem; font-size: 0.875rem; cursor: pointer; color: #64748B;">
-                    <i data-lucide="plus" width="16" height="16" style="vertical-align: middle; margin-right: 4px;"></i>
+                    style="width:100%;padding:0.5rem;background:#F8FAFC;border:1px dashed #E2E8F0;border-radius:0.5rem;font-size:0.875rem;cursor:pointer;color:#64748B;">
+                    <i data-lucide="plus" width="16" height="16" style="vertical-align:middle;margin-right:4px;"></i>
                     Add point
                   </button>
                 </div>
 
-                <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
-                  <button type="submit" class="btn-primary" id="submit-btn" style="flex: 1;">Create Course</button>
-                  <button type="button" class="btn-secondary" id="cancel-btn" style="display: none;">Cancel</button>
+                <div style="display:flex;gap:1rem;margin-top:1.5rem;">
+                  <button type="submit" class="btn-primary" id="submit-btn" style="flex:1;">Create Course</button>
+                  <button type="button" class="btn-secondary" id="cancel-btn" style="display:none;">Cancel</button>
                 </div>
               </form>
             </div>
@@ -426,9 +436,7 @@
     </main>
   </div>
 
-  <script>
-    lucide.createIcons();
-  </script>
+  <script>lucide.createIcons();</script>
 </body>
 
 </html>

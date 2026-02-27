@@ -2,17 +2,26 @@
 <html lang="en">
 
 <head>
-<script>
-  (function() {
-    const savedTheme = localStorage.getItem('siteTheme') || 'default';
-    if(savedTheme !== 'default') {
-      document.documentElement.setAttribute('data-theme', savedTheme);
-    }
-  })();
-</script>
+  <script>
+    (function () {
+      const savedTheme = localStorage.getItem('siteTheme') || 'default';
+      if (savedTheme !== 'default') {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+      }
+      const themeColors = {
+        'default': '#B45309',
+        'green': '#047857',
+        'blue': '#1E40AF',
+        'golden': '#AA8A2E',
+        'black': '#0A0A0A',
+        'frost': '#E0F2FE'
+      };
+      document.write('<meta name="theme-color" content="' + (themeColors[savedTheme] || '#B45309') + '">');
+    })();
+  </script>
+  
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="theme-color" content="#B45309">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Profile | JKSSB Drivers Academy</title>
@@ -53,11 +62,12 @@
 
     /* ── Hero banner ──────────────── */
     .profile-hero-bg {
-      background: linear-gradient(150deg, #1a0a00 0%, #3d1a00 50%, #c85d10 100%);
+      background: var(--gradient-hero);
       padding: 32px 20px 64px;
       position: relative;
       overflow: hidden;
       text-align: center;
+      transition: background 0.3s ease;
     }
 
     .profile-hero-bg::before {
@@ -188,11 +198,12 @@
 
     /* ── Guest card ─────────────────── */
     .guest-hero-bg {
-      background: linear-gradient(150deg, #1a0a00 0%, #3d1a00 55%, #c85d10 100%);
+      background: var(--gradient-hero);
       padding: 40px 20px 64px;
       text-align: center;
       position: relative;
       overflow: hidden;
+      transition: background 0.3s ease;
     }
 
     .guest-hero-bg::before {
@@ -270,7 +281,7 @@
     .menu-section-title {
       font-size: 10px;
       font-weight: 700;
-      color: #b45309;
+      color: var(--primary, #b45309);
       text-transform: uppercase;
       letter-spacing: 0.8px;
       margin-bottom: 7px;
@@ -294,7 +305,7 @@
       text-decoration: none;
       cursor: pointer;
       border-bottom: 1px solid rgba(0, 0, 0, 0.048);
-      color: #1c1917;
+      color: var(--text-primary, #1c1917);
       transition: background 0.15s ease;
     }
 
@@ -314,8 +325,29 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #b45309;
+      color: var(--primary, #b45309);
       flex-shrink: 0;
+    }
+
+    [data-theme="green"] .menu-icon {
+      background: #d1fae5;
+    }
+
+    [data-theme="golden"] .menu-icon {
+      background: #fef9c3;
+    }
+
+    [data-theme="black"] .menu-icon {
+      background: #e5e7eb;
+    }
+
+    [data-theme="blue"] .menu-icon {
+      background: #dbeafe;
+    }
+
+    [data-theme="dark"] .menu-icon {
+      background: #374151;
+      color: var(--primary);
     }
 
     .menu-item span {
@@ -343,13 +375,14 @@
     .btn-signout {
       width: 100%;
       padding: 14px;
-      background: rgba(220, 38, 38, 0.08);
-      border: 1px solid rgba(220, 38, 38, 0.2);
+      background: rgba(180, 83, 9, 0.08);
+      /* Default orange */
+      border: 1px solid rgba(180, 83, 9, 0.2);
       border-radius: 14px;
       font-family: 'Poppins', sans-serif;
       font-size: 15px;
       font-weight: 700;
-      color: #dc2626;
+      color: var(--primary, #dc2626);
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -358,15 +391,193 @@
       transition: all 0.2s ease;
     }
 
+    [data-theme="green"] .btn-signout {
+      background: rgba(5, 150, 105, 0.08);
+      border-color: rgba(5, 150, 105, 0.2);
+    }
+
+    [data-theme="golden"] .btn-signout {
+      background: rgba(212, 175, 55, 0.08);
+      border-color: rgba(212, 175, 55, 0.2);
+    }
+
+    [data-theme="black"] .btn-signout {
+      background: rgba(23, 23, 23, 0.08);
+      border-color: rgba(23, 23, 23, 0.2);
+    }
+
+    [data-theme="blue"] .btn-signout {
+      background: rgba(37, 99, 235, 0.08);
+      border-color: rgba(37, 99, 235, 0.2);
+    }
+
+    [data-theme="dark"] .btn-signout {
+      background: rgba(74, 222, 128, 0.08);
+      border-color: rgba(74, 222, 128, 0.2);
+    }
+
     .btn-signout:hover {
       background: rgba(220, 38, 38, 0.14);
       transform: translateY(-1px);
     }
+
+    /* ── Theme Modal ────────────────── */
+    .theme-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .theme-modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .theme-modal {
+      width: 90%;
+      max-width: 380px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(16px);
+      border-radius: 24px;
+      padding: 24px 20px 32px;
+      transform: scale(0.95);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    [data-theme="dark"] .theme-modal,
+    [data-theme="black"] .theme-modal {
+      background: rgba(30, 30, 30, 0.95);
+    }
+
+    .theme-modal-overlay.active .theme-modal {
+      transform: scale(1);
+      opacity: 1;
+    }
+
+    .theme-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .theme-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .theme-close {
+      background: rgba(0, 0, 0, 0.05);
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+
+    [data-theme="dark"] .theme-close,
+    [data-theme="black"] .theme-close {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+
+    .theme-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .theme-option {
+      background: rgba(255, 255, 255, 0.5);
+      border: 2px solid transparent;
+      border-radius: 16px;
+      padding: 16px 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    [data-theme="dark"] .theme-option,
+    [data-theme="black"] .theme-option {
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    .theme-option.active {
+      border-color: var(--primary);
+      background: rgba(180, 83, 9, 0.05);
+    }
+
+    [data-theme="dark"] .theme-option.active,
+    [data-theme="black"] .theme-option.active {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .theme-circle {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      margin: 0 auto 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    .theme-option span {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    /* Quick Theme Toggles inline */
+    .quick-theme-toggles {
+      display: flex;
+      gap: 6px;
+    }
+
+    .quick-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .quick-btn:hover {
+      background: rgba(180, 83, 9, 0.05);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    [data-theme="dark"] .quick-btn,
+    [data-theme="black"] .quick-btn {
+      background: rgba(255, 255, 255, 0.05);
+    }
   </style>
-  <script type="module" crossorigin src="./assets/profile-ClZGZgZo.js"></script>
+
+  <script type="module" crossorigin src="./assets/profile-C_6lB5Yv.js"></script>
   <link rel="modulepreload" crossorigin href="./assets/firebase-config-CsUtaHqz.js">
   <link rel="modulepreload" crossorigin href="./assets/auth-service-BYs2Equ7.js">
-  <link rel="stylesheet" crossorigin href="./assets/styles-Dw2jLAD7.css">
+  <link rel="stylesheet" crossorigin href="./assets/styles-DGwmoWwR.css">
 </head>
 
 <body>
@@ -506,11 +717,19 @@
               <span>Language</span>
               <i data-lucide="chevron-right" width="18" height="18" class="menu-chevron"></i>
             </a>
-            <a href="#" class="menu-item" onclick="alert('Appearance settings coming soon!'); return false;">
-              <div class="menu-icon"><i data-lucide="palette"></i></div>
-              <span>Appearance</span>
-              <i data-lucide="chevron-right" width="18" height="18" class="menu-chevron"></i>
-            </a>
+            <div class="menu-item" style="padding-right: 8px;">
+              <div class="menu-icon" style="cursor:pointer;" onclick="openThemeModal()"><i data-lucide="palette"></i>
+              </div>
+              <span style="cursor:pointer;" onclick="openThemeModal()">Appearance</span>
+              <div class="quick-theme-toggles">
+                <button class="quick-btn" onclick="selectTheme('default')" aria-label="Light Mode">
+                  <i data-lucide="sun" width="16" height="16"></i>
+                </button>
+                <button class="quick-btn" onclick="selectTheme('dark')" aria-label="Dark Mode">
+                  <i data-lucide="moon" width="16" height="16"></i>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -577,11 +796,77 @@
         <div style="height:24px;"></div>
       </div>
 
+      <!-- Appearance Modal -->
+      <div id="themeModal" class="theme-modal-overlay">
+        <div class="theme-modal">
+          <div class="theme-header">
+            <span class="theme-title">App Theme</span>
+            <button class="theme-close" onclick="closeThemeModal()">
+              <i data-lucide="x" width="18" height="18"></i>
+            </button>
+          </div>
+          <div class="theme-grid">
+            <div class="theme-option" data-val="default" onclick="selectTheme('default')">
+              <div class="theme-circle" style="background: linear-gradient(135deg, #B45309, #EA580C);"></div>
+              <span>Autumn</span>
+            </div>
+            <div class="theme-option" data-val="green" onclick="selectTheme('green')">
+              <div class="theme-circle" style="background: linear-gradient(135deg, #047857, #10B981);"></div>
+              <span>Greenish</span>
+            </div>
+            <div class="theme-option" data-val="golden" onclick="selectTheme('golden')">
+              <div class="theme-circle" style="background: linear-gradient(135deg, #FFD700, #F3E5AB);"></div>
+              <span>Golden</span>
+            </div>
+            <div class="theme-option" data-val="black" onclick="selectTheme('black')">
+              <div class="theme-circle" style="background: linear-gradient(135deg, #0A0A0A, #404040);"></div>
+              <span>Black</span>
+            </div>
+            <div class="theme-option" data-val="blue" onclick="selectTheme('blue')">
+              <div class="theme-circle" style="background: linear-gradient(135deg, #1E40AF, #60A5FA);"></div>
+              <span>Blue</span>
+            </div>
+            <!-- Dark Mode removed from popup, handled via inline Moon button -->
+          </div>
+        </div>
+      </div>
+
     </main>
   </div>
 
   <script>if (window.lucide) lucide.createIcons();</script>
   <script src="./nav.js"></script>
+  <script>
+    const themeModal = document.getElementById('themeModal');
+    function openThemeModal() {
+      themeModal.classList.add('active');
+    }
+    function closeThemeModal() {
+      themeModal.classList.remove('active');
+    }
+
+    function selectTheme(theme) {
+      localStorage.setItem('app-theme', theme);
+      if (theme === 'default') {
+        document.documentElement.removeAttribute('data-theme');
+      } else {
+        document.documentElement.setAttribute('data-theme', theme);
+      }
+
+      document.querySelectorAll('.theme-option').forEach(el => {
+        el.classList.toggle('active', el.dataset.val === theme);
+      });
+
+      // small delay to let visual CSS transitions complete before un-rendering
+      setTimeout(closeThemeModal, 280);
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const saved = localStorage.getItem('app-theme') || 'default';
+      const opt = document.querySelector(`.theme-option[data-val="${saved}"]`);
+      if (opt) opt.classList.add('active');
+    });
+  </script>
 </body>
 
 </html>

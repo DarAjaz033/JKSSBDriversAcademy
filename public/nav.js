@@ -32,7 +32,7 @@
     grad: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>',
     more: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg>',
     // Favicon-inspired shield/graduation icon for footer brand
-    brand: '<img src="./favicon.svg" width="22" height="22" style="object-fit: contain;" alt="Logo">',
+    brand: '<img src="./favicon.svg" width="22" height="22" style="object-fit: contain;" alt="Logo" loading="eager" onerror="this.onerror=null; this.outerHTML=\'🛡️\'">',
     fb: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>',
     ig: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>',
     tw: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg>',
@@ -144,7 +144,7 @@
     nav.setAttribute('aria-label', 'Main navigation');
     nav.innerHTML =
       '<a href="./index.html"' + (isHome ? ' class="active"' : '') + '>' + SVG.home + '<span>Home</span></a>' +
-      '<a href="./my-courses.html"' + (isCourses ? ' class="active"' : '') + '>' + SVG.book + '<span>Courses</span></a>' +
+      '<a href="./my-courses.html"' + (isCourses ? ' class="active"' : '') + '>' + SVG.book + '<span>My Course</span></a>' +
       '<a href="./course-details.html"' + (isCourseDetails ? ' class="active"' : '') + '>' + SVG.grad + '<span>Course Details</span></a>' +
       '<a href="./profile.html"' + (isMore ? ' class="active"' : '') + '>' + SVG.more + '<span>More</span></a>';
 
@@ -206,10 +206,91 @@
 
 
   // Deprecated downloadPdfSafely removed in favor of FirebaseCacheManager
+  /* ── Toasts ─────────────────────────────────────────────────── */
+  function checkToasts() {
+    try {
+      var msg = sessionStorage.getItem('app_toast_msg');
+      var type = sessionStorage.getItem('app_toast_type') || 'info';
+      if (msg) {
+        if (window.showToast) {
+          window.showToast(msg, type);
+        } else {
+          // Fallback if app.ts system isn't ready
+          var container = document.getElementById('toast-container');
+          if (!container) {
+            container = document.createElement('div');
+            container.id = 'toast-container';
+            Object.assign(container.style, { position: 'fixed', bottom: '24px', left: '50%', transform: 'translateX(-50%)', zIndex: '999999', display: 'flex', flexDirection: 'column', gap: '8px' });
+            document.body.appendChild(container);
+          }
+          var t = document.createElement('div');
+          t.textContent = msg;
+          Object.assign(t.style, { padding: '12px 24px', borderRadius: '8px', background: type === 'success' ? '#10b981' : '#3b82f6', color: '#fff', fontSize: '14px' });
+          container.appendChild(t);
+          setTimeout(function () { t.remove(); }, 3000);
+        }
+        sessionStorage.removeItem('app_toast_msg');
+        sessionStorage.removeItem('app_toast_type');
+      }
+    } catch (e) { }
+  }
+
+  /* ── Universal Theme Switcher ────────────────────────────────── */
+  function initThemeSwitcher() {
+    var themes = ['default', 'green', 'blue', 'golden', 'black', 'frost'];
+    var themeBtn = document.getElementById('theme-toggle-nav');
+    if (!themeBtn) return;
+
+    var themeIcon = themeBtn.querySelector('i');
+
+    function updateThemeMeta(theme) {
+      if (theme === 'default') {
+        themeBtn.style.background = 'transparent';
+        if (themeIcon) themeIcon.style.color = 'var(--app-bar-text)';
+      } else {
+        themeBtn.style.background = 'var(--primary)';
+        if (themeIcon) themeIcon.style.color = '#ffffff';
+      }
+
+      var themeColors = {
+        'default': '#B45309',
+        'green': '#047857',
+        'blue': '#1E40AF',
+        'golden': '#AA8A2E',
+        'black': '#0A0A0A',
+        'frost': '#E0F2FE'
+      };
+      var metaTheme = document.querySelector('meta[name="theme-color"]');
+      if (metaTheme) metaTheme.setAttribute('content', themeColors[theme] || '#B45309');
+    }
+
+    var initialTheme = document.documentElement.getAttribute('data-theme') || 'default';
+    updateThemeMeta(initialTheme);
+
+    themeBtn.addEventListener('click', function () {
+      var currentTheme = document.documentElement.getAttribute('data-theme') || 'default';
+      var nextIndex = (themes.indexOf(currentTheme) + 1) % themes.length;
+      var nextTheme = themes[nextIndex];
+
+      if (nextTheme === 'default') {
+        document.documentElement.removeAttribute('data-theme');
+        localStorage.setItem('siteTheme', 'default');
+      } else {
+        document.documentElement.setAttribute('data-theme', nextTheme);
+        localStorage.setItem('siteTheme', nextTheme);
+      }
+
+      updateThemeMeta(nextTheme);
+      if (window.lucide) lucide.createIcons();
+    });
+  }
+
   /* ── Init ─────────────────────────────────────────────────────── */
   function init() {
     buildNav();
     buildFooter();
+    initThemeSwitcher();
+    checkToasts();
 
     // Inject the global App-Locked PDF Downloader scanner
     var dlScript = document.createElement('script');

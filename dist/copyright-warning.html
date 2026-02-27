@@ -2,6 +2,23 @@
 <html lang="en">
 
 <head>
+  <script>
+    (function () {
+      const savedTheme = localStorage.getItem('siteTheme') || 'default';
+      if (savedTheme !== 'default') {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+      }
+      const themeColors = {
+        'default': '#B45309',
+        'green': '#047857',
+        'blue': '#1E40AF',
+        'golden': '#AA8A2E',
+        'black': '#0A0A0A',
+        'frost': '#E0F2FE'
+      };
+      document.write('<meta name="theme-color" content="' + (themeColors[savedTheme] || '#B45309') + '">');
+    })();
+  </script>
 <script>
   (function() {
     const savedTheme = localStorage.getItem('siteTheme') || 'default';
@@ -12,7 +29,7 @@
 </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="theme-color" content="#B45309">
+  
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Copyright Warning | JKSSB Drivers Academy</title>
@@ -38,12 +55,12 @@
       font-weight: 600;
     }
   </style>
-  <script type="module" crossorigin src="./assets/firebase-config-CsUtaHqz.js"></script>
-  <script type="module" crossorigin src="./assets/auth-service-BYs2Equ7.js"></script>
-  <script type="module" crossorigin src="./assets/global-pdf-viewer-PBUvBJhC.js"></script>
-  <script type="module" crossorigin src="./assets/app-CWVjG5oO.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/styles-Dw2jLAD7.css">
-</head>
+    <script type="module" crossorigin src="./assets/firebase-config-CsUtaHqz.js"></script>
+    <script type="module" crossorigin src="./assets/auth-service-BYs2Equ7.js"></script>
+    <script type="module" crossorigin src="./assets/global-pdf-viewer-PBUvBJhC.js"></script>
+    <script type="module" crossorigin src="./assets/app-DBvaxfdc.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/styles-DGwmoWwR.css">
+  </head>
 
 <body>
   <div id="app">

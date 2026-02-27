@@ -1,10 +1,11 @@
-import"./firebase-config-CsUtaHqz.js";/* empty css               */import"./global-pdf-viewer-PBUvBJhC.js";import{o as g}from"./auth-service-BYs2Equ7.js";import{g as u,b as m,f}from"./admin-service-CQyGqwJl.js";let x=0;function v(){return++x}class b{constructor(){this.coursesContainer=document.querySelector("#courses-content"),this.injectStyles(),this.init()}injectStyles(){if(document.getElementById("mc-styles"))return;const e=document.createElement("style");e.id="mc-styles",e.textContent=`
+import"./firebase-config-CsUtaHqz.js";/* empty css               */import"./global-pdf-viewer-PBUvBJhC.js";import{o as x}from"./auth-service-BYs2Equ7.js";import{g as f,b,d as w}from"./admin-service-WdanE3z8.js";function k(c){return`jkssb_enrolled_${c}`}function y(c){try{return JSON.parse(localStorage.getItem(k(c))??"[]")}catch{return[]}}let C=0;function z(){return++C}class j{constructor(){this.coursesContainer=document.querySelector("#courses-content"),this.injectStyles(),this.init()}injectStyles(){if(document.getElementById("mc-styles"))return;const e=document.createElement("style");e.id="mc-styles",e.textContent=`
       /* page wrapper — 1 col stack */
       #courses-content {
         display: flex;
         flex-direction: column;
         gap: 16px;
         padding: 14px 13px 30px;
+        background: transparent;
       }
       
       /* Wrapper to hold courses + sliding views */
@@ -31,8 +32,10 @@ import"./firebase-config-CsUtaHqz.js";/* empty css               */import"./glob
       .mc-card {
         border-radius: 20px;
         overflow: hidden;
-        box-shadow: 0 8px 26px rgba(124,45,18,0.30);
+        box-shadow: var(--shadow-lg);
         animation: mcUp 0.4s cubic-bezier(0.16,1,0.3,1) both;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
       }
       @keyframes mcUp {
         from { opacity:0; transform:translateY(20px) scale(0.96); }
@@ -48,14 +51,8 @@ import"./firebase-config-CsUtaHqz.js";/* empty css               */import"./glob
         justify-content: space-between;
         padding: 16px 13px 14px;
         overflow: hidden;
-        /* rich amber-to-orange gradient */
-        background: linear-gradient(148deg,
-          #3d0c02 0%,
-          #7c2d12 28%,
-          #b45309 60%,
-          #f97316 82%,
-          #fbbf24 100%
-        );
+        /* dynamic gradient based on theme */
+        background: var(--gradient-hero, linear-gradient(135deg, #B45309 0%, #D97706 50%, #EA580C 100%));
       }
 
       /* decorative circles */
@@ -73,7 +70,7 @@ import"./firebase-config-CsUtaHqz.js";/* empty css               */import"./glob
         position:absolute;
         width:75px; height:75px;
         border-radius:50%;
-        background:rgba(255,190,80,0.14);
+        background:rgba(255,255,255,0.08); /* light circle */
         bottom:-18px; left:-18px;
         pointer-events:none;
       }
@@ -110,11 +107,11 @@ import"./firebase-config-CsUtaHqz.js";/* empty css               */import"./glob
 
       /* course title */
       .mc-title {
-        font-size: 13px;
+        font-size: 13.5px;
         font-weight: 700;
         color: #fff;
         line-height: 1.38;
-        text-shadow: 0 1px 6px rgba(0,0,0,0.28);
+        text-shadow: 0 1px 4px rgba(0,0,0,0.2);
         margin: 0 0 13px;
         position: relative; z-index: 1;
         display: -webkit-box;
@@ -153,22 +150,22 @@ import"./firebase-config-CsUtaHqz.js";/* empty css               */import"./glob
       .mc-btn:hover  { background:rgba(255,255,255,0.22); border-color:rgba(255,255,255,0.5); }
       .mc-btn:active { transform:scale(0.95); }
       
-      /* Original authentic style icons inside buttons */
+      /* Theme-aware button accents */
       .mc-btn-icon-pdf {
         width: 22px; height: 22px;
-        background: #e11d48;
+        background: #ef4444; /* PDF Red */
         border-radius: 6px;
         display: flex; align-items: center; justify-content: center;
         color: #fff;
-        box-shadow: 0 2px 5px rgba(225,29,72,0.4);
+        box-shadow: 0 2px 5px rgba(239,68,68,0.3);
       }
       .mc-btn-icon-quiz {
         width: 22px; height: 22px;
-        background: #14b8a6;
+        background: #22c55e; /* Quiz Green */
         border-radius: 6px;
         display: flex; align-items: center; justify-content: center;
         color: #fff;
-        box-shadow: 0 2px 5px rgba(20,184,166,0.4);
+        box-shadow: 0 2px 5px rgba(34,197,94,0.3);
       }
 
       .mc-btn-lbl    { flex:1; text-align: left; }
@@ -203,21 +200,21 @@ import"./firebase-config-CsUtaHqz.js";/* empty css               */import"./glob
       .mc-btn-back {
         width: 36px; height: 36px;
         border-radius: 50%;
-        background: #fff;
-        border: 1px solid #e5e7eb;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
         display: flex; align-items: center; justify-content: center;
-        color: #4b5563;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        color: var(--text-primary);
+        box-shadow: var(--shadow-sm);
         cursor: pointer;
         padding: 0;
         transition: transform 0.2s, background 0.2s;
       }
-      .mc-btn-back:active { transform: scale(0.9); background: #f3f4f6; }
+      .mc-btn-back:active { transform: scale(0.9); opacity: 0.8; }
       
       .mc-view-title {
         font-size: 16px;
         font-weight: 700;
-        color: #1f2937;
+        color: var(--text-primary);
         margin: 0;
       }
 
@@ -228,54 +225,58 @@ import"./firebase-config-CsUtaHqz.js";/* empty css               */import"./glob
         gap: 12px;
         padding: 12px;
         border-radius: 12px;
-        background: #fff;
-        border: 1px solid rgba(180,83,9,0.1);
+        background: var(--bg-card);
+        border: 1px solid var(--border);
         text-decoration: none;
-        color: #1c1917;
+        color: var(--text-primary);
         font-size: 12px;
         font-weight: 500;
         transition: background .14s, border-color .14s, transform .14s;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+        box-shadow: var(--shadow-sm);
         line-height: 1.4;
         margin-bottom: 10px;
       }
-      .mc-item:hover { background:#fff8f0; border-color:#b45309; transform:translateX(2px); }
+      .mc-item:hover { background: var(--bg-app); border-color: var(--primary); transform: translateX(2px); }
 
       .mc-ico-pdf {
-        width:32px; height:32px; border-radius:8px; flex-shrink:0;
-        background:linear-gradient(135deg,#ffe4e6,#e11d48);
-        display:flex; align-items:center; justify-content:center; color:#881337;
+        width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0;
+        background: linear-gradient(135deg, #fee2e2, #ef4444);
+        display: flex; align-items: center; justify-content: center; color: #fff;
       }
       .mc-ico-quiz {
-        width:32px; height:32px; border-radius:8px; flex-shrink:0;
-        background:linear-gradient(135deg,#ccfbf1,#14b8a6);
-        display:flex; align-items:center; justify-content:center; color:#0f766e;
+        width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0;
+        background: linear-gradient(135deg, #dcfce7, #22c55e);
+        display: flex; align-items: center; justify-content: center; color: #fff;
       }
-      .mc-item-txt   { flex:1; word-break:break-word; }
+      .mc-item-txt   { flex: 1; word-break: break-word; }
       .mc-item-badge {
-        font-size:10px; color:#14b8a6; background:#ccfbf1;
-        padding:2px 6px; border-radius:99px; font-weight:600;
-        flex-shrink:0; white-space:nowrap;
+        font-size: 10px; color: #fff; background: var(--primary);
+        padding: 2px 8px; border-radius: 99px; font-weight: 600;
+        flex-shrink: 0; white-space: nowrap;
       }
 
       .mc-none {
-        text-align:center; color:#9ca3af; font-size:13px; padding:24px 0;
-        background: #fff; border-radius: 12px; border: 1px dashed #d1d5db;
+        text-align: center; color: var(--text-tertiary); font-size: 13px; padding: 24px 0;
+        background: var(--bg-card); border-radius: 12px; border: 1px dashed var(--border);
       }
 
       /* loading / empty spans full */
       .mc-full { width: 100%; }
-    `,document.head.appendChild(e)}async init(){g(async e=>{e?await this.loadUserCourses(e.uid):this.showEmptyState("Please Sign In","You need to sign in to view your courses.","Go to Home","./index.html")},!0)}async loadUserCourses(e){this.coursesContainer.innerHTML=`
+
+      /* Dark mode specifics for item lists */
+      [data-theme="dark"] .mc-ico-pdf, [data-theme="dark"] .mc-ico-quiz { box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+      [data-theme="dark"] .mc-item { background: rgba(255,255,255,0.05); }
+    `,document.head.appendChild(e)}async init(){x(async e=>{e?await this.loadEnrolledCourses(e.uid):this.showEmptyState("Sign In Required","Please sign in to view your enrolled courses.","Go to Home","./index.html")},!0)}async loadEnrolledCourses(e){this.coursesContainer.innerHTML=`
       <div class="skeleton-card" style="margin-bottom: var(--spacing-md);"><div class="skeleton skeleton-img"></div><div style="padding-top:12px;"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-text"></div></div></div>
       <div class="skeleton-card" style="margin-bottom: var(--spacing-md);"><div class="skeleton skeleton-img"></div><div style="padding-top:12px;"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-text"></div></div></div>
-    `;const t=await u(e);if(t.success&&t.courses&&t.courses.length>0){const i=await m(),s=i.success&&i.pdfs?i.pdfs:[],n=[],r=[];for(const a of t.courses){const p=s.filter(o=>{var l;return(l=a.pdfIds)==null?void 0:l.includes(o.id)}),c=await f(a.id),h=c.success&&c.tests?c.tests:[],d=this.buildCardWithViews(a,p,h);n.push(d.card),r.push(d.views)}this.coursesContainer.innerHTML=`
-        <div class="mc-wrapper">
-          <div class="mc-courses-list" id="mc-courses-list">
-            ${n.join("")}
-          </div>
-          ${r.join("")}
+    `;const t=y(e);if(t.length===0){this.showEmptyState("No Enrolled Courses","You have no enrolled courses yet. Browse courses to get started.","Browse Courses","./course-details.html");return}const i=await f(),r=(i.success&&"courses"in i&&i.courses?i.courses:[]).filter(n=>n.id&&t.includes(n.id));if(r.length===0){this.showEmptyState("No Enrolled Courses","No enrolled courses found. Course data may have changed — browse to find new courses.","Browse Courses","./course-details.html");return}const a=await b(),h=a.success&&a.pdfs?a.pdfs:[],l=[],d=[];for(const n of r){const u=h.filter(v=>{var m;return(m=n.pdfIds)==null?void 0:m.includes(v.id)}),o=await w(n.id),p=o.success&&o.tests?o.tests:[],g=this.buildCardWithViews(n,u,p);l.push(g.card),d.push(g.views)}this.coursesContainer.innerHTML=`
+      <div class="mc-wrapper">
+        <div class="mc-courses-list" id="mc-courses-list">
+          ${l.join("")}
         </div>
-      `,this.attachListeners()}else this.showEmptyState("No Courses Yet","You haven't enrolled in any courses yet. Browse and start learning today!","Browse Courses","./index.html")}buildCardWithViews(e,t,i){const s=v(),n=`mc-view-pdf-${s}`,r=`mc-view-quiz-${s}`,a=this.categoryIcon(e.category),p=t.length>0?t.map(o=>`
+        ${d.join("")}
+      </div>
+    `,this.attachListeners()}buildCardWithViews(e,t,i){const s=z(),r=`mc-view-pdf-${s}`,a=`mc-view-quiz-${s}`,h=this.categoryIcon(e.category??""),l=t.length>0?t.map(o=>`
           <a href="./pdf-viewer.html?name=${encodeURIComponent(o.name)}&url=${encodeURIComponent(o.url)}" class="mc-item">
             <span class="mc-ico-pdf">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
@@ -288,7 +289,7 @@ import"./firebase-config-CsUtaHqz.js";/* empty css               */import"./glob
               <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
               <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
             </svg>
-          </a>`).join(""):'<p class="mc-none">No PDFs available for this course yet.</p>',c=i.length>0?i.map(o=>{var l;return`
+          </a>`).join(""):'<p class="mc-none">No PDFs available for this course yet.</p>',d=i.length>0?i.map(o=>{var p;return`
           <a href="./practice-test.html?id=${o.id}" class="mc-item">
             <span class="mc-ico-quiz">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
@@ -298,24 +299,24 @@ import"./firebase-config-CsUtaHqz.js";/* empty css               */import"./glob
               </svg>
             </span>
             <span class="mc-item-txt">${o.title}</span>
-            <span class="mc-item-badge">${((l=o.questions)==null?void 0:l.length)??0}Q · ${o.duration}m</span>
+            <span class="mc-item-badge">${((p=o.questions)==null?void 0:p.length)??0}Q · ${o.duration}m</span>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d1d5db" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="9 18 15 12 9 6"/>
             </svg>
-          </a>`}).join(""):'<p class="mc-none">No quizzes available for this course yet.</p>',h=`
+          </a>`}).join(""):'<p class="mc-none">No quizzes available for this course yet.</p>',n=`
       <div class="mc-card">
         <!-- Gradient square face -->
         <div class="mc-face">
           <span class="mc-enrolled">✓ Enrolled</span>
 
           <div>
-            <div class="mc-icon">${a}</div>
+            <div class="mc-icon">${h}</div>
             <div class="mc-title">${e.title}</div>
           </div>
 
           <div class="mc-btns">
             <!-- PDFs btn -->
-            <button class="mc-btn" data-target="${n}">
+            <button class="mc-btn" data-target="${r}">
               <span class="mc-btn-icon-pdf">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
@@ -329,7 +330,7 @@ import"./firebase-config-CsUtaHqz.js";/* empty css               */import"./glob
             </button>
 
             <!-- Quiz btn -->
-            <button class="mc-btn" data-target="${r}">
+            <button class="mc-btn" data-target="${a}">
               <span class="mc-btn-icon-quiz">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M18 6H5a2 2 0 0 0-2 2v3a2 2 0 0 1 0 4v3a2 2 0 0 0 2 2h13l4-3.5L18 6Z"/>
@@ -343,29 +344,29 @@ import"./firebase-config-CsUtaHqz.js";/* empty css               */import"./glob
             </button>
           </div>
         </div>
-      </div>`,d=`
+      </div>`,u=`
       <!-- PDFs View -->
-      <div class="mc-content-view" id="${n}">
+      <div class="mc-content-view" id="${r}">
         <div class="mc-view-header">
           <button class="mc-btn-back">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
           </button>
           <h3 class="mc-view-title">${e.title} - PDFs</h3>
         </div>
-        <div class="mc-view-list">${p}</div>
+        <div class="mc-view-list">${l}</div>
       </div>
 
       <!-- Quiz View -->
-      <div class="mc-content-view" id="${r}">
+      <div class="mc-content-view" id="${a}">
         <div class="mc-view-header">
           <button class="mc-btn-back">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
           </button>
           <h3 class="mc-view-title">${e.title} - Quizzes</h3>
         </div>
-        <div class="mc-view-list">${c}</div>
+        <div class="mc-view-list">${d}</div>
       </div>
-    `;return{card:h,views:d}}attachListeners(){const e=this.coursesContainer.querySelector(".mc-courses-list");this.coursesContainer.querySelectorAll(".mc-btn").forEach(t=>{t.addEventListener("click",()=>{const i=t.getAttribute("data-target"),s=document.getElementById(i);e.classList.add("hidden"),s.classList.add("active"),window.scrollTo({top:0,behavior:"smooth"})})}),this.coursesContainer.querySelectorAll(".mc-btn-back").forEach(t=>{t.addEventListener("click",i=>{i.currentTarget.closest(".mc-content-view").classList.remove("active"),e.classList.remove("hidden")})})}categoryIcon(e){return{"Complete Package":'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>',"Traffic Rules":'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>',"MV Act":'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>',Mechanical:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.34 19.66l-1.41 1.41M20 12h2M2 12h2M19.07 19.07l-1.41-1.41M4.34 4.34L2.93 2.93M12 20v2M12 2v2"/></svg>'}[e]??'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>'}showEmptyState(e,t,i,s){var n;this.coursesContainer.innerHTML=`
+    `;return{card:n,views:u}}attachListeners(){const e=this.coursesContainer.querySelector(".mc-courses-list");this.coursesContainer.querySelectorAll(".mc-btn").forEach(t=>{t.addEventListener("click",()=>{const i=t.getAttribute("data-target"),s=document.getElementById(i);e.classList.add("hidden"),s.classList.add("active"),window.scrollTo({top:0,behavior:"smooth"})})}),this.coursesContainer.querySelectorAll(".mc-btn-back").forEach(t=>{t.addEventListener("click",i=>{i.currentTarget.closest(".mc-content-view").classList.remove("active"),e.classList.remove("hidden")})})}categoryIcon(e){return{"Complete Package":'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>',"Traffic Rules":'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>',"MV Act":'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>',Mechanical:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.34 19.66l-1.41 1.41M20 12h2M2 12h2M19.07 19.07l-1.41-1.41M4.34 4.34L2.93 2.93M12 20v2M12 2v2"/></svg>'}[e]??'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>'}showEmptyState(e,t,i,s){var r;this.coursesContainer.innerHTML=`
       <div class="mc-full info-card" style="text-align:center;margin:8px 0;">
         <div class="info-icon" style="margin:0 auto var(--spacing-lg);">
           <i data-lucide="book-open" style="width:48px;height:48px;"></i>
@@ -377,4 +378,4 @@ import"./firebase-config-CsUtaHqz.js";/* empty css               */import"./glob
           <span>${i}</span>
           <i data-lucide="arrow-right" style="width:18px;height:18px;"></i>
         </a>
-      </div>`,(n=window.lucide)==null||n.createIcons()}}new b;
+      </div>`,(r=window.lucide)==null||r.createIcons()}}new j;

@@ -19,10 +19,11 @@
     'jkssb-updates.html', 'profile.html'].indexOf(page) !== -1;
   var isLearning = ['mock-tests.html', 'practice-test.html', 'gk-pdfs.html',
     'demo-pdfs.html'].indexOf(page) !== -1;
-  var isCourses = ['my-courses.html', 'course-details.html', 'full-course.html',
+  var isCourseDetails = ['course-details.html'].indexOf(page) !== -1;
+  var isCourses = ['my-courses.html', 'full-course.html',
     'course-purchase.html', 'part-1.html', 'part-2.html',
     'part-3.html'].indexOf(page) !== -1;
-  var isHome = !isMore && !isLearning && !isCourses;
+  var isHome = !isMore && !isLearning && !isCourses && !isCourseDetails;
 
   /* ── Inline SVGs (no Lucide = no flash) ──────────────────────── */
   var SVG = {
@@ -31,7 +32,7 @@
     grad: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>',
     more: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg>',
     // Favicon-inspired shield/graduation icon for footer brand
-    brand: '<img src="./favicon.svg" width="22" height="22" style="object-fit: contain;" alt="Logo">',
+    brand: '<img src="./favicon.svg" width="22" height="22" style="object-fit: contain;" alt="Logo" loading="eager" onerror="this.onerror=null; this.outerHTML=\'🛡️\'">',
     fb: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>',
     ig: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>',
     tw: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg>',
@@ -57,63 +58,79 @@
       '@keyframes nj-in  { from{opacity:0} to{opacity:1} }' +
       '}' +
       '#unav-root   { view-transition-name: bottom-nav; }' +
-      '#unav-footer { view-transition-name: app-footer; }' +
+      '#unav-footer, .unav-footer-clone { view-transition-name: app-footer; }' +
       '}' +
 
       /* ── Bottom Nav ── */
       '#unav-root {' +
       'position:fixed;bottom:0;left:0;right:0;z-index:9999;' +
       'display:flex;align-items:stretch;height:62px;' +
-      'background:#fff;' +
-      'border-top:1px solid rgba(0,0,0,0.09);' +
-      'box-shadow:0 -2px 10px rgba(0,0,0,0.06);' +
+      'background:var(--app-bar-bg, linear-gradient(135deg, #B45309 0%, #D97706 50%, #EA580C 100%));' +
+      'border-top:1px solid var(--border, rgba(0,0,0,0.09));' +
+      'box-shadow:0 -2px 10px var(--shadow, rgba(0,0,0,0.06));' +
       'padding-bottom:env(safe-area-inset-bottom,0);' +
+      'transition: background 0.3s, border-color 0.3s;' +
       '}' +
       '#unav-root a {' +
       'flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;' +
-      'text-decoration:none;color:#9CA3AF;font-size:10.5px;font-weight:600;' +
+      'text-decoration:none;color:var(--text-tertiary, #9CA3AF);font-size:10.5px;font-weight:600;' +
       'font-family:"Poppins",system-ui,sans-serif;' +
       '-webkit-tap-highlight-color:transparent;transition:color 0.18s;' +
       '}' +
-      '#unav-root a.active,#unav-root a:hover { color:#B45309; }' +
+      '#unav-root a.active,#unav-root a:hover { color:var(--primary, #B45309); }' +
       '#unav-root a svg { flex-shrink:0; }' +
 
       /* ── Footer ── */
-      '#unav-footer {' +
-      'background:linear-gradient(135deg,#92400e 0%,#b45309 50%,#c2500a 100%);' +
-      'color:rgba(255,255,255,0.92);' +
+      '#unav-footer, .unav-footer-clone {' +
+      'background:var(--app-bar-bg, linear-gradient(135deg, #B45309 0%, #D97706 50%, #EA580C 100%));' +
+      'color:var(--app-bar-text, #fff);' +
       'padding:12px 16px 10px;' +
       'text-align:center;' +
       'font-family:"Poppins",system-ui,sans-serif;' +
+      'transition: background 0.3s, color 0.3s;' +
+      '}' +
+      '.unav-footer-clone {' +
+      'display: block !important;' +
+      'width: 100%;' +
+      'position: relative;' +
+      'z-index: 10;' +
+      'margin-top: auto;' +
       '}' +
       '.njf-brand { display:flex;align-items:center;justify-content:center;gap:7px;margin-bottom:3px; }' +
       '.njf-brand svg { flex-shrink:0; }' +
-      '.njf-brand-name { font-size:14px;font-weight:700;color:#fff;letter-spacing:0.2px; }' +
-      '.njf-tagline { font-size:10.5px;color:rgba(255,255,255,0.7);margin:0 0 8px; }' +
+      '.njf-brand-name { font-size:14px;font-weight:700;color:var(--app-bar-text, #fff);letter-spacing:0.2px; }' +
+      '.njf-tagline { font-size:10.5px;color:var(--app-bar-text, #fff);opacity:0.8;margin:0 0 8px; }' +
       '.njf-social { display:flex;justify-content:center;gap:8px;margin-bottom:8px; }' +
       '.njf-social a {' +
       'display:flex;align-items:center;justify-content:center;' +
       'width:30px;height:30px;border-radius:50%;' +
-      'background:rgba(255,255,255,0.15);color:rgba(255,255,255,0.9);' +
-      'text-decoration:none;transition:background 0.2s;' +
+      'border:1px solid var(--app-bar-text, #fff);color:var(--app-bar-text, #fff);opacity:0.7;' +
+      'text-decoration:none;transition:opacity 0.2s;' +
       '-webkit-tap-highlight-color:transparent;' +
       '}' +
-      '.njf-social a:hover { background:rgba(255,255,255,0.28); }' +
+      '.njf-social a:hover { opacity:1; }' +
       '.njf-links { display:flex;flex-wrap:wrap;justify-content:center;gap:4px 10px;margin-bottom:8px; }' +
       '.njf-links a {' +
       'display:flex;align-items:center;gap:3px;' +
-      'font-size:11.5px;color:rgba(255,255,255,0.85);text-decoration:none;' +
-      'transition:color 0.18s;' +
+      'font-size:11.5px;color:var(--app-bar-text, #fff);opacity:0.85;text-decoration:none;' +
+      'transition:opacity 0.18s;' +
       '}' +
-      '.njf-links a:hover { color:#fff; }' +
+      '.njf-links a:hover { opacity:1; }' +
       '.njf-sep { opacity:0.3;font-size:11px; }' +
-      '.njf-bottom { border-top:1px solid rgba(255,255,255,0.15);padding-top:6px;' +
+      '.njf-bottom { border-top:1px solid var(--app-bar-text, #fff);padding-top:6px;opacity:0.8;' +
       'display:flex;flex-wrap:wrap;justify-content:center;gap:2px 10px; }' +
-      '.njf-copy,.njf-designed { font-size:10.5px;color:rgba(255,255,255,0.65);margin:0; }' +
-      '.njf-designer { font-weight:600;color:rgba(255,255,255,0.9); }' +
+      '.njf-copy,.njf-designed { font-size:10.5px;color:var(--app-bar-text, #fff);opacity:0.8;margin:0; }' +
+      '.njf-designer { font-weight:600;color:var(--app-bar-text, #fff);opacity:1; }' +
 
       /* Push body content above fixed bottom nav */
-      'body { padding-bottom:calc(62px + env(safe-area-inset-bottom,0px)) !important; }';
+      'body { padding-bottom:calc(62px + env(safe-area-inset-bottom,0px)) !important; }' +
+
+      /* Force theme updates on cloned footers due to deep DOM placement */
+      '[data-theme="green"] .unav-footer-clone { background: linear-gradient(135deg, #047857 0%, #059669 50%, #10B981 100%) !important; color: #FFFFFF !important; }' +
+      '[data-theme="golden"] .unav-footer-clone { background: linear-gradient(135deg, #AA8A2E 0%, #D4AF37 50%, #FFD700 100%) !important; color: #333333 !important; }' +
+      '[data-theme="black"] .unav-footer-clone { background: linear-gradient(135deg, #0A0A0A 0%, #171717 50%, #404040 100%) !important; color: #FFFFFF !important; }' +
+      '[data-theme="blue"] .unav-footer-clone { background: linear-gradient(135deg, #1E40AF 0%, #2563EB 50%, #60A5FA 100%) !important; color: #FFFFFF !important; }' +
+      '[data-theme="frost"] .unav-footer-clone { background: linear-gradient(135deg, #E0F2FE 0%, #F0F9FF 50%, #FFFFFF 100%) !important; color: #1C1917 !important; }';
 
     document.head.appendChild(style);
   }
@@ -127,8 +144,8 @@
     nav.setAttribute('aria-label', 'Main navigation');
     nav.innerHTML =
       '<a href="./index.html"' + (isHome ? ' class="active"' : '') + '>' + SVG.home + '<span>Home</span></a>' +
-      '<a href="./my-courses.html"' + (isCourses ? ' class="active"' : '') + '>' + SVG.book + '<span>Courses</span></a>' +
-      '<a href="./mock-tests.html"' + (isLearning ? ' class="active"' : '') + '>' + SVG.grad + '<span>Course Details</span></a>' +
+      '<a href="./my-courses.html"' + (isCourses ? ' class="active"' : '') + '>' + SVG.book + '<span>My Course</span></a>' +
+      '<a href="./course-details.html"' + (isCourseDetails ? ' class="active"' : '') + '>' + SVG.grad + '<span>Course Details</span></a>' +
       '<a href="./profile.html"' + (isMore ? ' class="active"' : '') + '>' + SVG.more + '<span>More</span></a>';
 
     /* Use View Transition navigate when supported */
@@ -189,10 +206,91 @@
 
 
   // Deprecated downloadPdfSafely removed in favor of FirebaseCacheManager
+  /* ── Toasts ─────────────────────────────────────────────────── */
+  function checkToasts() {
+    try {
+      var msg = sessionStorage.getItem('app_toast_msg');
+      var type = sessionStorage.getItem('app_toast_type') || 'info';
+      if (msg) {
+        if (window.showToast) {
+          window.showToast(msg, type);
+        } else {
+          // Fallback if app.ts system isn't ready
+          var container = document.getElementById('toast-container');
+          if (!container) {
+            container = document.createElement('div');
+            container.id = 'toast-container';
+            Object.assign(container.style, { position: 'fixed', bottom: '24px', left: '50%', transform: 'translateX(-50%)', zIndex: '999999', display: 'flex', flexDirection: 'column', gap: '8px' });
+            document.body.appendChild(container);
+          }
+          var t = document.createElement('div');
+          t.textContent = msg;
+          Object.assign(t.style, { padding: '12px 24px', borderRadius: '8px', background: type === 'success' ? '#10b981' : '#3b82f6', color: '#fff', fontSize: '14px' });
+          container.appendChild(t);
+          setTimeout(function () { t.remove(); }, 3000);
+        }
+        sessionStorage.removeItem('app_toast_msg');
+        sessionStorage.removeItem('app_toast_type');
+      }
+    } catch (e) { }
+  }
+
+  /* ── Universal Theme Switcher ────────────────────────────────── */
+  function initThemeSwitcher() {
+    var themes = ['default', 'green', 'blue', 'golden', 'black', 'frost'];
+    var themeBtn = document.getElementById('theme-toggle-nav');
+    if (!themeBtn) return;
+
+    var themeIcon = themeBtn.querySelector('i');
+
+    function updateThemeMeta(theme) {
+      if (theme === 'default') {
+        themeBtn.style.background = 'transparent';
+        if (themeIcon) themeIcon.style.color = 'var(--app-bar-text)';
+      } else {
+        themeBtn.style.background = 'var(--primary)';
+        if (themeIcon) themeIcon.style.color = '#ffffff';
+      }
+
+      var themeColors = {
+        'default': '#B45309',
+        'green': '#047857',
+        'blue': '#1E40AF',
+        'golden': '#AA8A2E',
+        'black': '#0A0A0A',
+        'frost': '#E0F2FE'
+      };
+      var metaTheme = document.querySelector('meta[name="theme-color"]');
+      if (metaTheme) metaTheme.setAttribute('content', themeColors[theme] || '#B45309');
+    }
+
+    var initialTheme = document.documentElement.getAttribute('data-theme') || 'default';
+    updateThemeMeta(initialTheme);
+
+    themeBtn.addEventListener('click', function () {
+      var currentTheme = document.documentElement.getAttribute('data-theme') || 'default';
+      var nextIndex = (themes.indexOf(currentTheme) + 1) % themes.length;
+      var nextTheme = themes[nextIndex];
+
+      if (nextTheme === 'default') {
+        document.documentElement.removeAttribute('data-theme');
+        localStorage.setItem('siteTheme', 'default');
+      } else {
+        document.documentElement.setAttribute('data-theme', nextTheme);
+        localStorage.setItem('siteTheme', nextTheme);
+      }
+
+      updateThemeMeta(nextTheme);
+      if (window.lucide) lucide.createIcons();
+    });
+  }
+
   /* ── Init ─────────────────────────────────────────────────────── */
   function init() {
     buildNav();
     buildFooter();
+    initThemeSwitcher();
+    checkToasts();
 
     // Inject the global App-Locked PDF Downloader scanner
     var dlScript = document.createElement('script');

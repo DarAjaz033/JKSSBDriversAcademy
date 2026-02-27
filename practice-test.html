@@ -2,6 +2,23 @@
 <html lang="en">
 
 <head>
+  <script>
+    (function () {
+      const savedTheme = localStorage.getItem('siteTheme') || 'default';
+      if (savedTheme !== 'default') {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+      }
+      const themeColors = {
+        'default': '#B45309',
+        'green': '#047857',
+        'blue': '#1E40AF',
+        'golden': '#AA8A2E',
+        'black': '#0A0A0A',
+        'frost': '#E0F2FE'
+      };
+      document.write('<meta name="theme-color" content="' + (themeColors[savedTheme] || '#B45309') + '">');
+    })();
+  </script>
 <script>
   (function() {
     const savedTheme = localStorage.getItem('siteTheme') || 'default';
@@ -12,7 +29,7 @@
 </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="theme-color" content="#B45309">
+  
   <title>Practice Test | JKSSB Drivers Academy</title>
   <link rel="icon" type="image/svg+xml" href="./favicon.svg">
   <link rel="stylesheet" href="./styles.css">

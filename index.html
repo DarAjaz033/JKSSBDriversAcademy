@@ -19,6 +19,7 @@
       document.write('<meta name="theme-color" content="' + (themeColors[savedTheme] || '#B45309') + '">');
     })();
   </script>
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="mobile-web-app-capable" content="yes">
@@ -155,9 +156,9 @@
       border-radius: 24px;
       cursor: pointer;
       transition:
-        transform 0.9s cubic-bezier(0.34, 1.15, 0.64, 1),
-        opacity 0.9s ease,
-        filter 0.9s ease,
+        transform 0.7s cubic-bezier(0.34, 1.15, 0.64, 1),
+        opacity 0.7s ease,
+        filter 0.7s ease,
         box-shadow 0.45s ease;
       transform-style: preserve-3d;
       will-change: transform, opacity, filter;
@@ -1485,179 +1486,7 @@
     });
   </script>
 
-  <script>
-    (function () {
-      // Use theme-aware colors for particles
-      const getThemeColors = () => {
-        const style = getComputedStyle(document.documentElement);
-        return [
-          style.getPropertyValue('--primary').trim() || '#ff6b00',
-          style.getPropertyValue('--accent').trim() || '#ff9a00',
-          style.getPropertyValue('--primary-light').trim() || '#ffd700',
-          '#ffffff'
-        ];
-      };
 
-      const heroEl = document.querySelector('.ajaz-hero');
-      if (heroEl) {
-        const pColors = getThemeColors();
-        for (let i = 0; i < 22; i++) {
-          const p = document.createElement('div');
-          p.className = 'ajaz-particle';
-          p.style.setProperty('--x', Math.random() * 100 + '%');
-          p.style.setProperty('--dur', (7 + Math.random() * 10) + 's');
-          p.style.setProperty('--delay', (Math.random() * 12) + 's');
-          const sz = (1.5 + Math.random() * 2.5) + 'px';
-          p.style.width = sz; p.style.height = sz;
-          p.style.background = pColors[Math.floor(Math.random() * pColors.length)];
-          heroEl.appendChild(p);
-        }
-      }
-
-      const carousel = document.getElementById('ajazTrack');
-      const cards = [...carousel.querySelectorAll('.ajaz-card')];
-      const N = cards.length;
-      if (!carousel || !N) return;
-
-      let current = 0;
-      let autoTimer;
-      let busy = false;
-
-      function positionCards() {
-        const w = window.innerWidth;
-        // Optimized spread/shift for more compact look on mobile
-        const SPREAD = w < 480 ? 28 : w < 768 ? 34 : 40;
-        const DEPTH = w < 480 ? 120 : w < 768 ? 160 : 200;
-        const XSHIFT = w < 480 ? 95 : w < 768 ? 125 : 160;
-
-        cards.forEach((card, i) => {
-          let off = i - current;
-          if (off > N / 2) off -= N;
-          if (off < -N / 2) off += N;
-
-          const rotY = off * SPREAD;
-          const tx = off * XSHIFT;
-          const tz = -Math.abs(off) * DEPTH;
-          const sc = off === 0 ? 1.05 : Math.max(0.65, 0.88 - Math.abs(off) * 0.12);
-          const op = off === 0 ? 1 : Math.max(0.2, 0.55 - Math.abs(off) * 0.18);
-
-          card.style.transform = `translateX(${tx}px) translateZ(${tz}px) rotateY(${rotY}deg) scale(${sc})`;
-          card.style.opacity = op;
-          card.style.zIndex = off === 0 ? 20 : Math.max(1, 10 - Math.abs(off) * 3);
-
-          card.classList.toggle('active', off === 0);
-          card.classList.toggle('behind', Math.abs(off) >= 2);
-          card.style.pointerEvents = off === 0 ? 'auto' : 'none';
-        });
-      }
-
-      window.addEventListener('resize', positionCards);
-
-      function goTo(i) {
-        if (busy) return;
-        busy = true;
-        current = ((i % N) + N) % N;
-        positionCards();
-        resetAuto();
-        setTimeout(() => { busy = false; }, 820);
-      }
-
-      const next = () => goTo(current + 1);
-      const prev = () => goTo(current - 1);
-
-      function startAuto() {
-        clearInterval(autoTimer);
-        autoTimer = setInterval(next, 3500);
-      }
-      function resetAuto() { startAuto(); }
-
-      // Touch swipe - Enhanced sensitivity
-      let tx0 = 0;
-      carousel.addEventListener('touchstart', e => { tx0 = e.touches[0].clientX; }, { passive: true });
-      carousel.addEventListener('touchend', e => {
-        const d = tx0 - e.changedTouches[0].clientX;
-        if (Math.abs(d) > 30) {
-          d > 0 ? next() : prev();
-        }
-      });
-
-      // Liquid ripple & Instant card selection
-      cards.forEach((card, idx) => {
-        card.addEventListener('click', function (e) {
-          if (!this.classList.contains('active')) {
-            goTo(idx); // Go instantly if someone clicks a side card
-            return;
-          }
-          if (e.target.closest('.ajaz-enroll-btn')) return;
-
-          const face = this.querySelector('.ajaz-card-face');
-          const r = face.getBoundingClientRect();
-          const rpl = document.createElement('div');
-          rpl.className = 'ajaz-ripple';
-          const sz = Math.max(r.width, r.height) * 1.6;
-          rpl.style.cssText = `width:${sz}px;height:${sz}px;left:${e.clientX - r.left - sz / 2}px;top:${e.clientY - r.top - sz / 2}px`;
-          face.appendChild(rpl);
-          setTimeout(() => rpl.remove(), 950);
-        });
-      });
-
-      positionCards();
-      startAuto();
-    })();
-
-    // // // Theme Switcher Loop Logic
-    (function () {
-      const themes = ['default', 'green', 'blue', 'golden', 'black', 'frost'];
-      const themeBtn = document.getElementById('theme-toggle-nav');
-      if (!themeBtn) return;
-
-      const themeIcon = themeBtn.querySelector('i');
-
-      function updateThemeIcon(theme) {
-        if (theme === 'default') {
-          themeBtn.style.background = 'transparent';
-          if (themeIcon) themeIcon.style.color = 'var(--app-bar-text)';
-        } else {
-          themeBtn.style.background = 'var(--primary)';
-          if (themeIcon) themeIcon.style.color = '#ffffff';
-        }
-
-        const themeColors = {
-          'default': '#B45309',
-          'green': '#047857',
-          'blue': '#1E40AF',
-          'golden': '#AA8A2E',
-          'black': '#0A0A0A',
-          'frost': '#E0F2FE'
-        };
-        const metaTheme = document.querySelector('meta[name="theme-color"]');
-        if (metaTheme) metaTheme.setAttribute('content', themeColors[theme] || '#B45309');
-      }
-
-      // Initialize icon on load
-      const initialTheme = document.documentElement.getAttribute('data-theme') || 'default';
-      updateThemeIcon(initialTheme);
-
-      themeBtn.addEventListener('click', function () {
-        const currentTheme = document.documentElement.getAttribute('data-theme') || 'default';
-        let nextIndex = (themes.indexOf(currentTheme) + 1) % themes.length;
-        const nextTheme = themes[nextIndex];
-
-        if (nextTheme === 'default') {
-          document.documentElement.removeAttribute('data-theme');
-          localStorage.setItem('siteTheme', 'default');
-        } else {
-          document.documentElement.setAttribute('data-theme', nextTheme);
-          localStorage.setItem('siteTheme', nextTheme);
-        }
-
-        updateThemeIcon(nextTheme);
-
-        // Trigger Lucide refresh in case any SVG colors need updating
-        if (window.lucide) lucide.createIcons();
-      });
-    })();
-  </script>
 </body>
 
 </html>

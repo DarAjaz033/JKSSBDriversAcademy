@@ -2,17 +2,27 @@
 <html lang="en">
 
 <head>
-<script>
-  (function() {
-    const savedTheme = localStorage.getItem('siteTheme') || 'default';
-    if(savedTheme !== 'default') {
-      document.documentElement.setAttribute('data-theme', savedTheme);
-    }
-  })();
-</script>
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('siteTheme') || 'default';
+            if (savedTheme !== 'default') {
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            }
+            const themeColors = {
+                'default': '#B45309',
+                'green': '#047857',
+                'blue': '#1E40AF',
+                'golden': '#AA8A2E',
+                'black': '#0A0A0A',
+                'frost': '#E0F2FE'
+            };
+            document.write('<meta name="theme-color" content="' + (themeColors[savedTheme] || '#B45309') + '">');
+        })();
+    </script>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#c85d10">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <title>Sign In | JKSSB Drivers Academy</title>
     <link rel="icon" type="image/svg+xml" href="./assets/favicon-PcQ0y5Tl.svg">
@@ -29,15 +39,20 @@
             padding: 0;
         }
 
+        html,
+        body {
+            height: 100%;
+            overflow: hidden;
+            background: linear-gradient(135deg, #1a0a00 0%, #3d1a00 40%, #c85d10 100%);
+        }
+
         body {
             font-family: 'Poppins', sans-serif;
-            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #1a0a00 0%, #3d1a00 40%, #c85d10 100%);
-            padding: 20px;
-            overflow-x: hidden;
+            padding: 12px;
+            margin: 0;
         }
 
         /* Toast */
@@ -104,7 +119,7 @@
         /* Wrapper */
         .auth-wrapper {
             width: 100%;
-            max-width: 420px;
+            max-width: 350px;
             animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
         }
 
@@ -126,27 +141,51 @@
             backdrop-filter: blur(24px);
             -webkit-backdrop-filter: blur(24px);
             border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 24px;
+            border-radius: 20px;
             box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
             overflow: hidden;
+            position: relative;
+        }
+
+        .back-btn-top {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            transition: all 0.2s;
+            z-index: 10;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .back-btn-top:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
         }
 
         /* Logo area */
         .auth-logo {
-            padding: 28px 28px 20px;
+            padding: 2px 24px 0;
             text-align: center;
         }
 
         .logo-badge {
-            width: 56px;
-            height: 56px;
+            width: 28px;
+            height: 28px;
             background: linear-gradient(135deg, #e07b2a, #c85d10);
-            border-radius: 16px;
+            border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 12px;
-            box-shadow: 0 8px 20px rgba(200, 93, 16, 0.4);
+            margin: 0 auto 2px;
+            box-shadow: 0 4px 10px rgba(200, 93, 16, 0.4);
         }
 
         .logo-badge svg {
@@ -156,26 +195,26 @@
         }
 
         .auth-logo h1 {
-            font-size: 20px;
+            font-size: 16px;
             font-weight: 800;
             color: white;
-            letter-spacing: -0.02em;
+            letter-spacing: -0.01em;
         }
 
         .auth-logo p {
-            font-size: 13px;
+            font-size: 11px;
             color: rgba(255, 255, 255, 0.55);
-            margin-top: 3px;
+            margin-top: 1px;
         }
 
         /* Tabs */
         .auth-tabs {
             display: flex;
             gap: 4px;
-            margin: 0 28px 20px;
+            margin: 0 24px 2px;
             background: rgba(255, 255, 255, 0.07);
             border-radius: 12px;
-            padding: 4px;
+            padding: 2px;
         }
 
         .auth-tab-btn {
@@ -201,7 +240,7 @@
         /* Form panels */
         .auth-panel {
             display: none;
-            padding: 0 28px 28px;
+            padding: 0 24px 6px;
         }
 
         .auth-panel.active {
@@ -210,25 +249,25 @@
 
         /* Input fields */
         .field-group {
-            margin-bottom: 14px;
+            margin-bottom: 2px;
         }
 
         .field-label {
             display: block;
-            font-size: 13px;
+            font-size: 11px;
             font-weight: 600;
             color: rgba(255, 255, 255, 0.8);
-            margin-bottom: 6px;
+            margin-bottom: 2px;
         }
 
         .glass-input {
             width: 100%;
-            padding: 14px 16px;
+            padding: 6px 12px;
             background: rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
+            border-radius: 8px;
             font-family: 'Poppins', sans-serif;
-            font-size: 14px;
+            font-size: 13px;
             color: white;
             outline: none;
             transition: border-color 0.2s ease, box-shadow 0.2s ease;
@@ -247,8 +286,8 @@
         .forgot-link-row {
             display: flex;
             justify-content: flex-end;
-            margin-top: -8px;
-            margin-bottom: 14px;
+            margin-top: -2px;
+            margin-bottom: 4px;
         }
 
         .forgot-link {
@@ -267,18 +306,18 @@
         /* Primary button */
         .btn-primary {
             width: 100%;
-            padding: 14px;
+            padding: 7px;
             background: linear-gradient(135deg, #e07b2a, #c85d10);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
+            border-radius: 8px;
             font-family: 'Poppins', sans-serif;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 700;
             color: white;
             cursor: pointer;
-            box-shadow: 0 8px 24px rgba(200, 93, 16, 0.4);
+            box-shadow: 0 6px 16px rgba(200, 93, 16, 0.4);
             transition: all 0.2s ease;
-            margin-bottom: 14px;
+            margin-bottom: 4px;
         }
 
         .btn-primary:hover {
@@ -301,7 +340,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            margin-bottom: 14px;
+            margin-bottom: 2px;
         }
 
         .or-divider::before,
@@ -321,12 +360,12 @@
         /* Google button */
         .btn-google {
             width: 100%;
-            padding: 13px;
+            padding: 7px;
             background: rgba(255, 255, 255, 0.12);
             border: 1px solid rgba(255, 255, 255, 0.25);
-            border-radius: 12px;
+            border-radius: 8px;
             font-family: 'Poppins', sans-serif;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             color: white;
             cursor: pointer;
@@ -335,7 +374,7 @@
             justify-content: center;
             gap: 10px;
             transition: all 0.2s ease;
-            margin-bottom: 20px;
+            margin-bottom: 6px;
         }
 
         .btn-google:hover {
@@ -435,7 +474,7 @@
 
         /* Back to site */
         .back-site-row {
-            padding: 16px 28px;
+            padding: 8px 24px;
             border-top: 1px solid rgba(255, 255, 255, 0.08);
             text-align: center;
         }
@@ -450,8 +489,44 @@
         .back-site-row a:hover {
             color: rgba(255, 255, 255, 0.7);
         }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 8px;
+            }
+
+            .auth-logo {
+                padding: 16px 20px 12px !important;
+            }
+
+            .auth-logo h1 {
+                font-size: 18px !important;
+            }
+
+            .auth-tabs {
+                margin: 0 20px 12px !important;
+            }
+
+            .auth-panel {
+                padding: 0 20px 20px !important;
+            }
+
+            .glass-input {
+                padding: 10px 14px !important;
+                font-size: 13px !important;
+            }
+
+            .btn-primary {
+                padding: 12px !important;
+                font-size: 14px !important;
+            }
+
+            .auth-card {
+                border-radius: 16px;
+            }
+        }
     </style>
-  <script type="module" crossorigin src="./assets/login-4eLK9whO.js"></script>
+  <script type="module" crossorigin src="./assets/login-1B-2Ou8-.js"></script>
   <link rel="modulepreload" crossorigin href="./assets/firebase-config-CsUtaHqz.js">
   <link rel="modulepreload" crossorigin href="./assets/auth-service-BYs2Equ7.js">
 </head>
@@ -462,11 +537,21 @@
 
     <div class="auth-wrapper">
         <div class="auth-card">
-            <!-- Logo -->
+            <!-- Top Back Button -->
+            <a href="./index.html" class="back-btn-top" title="Go back">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+            </a>
+
+            <!-- Logo area -->
             <div class="auth-logo">
-                <div class="logo-badge" style="background:none;box-shadow:none;width:68px;height:68px;">
-                    <img src="./assets/favicon-PcQ0y5Tl.svg" alt="JKSSB" style="width:68px;height:68px;object-fit:contain;"
-                        loading="lazy">
+                <div class="logo-badge"
+                    style="background:none;box-shadow:none;width:40px;height:40px;margin-bottom:4px;">
+                    <img src="./assets/favicon-PcQ0y5Tl.svg" alt="JKSSB" style="width:40px;height:40px;object-fit:contain;"
+                        loading="eager">
                 </div>
                 <h1>JKSSB Drivers Academy</h1>
                 <p>Prepare. Practice. Succeed.</p>

@@ -238,4 +238,13 @@ document.addEventListener('DOMContentLoaded', () => {
         // Clean URL to prevent repeated toasts on refresh
         window.history.replaceState({}, document.title, window.location.pathname);
     }
+
+    // Check for pending toasts from sessionStorage
+    const msg = sessionStorage.getItem('app_toast_msg');
+    const type = sessionStorage.getItem('app_toast_type') as any || 'success';
+    if (msg) {
+        setTimeout(() => showToast(msg, type), 500);
+        sessionStorage.removeItem('app_toast_msg');
+        sessionStorage.removeItem('app_toast_type');
+    }
 });

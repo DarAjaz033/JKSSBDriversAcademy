@@ -2,26 +2,41 @@
 <html lang="en">
 
 <head>
-<script>
-  (function() {
-    const savedTheme = localStorage.getItem('siteTheme') || 'default';
-    if(savedTheme !== 'default') {
-      document.documentElement.setAttribute('data-theme', savedTheme);
-    }
-  })();
-</script>
+  <script>
+    (function () {
+      const savedTheme = localStorage.getItem('siteTheme') || 'default';
+      if (savedTheme !== 'default') {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+      }
+      const themeColors = {
+        'default': '#B45309',
+        'green': '#047857',
+        'blue': '#1E40AF',
+        'golden': '#AA8A2E',
+        'black': '#0A0A0A',
+        'frost': '#E0F2FE'
+      };
+      document.write('<meta name="theme-color" content="' + (themeColors[savedTheme] || '#B45309') + '">');
+    })();
+  </script>
+  
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#B45309">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Admin Login | JKSSB Drivers Academy</title>
   <link rel="icon" type="image/svg+xml" href="./assets/favicon-PcQ0y5Tl.svg">
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
+    html,
     body {
+      height: 100%;
+      overflow: hidden;
       margin: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: radial-gradient(circle at top left, #FEF3C7, #F3F4F6);
-      min-height: 100vh;
+      background: #F8FAFC;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -273,12 +288,37 @@
     #error-message.show {
       display: block;
     }
+
+    @media (max-width: 480px) {
+      .admin-login-wrapper {
+        padding: 12px;
+      }
+
+      .admin-login-card {
+        padding: 16px 16px 12px !important;
+        border-radius: 12px !important;
+      }
+
+      .admin-login-title h1 {
+        font-size: 18px !important;
+      }
+
+      .form-input {
+        padding: 8px 10px !important;
+        font-size: 13px !important;
+      }
+
+      #submit-btn {
+        padding: 8px 12px !important;
+        font-size: 14px !important;
+      }
+    }
   </style>
-  <script type="module" crossorigin src="./assets/admin-login-CymYGDBu.js"></script>
+  <script type="module" crossorigin src="./assets/admin-login-jH7qh4gb.js"></script>
   <link rel="modulepreload" crossorigin href="./assets/firebase-config-CsUtaHqz.js">
   <link rel="modulepreload" crossorigin href="./assets/auth-service-BYs2Equ7.js">
-  <link rel="modulepreload" crossorigin href="./assets/admin-service-CQyGqwJl.js">
-  <link rel="stylesheet" crossorigin href="./assets/styles-Dw2jLAD7.css">
+  <link rel="modulepreload" crossorigin href="./assets/admin-service-WdanE3z8.js">
+  <link rel="stylesheet" crossorigin href="./assets/styles-DGwmoWwR.css">
 </head>
 
 <body>

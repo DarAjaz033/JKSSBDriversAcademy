@@ -118,6 +118,14 @@
   color: #ffffff !important;
 }
 
+.app-bar-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: clamp(0.75rem, 3.5vw, 1rem);
+  max-width: 55vw;
+}
+
 /* Black Gradient Theme */
 [data-theme="black"] {
   --primary: #171717;
@@ -311,9 +319,13 @@ body::before {
   align-items: center;
   gap: var(--spacing-sm);
   font-weight: 700;
-  font-size: 20px;
   color: var(--app-bar-text);
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: clamp(0.75rem, 3.5vw, 1rem);
+  max-width: 55vw;
 }
 
 @keyframes slideDown {
@@ -4068,4 +4080,49 @@ body::before {
 
 [data-theme="dark"] .cdm-buy-btn:hover:not(:disabled) {
   box-shadow: 0 8px 28px rgba(34, 197, 94, 0.3);
+}
+
+/* --- Universal Theme Contrast Fixes --- */
+[data-theme="green"] .cta-card,
+[data-theme="green"] .app-footer {
+  background: var(--app-bar-bg) !important;
+  color: white !important;
+}
+
+[data-theme="blue"] .cta-card,
+[data-theme="blue"] .app-footer {
+  background: var(--app-bar-bg) !important;
+  color: white !important;
+}
+
+[data-theme="golden"] .cta-card,
+[data-theme="golden"] .app-footer {
+  background: var(--app-bar-bg) !important;
+  color: #333333 !important;
+}
+
+[data-theme="black"] .cta-card,
+[data-theme="black"] .app-footer {
+  background: var(--app-bar-bg) !important;
+  color: white !important;
+}
+
+[data-theme="frost"] .cta-card,
+[data-theme="frost"] .app-footer {
+  background: var(--app-bar-bg) !important;
+  color: #1C1917 !important;
+}
+
+/* Ensure text inside CTA cards in light themes is visible */
+[data-theme="golden"] .cta-card h3,
+[data-theme="golden"] .cta-card p,
+[data-theme="frost"] .cta-card h3,
+[data-theme="frost"] .cta-card p {
+  color: inherit !important;
+}
+
+/* Force white text for Black mode branding */
+[data-theme="black"] .app-bar-title,
+[data-theme="black"] .footer-logo {
+  color: #ffffff !important;
 }
