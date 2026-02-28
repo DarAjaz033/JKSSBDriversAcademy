@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Payment Successful</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: #f0fdf4;
+            color: #16a34a;
+        }
+
+        .spinner {
+            margin-top: 20px;
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(22, 163, 74, 0.3);
+            border-radius: 50%;
+            border-top-color: #16a34a;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+    </svg>
+    <h2 style="margin-top: 16px;">Payment Successful!</h2>
+    <p style="color: #15803d;">Verifying your enrollment...</p>
+    <div class="spinner"></div>
+
+    <script>
+        // Post message to parent window (the course details page overlay)
+        // telling it to close the modal and run the success flow
+        if (window.parent) {
+            setTimeout(() => {
+                window.parent.postMessage({ type: 'CASHFREE_PAYMENT_SUCCESS' }, '*');
+            }, 1000); // slight delay for visual
+        }
+    </script>
+</body>
+
+</html>

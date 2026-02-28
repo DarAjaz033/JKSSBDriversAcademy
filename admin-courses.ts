@@ -118,8 +118,17 @@ class AdminCoursesPage {
       description,
       syllabus,
       price: parseInt((document.getElementById('price') as HTMLInputElement).value),
+      oldPrice: (document.getElementById('old-price') as HTMLInputElement).value ? parseInt((document.getElementById('old-price') as HTMLInputElement).value) : undefined,
       duration: (document.getElementById('duration') as HTMLInputElement).value.trim(),
       paymentLink,
+      thumbCssClass: (document.getElementById('thumb-css-class') as HTMLSelectElement).value,
+      thumbBadge: (document.getElementById('thumb-badge') as HTMLInputElement).value.trim(),
+      thumbBadgeStyle: (document.getElementById('thumb-badge-style') as HTMLSelectElement).value,
+      thumbTopLabel: (document.getElementById('thumb-top-label') as HTMLInputElement).value.trim(),
+      thumbMainHeading: (document.getElementById('thumb-main-heading') as HTMLInputElement).value.trim(),
+      thumbSubHeading: (document.getElementById('thumb-sub-heading') as HTMLInputElement).value.trim(),
+      thumbPartTags: (document.getElementById('thumb-part-tags') as HTMLInputElement).value.trim(),
+      thumbBottomCaption: (document.getElementById('thumb-bottom-caption') as HTMLInputElement).value.trim(),
       pdfIds: [],
       practiceTestIds: []
     };
@@ -185,7 +194,7 @@ class AdminCoursesPage {
         <div class="course-info">
           <h3>${course.title}</h3>
           <div class="course-meta">
-            <div class="meta-item"><i data-lucide="indian-rupee" width="13" height="13"></i> ₹${course.price}</div>
+            <div class="meta-item"><i data-lucide="indian-rupee" width="13" height="13"></i> ${course.oldPrice ? `<del style="color:#DC2626; margin-right:4px;">${course.oldPrice}</del>` : ''}₹${course.price}</div>
             <div class="meta-item"><i data-lucide="clock" width="13" height="13"></i> ${course.duration}</div>
             ${course.paymentLink ? '<div class="meta-item" style="color:#16A34A;"><i data-lucide="link" width="13" height="13"></i> Payment Link ✓</div>' : ''}
             <div class="meta-item"><i data-lucide="hash" width="13" height="13"></i> Rank #${rank}</div>
@@ -300,9 +309,18 @@ class AdminCoursesPage {
     this.editingCourseId = courseId;
     (document.getElementById('title') as HTMLInputElement).value = course.title;
     (document.getElementById('price') as HTMLInputElement).value = course.price.toString();
+    (document.getElementById('old-price') as HTMLInputElement).value = course.oldPrice ? course.oldPrice.toString() : '';
     (document.getElementById('duration') as HTMLInputElement).value = course.duration;
     (document.getElementById('payment-link') as HTMLInputElement).value = course.paymentLink ?? '';
     (document.getElementById('syllabus') as HTMLTextAreaElement).value = course.syllabus ?? '';
+    (document.getElementById('thumb-css-class') as HTMLSelectElement).value = course.thumbCssClass ?? 'thumb-fullcourse';
+    (document.getElementById('thumb-badge') as HTMLInputElement).value = course.thumbBadge ?? '';
+    (document.getElementById('thumb-badge-style') as HTMLSelectElement).value = course.thumbBadgeStyle ?? 'badge-pop';
+    (document.getElementById('thumb-top-label') as HTMLInputElement).value = course.thumbTopLabel ?? '';
+    (document.getElementById('thumb-main-heading') as HTMLInputElement).value = course.thumbMainHeading ?? '';
+    (document.getElementById('thumb-sub-heading') as HTMLInputElement).value = course.thumbSubHeading ?? '';
+    (document.getElementById('thumb-part-tags') as HTMLInputElement).value = course.thumbPartTags ?? '';
+    (document.getElementById('thumb-bottom-caption') as HTMLInputElement).value = course.thumbBottomCaption ?? '';
     this.parseDescriptionToForm(course.description);
 
     document.getElementById('form-title')!.textContent = 'Edit Course';
@@ -315,6 +333,8 @@ class AdminCoursesPage {
   private cancelEdit(): void {
     this.editingCourseId = null;
     this.form.reset();
+    (document.getElementById('thumb-css-class') as HTMLSelectElement).value = 'thumb-fullcourse';
+    (document.getElementById('thumb-badge-style') as HTMLSelectElement).value = 'badge-pop';
     (document.getElementById('description-heading') as HTMLInputElement).value = '';
     this.descriptionPointsContainer.innerHTML = '';
     this.ensureDescriptionPoints();

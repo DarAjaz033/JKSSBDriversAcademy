@@ -81,8 +81,11 @@ async function afterAuth(user: any, name?: string) {
         sessionStorage.setItem('app_toast_msg', 'Welcome back! You are successfully signed in 👋');
         sessionStorage.setItem('app_toast_type', 'success');
     } catch { }
-    // Redirect to HOME page
-    window.location.href = './index.html';
+    // Redirect to requested page or HOME page
+    const params = new URLSearchParams(window.location.search);
+    const redirectParam = params.get('redirect');
+    const redirectUrl = redirectParam ? redirectParam : './index.html';
+    window.location.href = redirectUrl;
 }
 
 // ─── Sign In ──────────────────────────────────────────────────────────────────
@@ -224,8 +227,11 @@ async function handleForgotPassword() {
 
 onAuthChange((user) => {
     if (user && !loginInProgress) {
-        // User is already logged in from a previous session — go straight to profile
-        window.location.href = './index.html';
+        // User is already logged in from a previous session
+        const params = new URLSearchParams(window.location.search);
+        const redirectParam = params.get('redirect');
+        const redirectUrl = redirectParam ? redirectParam : './index.html';
+        window.location.href = redirectUrl;
     }
 });
 

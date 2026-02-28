@@ -50,7 +50,7 @@ class CoursePurchasePage {
           <div class="course-meta">
             <span>${this.course.duration}</span>
             <span>•</span>
-            <span>${this.course.category.replace('-', ' ').toUpperCase()}</span>
+            <span>${(this.course.category || '').replace('-', ' ').toUpperCase()}</span>
           </div>
         </div>
 
@@ -98,18 +98,26 @@ class CoursePurchasePage {
     if (!this.course || !this.userId) return;
 
     const purchaseBtn = document.getElementById('purchase-btn') as HTMLButtonElement;
-    purchaseBtn.disabled = true;
-    purchaseBtn.textContent = 'Processing...';
 
-    const result = await simulatePayment(this.course, this.userId);
-
-    if (result.success) {
-      alert('Purchase successful! You can now access this course.');
-      window.location.href = './my-courses.html';
+    if (this.course.paymentLink) {
+      // Redirect to the live Cashfree payment link
+      purchaseBtn.disabled = true;
+      purchaseBtn.textContent = 'Redirecting to Secure Checkout...';
+      window.location.href = this.course.paymentLink;
     } else {
-      alert('Payment failed: ' + result.error);
-      purchaseBtn.disabled = false;
-      purchaseBtn.textContent = 'Purchase Course';
+      purchaseBtn.disabled = true;
+      purchaseBtn.textContent = 'Processing...';
+
+      const result = await simulatePayment(this.course, this.userId);
+
+      if (result.success) {
+        alert('Purchase successful! You can now access this course.');
+        window.location.href = './my-courses.html';
+      } else {
+        alert('Payment failed: ' + result.error);
+        purchaseBtn.disabled = false;
+        purchaseBtn.textContent = 'Purchase Course';
+      }
     }
   }
 }

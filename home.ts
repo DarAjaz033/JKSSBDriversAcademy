@@ -1,6 +1,7 @@
 import { getCurrentUser, onAuthChange } from './auth-service';
 import { escapeHtml } from './utils/escape-html';
-import { getCourses } from './admin-service';
+import { getCourses, Course as AdminCourse } from './admin-service';
+import { openDirectPaymentModal } from './payment-service';
 
 interface Course {
   id: string;
@@ -8,8 +9,17 @@ interface Course {
   description: string;
   syllabus?: string;
   price: number;
+  oldPrice?: number;
   duration: string;
   paymentLink?: string;
+  thumbCssClass?: string;
+  thumbBadge?: string;
+  thumbBadgeStyle?: string;
+  thumbTopLabel?: string;
+  thumbMainHeading?: string;
+  thumbSubHeading?: string;
+  thumbPartTags?: string;
+  thumbBottomCaption?: string;
 }
 
 // ─── Per-user enrolment key ──────────────────────────────────────────────────
@@ -72,12 +82,15 @@ function openCourseModal(course: Course): void {
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
         <h2 class="cdm-title">${escapeHtml(course.title)}</h2>
-        <div class="cdm-price">₹${course.price.toLocaleString()}</div>
+        <div class="cdm-price">
+          ${course.oldPrice ? `<del style="color:#DC2626; font-size:0.85em; margin-right:8px; text-decoration-thickness: 2px;">₹${course.oldPrice.toLocaleString()}</del>` : ''}
+          ₹${course.price.toLocaleString()}
+        </div>
       </div>
 
       <div class="cdm-body">
         <!-- Syllabus toggle -->
-        <div class="cdm-toggle-bar" data-target="cdm-syllabus">
+        <div class="cdm-toggle-bar watery-tab" data-target="cdm-syllabus">
           <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> Syllabus</span>
           <svg class="cdm-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
@@ -86,7 +99,7 @@ function openCourseModal(course: Course): void {
         </div>
 
         <!-- Description toggle -->
-        <div class="cdm-toggle-bar" data-target="cdm-description">
+        <div class="cdm-toggle-bar watery-tab" data-target="cdm-description">
           <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Description</span>
           <svg class="cdm-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
@@ -95,9 +108,13 @@ function openCourseModal(course: Course): void {
         </div>
       </div>
 
-      <div class="cdm-footer">
-        <button class="cdm-buy-btn" id="cdm-buy-btn-trigger">
-          <span>Buy Now</span>
+      <div class="cdm-footer" style="display: flex; justify-content: space-between; align-items: center; gap: 16px;">
+        <div class="cdm-footer-price" style="display: flex; flex-direction: column;">
+          ${course.oldPrice ? `<del style="color:var(--text-secondary); font-size:13px; text-decoration-thickness: 1.5px;">₹${course.oldPrice.toLocaleString()}</del>` : ''}
+          <span style="font-size:22px; font-weight:800; color:var(--text-primary); line-height: 1;">₹${course.price.toLocaleString()}</span>
+        </div>
+        <button class="${getCurrentUser() ? 'cdm-buy-btn' : 'cdm-buy-btn signin-mode'}" id="cdm-buy-btn-trigger" style="flex: 1; justify-content: center;">
+          <span>${getCurrentUser() ? 'Buy Now' : 'Sign In to Enroll'}</span>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
         </button>
       </div>
@@ -129,19 +146,18 @@ function openCourseModal(course: Course): void {
     if (e.target === overlay) overlay.remove();
   });
 
-  // Buy Now: dummy payment flow — requires user to be logged in
+  // Buy Now: Dummy payment flow no longer used — route everything through course purchase page
   overlay.querySelector('#cdm-buy-btn-trigger')?.addEventListener('click', () => {
     const user = getCurrentUser();
     if (!user) {
-      alert('Please sign in to purchase a course.');
+      window.location.href = `./login.html?redirect=${encodeURIComponent(`index.html?buyCourse=${course.id}`)}`;
       return;
     }
-    const confirmed = window.confirm(
-      `Enroll in "${course.title}" for \u20b9${course.price.toLocaleString()}?\n\n(Demo payment \u2014 no real charge)\n\nClick OK to confirm.`
-    );
-    if (confirmed) {
-      overlay.remove();
-      handlePaymentSuccess(course.id, user.uid);
+
+    if (course.paymentLink) {
+      openDirectPaymentModal(course as AdminCourse, user.uid);
+    } else {
+      window.location.href = `./course-purchase.html?id=${course.id}`;
     }
   });
 
@@ -228,6 +244,7 @@ class HomePage {
         description: c.description,
         syllabus: c.syllabus,
         price: c.price,
+        oldPrice: c.oldPrice,
         duration: c.duration,
         paymentLink: c.paymentLink
       })).sort((a, b) => {
@@ -249,7 +266,6 @@ class HomePage {
         });
       });
 
-      // Unenrolled cards → open modal
       this.coursesContainer.querySelectorAll<HTMLButtonElement>('.btn-enroll').forEach(btn => {
         btn.addEventListener('click', () => {
           const id = btn.dataset.courseId!;
@@ -257,6 +273,22 @@ class HomePage {
           if (course) openCourseModal(course);
         });
       });
+
+      // Handle auto-buy redirect flag
+      const urlParams = new URLSearchParams(window.location.search);
+      const buyCourseId = urlParams.get('buyCourse');
+      if (buyCourseId && this.currentUser) {
+        const courseToBuy = courses.find(c => c.id === buyCourseId);
+        if (courseToBuy && !enrolledIds.includes(courseToBuy.id)) {
+          if (courseToBuy.paymentLink) {
+            openDirectPaymentModal(courseToBuy as AdminCourse, this.currentUser.uid);
+          } else {
+            window.location.href = `./course-purchase.html?id=${courseToBuy.id}`;
+          }
+          // Clean URL
+          window.history.replaceState({}, document.title, window.location.pathname);
+        }
+      }
 
       (window as any).lucide?.createIcons();
     } catch (error) {
@@ -276,39 +308,170 @@ class HomePage {
     }
   }
 
+  private getThumbInfo(course: Course) {
+    if (course.thumbCssClass) {
+      // New dynamic admin-editable thumbnail
+      const badgeStyle = course.thumbBadgeStyle || 'badge-pop';
+      let badgeHtml = '';
+      if (course.thumbBadge) {
+        badgeHtml = `<span class="thumb-badge ${badgeStyle}">${escapeHtml(course.thumbBadge)}</span>`;
+      }
+
+      let partTagsHtml = '';
+      if (course.thumbPartTags) {
+        const parts = course.thumbPartTags.split(',').map(p => p.trim()).filter(Boolean);
+        if (parts.length > 0) {
+          partTagsHtml = `<div class="fc-parts">${parts.map(p => `<span class="part-pill">${escapeHtml(p)}</span>`).join('')}</div>`;
+        }
+      }
+
+      return {
+        class: course.thumbCssClass,
+        label: course.thumbTopLabel ? escapeHtml(course.thumbTopLabel) : '',
+        badge: badgeHtml,
+        content: `
+          ${course.thumbMainHeading ? `<div class="fc-title">${course.thumbMainHeading}</div>` : ''}
+          ${course.thumbSubHeading ? `<div class="fc-sub">${course.thumbSubHeading}</div>` : ''}
+          ${partTagsHtml}
+          ${course.thumbBottomCaption ? `<div class="fc-includes">${course.thumbBottomCaption}</div>` : ''}
+        `
+      };
+    }
+
+    // Fallback legacy system
+    const title = course.title;
+    const t = title.toLowerCase();
+    if (t.includes('full course')) return {
+      class: 'thumb-fullcourse',
+      label: 'JKSSB Driver Full Course',
+      badge: '<span class="thumb-badge badge-pop">Popular</span>',
+      content: `
+        <div class="fc-title">FULL<br>COURSE</div>
+        <div class="fc-sub">All 3 Parts Included</div>
+        <div class="fc-parts">
+          <span class="part-pill">Part I</span>
+          <span class="part-pill">Part II</span>
+          <span class="part-pill">Part III</span>
+        </div>
+        <div class="fc-includes">
+          Notes, Videos + 2500+ MCQ Book + <span class="blink-free">FREE</span> MV Act MCQ Book
+        </div>
+      `
+    };
+    if (t.includes('part i') && !t.includes('part ii') && !t.includes('part iii')) return {
+      class: 'thumb-part1',
+      label: 'JKSSB Driver Part I',
+      badge: '<span class="thumb-badge badge-val">Best Value</span>',
+      content: `
+        <div class="p1-main">TRAFFIC<br>RULES &<br>SIGNALLING</div>
+        <div class="p1-icons">🚦 🛑 ⚠️</div>
+        <div class="p1-sub">Road Safety & Signals</div>
+      `
+    };
+    if (t.includes('part ii') && !t.includes('part iii')) return {
+      class: 'thumb-part2',
+      label: 'JKSSB Driver Part II',
+      badge: '<span class="thumb-badge badge-val">Best Value</span>',
+      content: `
+        <div class="mv-italic">Objective Questions Answers</div>
+        <div class="mv-title">MOTOR<br>VEHICLE<br>ACT</div>
+        <div class="mv-sub">1988 & CMV Rules 1989</div>
+        <div class="mv-line"></div>
+        <div class="mv-by">By JKSSB Drivers Academy</div>
+      `
+    };
+    if (t.includes('part iii')) return {
+      class: 'thumb-part3',
+      label: 'JKSSB Driver Part III',
+      badge: '<span class="thumb-badge badge-val">Best Value</span>',
+      content: `
+        <div class="p3-title">MOTOR<br>PARTS &<br>REPAIR</div>
+        <div class="p3-icons">🔧 ⚙️ 🔩 🛞</div>
+        <div class="p3-sub">Mechanical Knowledge</div>
+      `
+    };
+    if (t.includes('mv act') && t.includes('mcq')) return {
+      class: 'thumb-mvact',
+      label: 'JKSSB Driver MV Act MCQ Book',
+      badge: '',
+      content: `
+        <div class="mvb-italic">Objective Questions Answers</div>
+        <div class="mvb-main">MOTOR<br>VEHICLE<br>ACT</div>
+        <div class="mvb-mcq">MCQs book</div>
+        <div class="mvb-line"></div>
+        <div class="mvb-by">By JKSSB Drivers Academy</div>
+      `
+    };
+    if (t.includes('old driver papers') || t.includes('old papers')) return {
+      class: 'thumb-oldpapers',
+      label: 'JKSSB Driver Old Papers',
+      badge: '<span class="thumb-badge badge-new">New</span>',
+      content: `
+        <div class="op-title">OLD<br>DRIVER<br>PAPERS</div>
+        <div class="op-sub">JKSSB & Other Boards</div>
+        <div class="op-line"></div>
+        <div class="op-detail">Previous Year Papers</div>
+        <div class="op-by">By JKSSB Drivers Academy</div>
+      `
+    };
+    // Default fallback (e.g. for Full Syllabus MCQ Book)
+    return {
+      class: 'thumb-mcqbook',
+      label: 'JKSSB Driver MCQ Book',
+      badge: '<span class="thumb-badge badge-new">New</span>',
+      content: `
+        <div class="mcq-count">2500+<br>MCQs</div>
+        <div class="mcq-sub">Full Syllabus Covered</div>
+        <div class="mcq-line"></div>
+        <div class="mcq-detail">Topic Wise · With Answers</div>
+        <div class="mcq-by">By JKSSB Drivers Academy</div>
+      `
+    };
+  }
+
   private renderCourseCard(course: Course, isEnrolled = false): string {
+    const thumb = this.getThumbInfo(course);
+
+    // Calculate discount tag for unenrolled presentation
+    let discountStr = '';
+    if (course.oldPrice && course.oldPrice > course.price) {
+      const off = Math.round(((course.oldPrice - course.price) / course.oldPrice) * 100);
+      discountStr = `<span class="discount-tag">${off}% OFF</span>`;
+    }
+
     if (isEnrolled) {
       return `
-        <div class="glass-card glass-card--enrolled">
-          <div class="glass-card-glow glass-card-glow--enrolled"></div>
-          <div class="glass-card-inner">
-            <div class="glass-card-icon glass-card-icon--enrolled">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
-              </svg>
-            </div>
-            <h3 class="glass-card-title">${escapeHtml(course.title)}</h3>
-            <button class="btn-enrolled glass-enrolled-btn" data-course-id="${course.id}">
-              🎉 Enrolled
+        <div class="card" style="box-shadow: 0 4px 20px rgba(22, 163, 74, 0.15); border: 2px solid rgba(22, 163, 74, 0.3);">
+          <div class="card-thumb ${thumb.class}">
+            <div class="thumb-toplabel">${thumb.label}</div>
+            ${thumb.badge}
+            ${thumb.content}
+          </div>
+          <div class="card-body">
+            <div class="card-title">${escapeHtml(course.title)}</div>
+            <button class="btn-enrolled enroll-btn" data-course-id="${course.id}" style="background: linear-gradient(90deg, #16A34A, #22C55E);">
+              🎉 Enrolled - Go to Course
             </button>
-            <span class="glass-card-hint">Click to view your course</span>
           </div>
         </div>
       `;
     }
 
     return `
-      <div class="glass-card">
-        <div class="glass-card-glow"></div>
-        <div class="glass-card-inner">
-          <div class="glass-card-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-              <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
-            </svg>
+      <div class="card">
+        <div class="card-thumb ${thumb.class}">
+          <div class="thumb-toplabel">${thumb.label}</div>
+          ${thumb.badge}
+          ${thumb.content}
+        </div>
+        <div class="card-body">
+          <div class="card-title">${escapeHtml(course.title)}</div>
+          <div class="price-row">
+            ${course.oldPrice ? `<span class="old-price">₹${course.oldPrice.toLocaleString()}</span>` : ''}
+            <span class="new-price">₹${course.price.toLocaleString()}</span>
+            ${discountStr}
           </div>
-          <h3 class="glass-card-title">${escapeHtml(course.title)}</h3>
-          <div class="glass-card-price">\u20B9${course.price.toLocaleString()}</div>
-          <button class="btn-enroll glass-enroll-btn" data-course-id="${course.id}">
+          <button class="btn-enroll enroll-btn" data-course-id="${course.id}">
             View Details &amp; Enroll
           </button>
         </div>

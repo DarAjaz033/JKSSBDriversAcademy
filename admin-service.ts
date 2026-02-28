@@ -36,11 +36,20 @@ export interface Course {
   description: string;
   syllabus?: string;
   price: number;
+  oldPrice?: number;
   duration: string;
   category?: string;
   paymentLink?: string;
   rank?: number;
-  thumbnailUrl?: string;
+  thumbnailUrl?: string; // Legacy/unused
+  thumbCssClass?: string;
+  thumbBadge?: string;
+  thumbBadgeStyle?: string;
+  thumbTopLabel?: string;
+  thumbMainHeading?: string;
+  thumbSubHeading?: string;
+  thumbPartTags?: string;
+  thumbBottomCaption?: string;
   pdfIds: string[];
   practiceTestIds: string[];
   createdAt: any;
