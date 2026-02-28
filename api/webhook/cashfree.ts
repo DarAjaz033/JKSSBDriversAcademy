@@ -18,22 +18,26 @@ export default async function handler(req, res) {
   }
 
   try {
-    const payload = req.body;
+    let payload = req.body;
+
+    // In some cases Vercel passes the raw string body, so attempt to parse it if needed
+    if (typeof payload === 'string') {
+      try {
+        payload = JSON.parse(payload);
+      } catch (e) {
+        console.warn('Could not JSON parse req.body string');
+      }
+    }
+
     console.log('--- Incoming Cashfree Webhook ---');
-    console.log('Event Type:', payload?.type);
-    console.log('Data:', JSON.stringify(payload?.data || payload));
+    console.log('Data:', JSON.stringify(payload, null, 2));
     console.log('---------------------------------');
 
-    // Return 200 immediately to acknowledge receipt of the webhook to Cashfree
-    return res.status(200).json({
-      success: true,
-      message: 'Webhook received successfully'
-    });
+    // Return exact status and response requested
+    return res.status(200).json({ status: "ok" });
   } catch (error) {
     console.error('Error processing Cashfree webhook:', error);
-    return res.status(400).json({
-      success: false,
-      message: 'Invalid request'
-    });
+    // Still return 200 with ok status so cashfree doesn't retry infinitely on error
+    return res.status(200).json({ status: "ok" });
   }
 }
