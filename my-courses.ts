@@ -6,19 +6,12 @@ import {
   getCourses,
   Course,
   PDF,
-  PracticeTest
+  PracticeTest,
+  fetchUserEnrollments
 } from './admin-service';
 
-// ─── Per-user enrolment key (mirrors home.ts) ───────────────────────────
-function enrolledKey(userId: string): string {
-  return `jkssb_enrolled_${userId}`;
-}
-
-function getEnrolledIds(userId: string): string[] {
-  try {
-    return JSON.parse(localStorage.getItem(enrolledKey(userId)) ?? '[]') as string[];
-  } catch { return []; }
-}
+// Removed local storage backup.
+// System now reads directly from Firebase enrollments.
 
 let _uid = 0;
 function uid() { return ++_uid; }
@@ -325,20 +318,20 @@ class MyCoursesPage {
   }
 
   /* ─── Single-source enrolment loader ────────────────────────────────── */
-  // 🔁 When swapping to real gateway: replace getEnrolledIds() to read from Firebase instead
   private async loadEnrolledCourses(userId: string): Promise<void> {
     this.coursesContainer.innerHTML = `
       <div class="skeleton-card" style="margin-bottom: var(--spacing-md);"><div class="skeleton skeleton-img"></div><div style="padding-top:12px;"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-text"></div></div></div>
       <div class="skeleton-card" style="margin-bottom: var(--spacing-md);"><div class="skeleton skeleton-img"></div><div style="padding-top:12px;"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-text"></div></div></div>
     `;
 
-    // 1. Read this user's purchased course IDs
-    const enrolledIds = getEnrolledIds(userId);
+    // 1. Read this user's actively purchased course IDs securely from Firebase
+    const enrollmentsRes = await fetchUserEnrollments(userId);
+    const enrolledIds = enrollmentsRes.success ? (enrollmentsRes.enrolledIds as string[]) : [];
 
     if (enrolledIds.length === 0) {
       this.showEmptyState(
         'No Enrolled Courses',
-        'You have no enrolled courses yet. Browse courses to get started.',
+        'You have no active enrolled courses. Browse courses to get started. If you recently purchased, please wait a minute and refresh.',
         'Browse Courses', './course-details.html'
       );
       return;

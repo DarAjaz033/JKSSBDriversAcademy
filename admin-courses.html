@@ -404,16 +404,20 @@
                     <input type="number" id="old-price" class="form-input" min="0" placeholder="e.g. 1999" />
                   </div>
                   <div class="form-group">
-                    <label class="form-label">Duration</label>
-                    <input type="text" id="duration" class="form-input" placeholder="6 months" required />
+                    <label class="form-label">Duration <span>(e.g., "12 Weeks")</span></label>
+                    <input type="text" id="duration" class="form-input" required>
                   </div>
                 </div>
 
-                <!-- Payment Link -->
                 <div class="form-group">
-                  <label class="form-label">Payment Link</label>
-                  <input type="url" id="payment-link" class="form-input" placeholder="https://rzp.io/l/..." />
-                  <p class="hint">URL that opens when student clicks "Buy Now"</p>
+                  <label class="form-label">Payment Link <span>(Cashfree Link)</span></label>
+                  <input type="url" id="payment-link" class="form-input" placeholder="https://payments.cashfree.com/..."
+                    required>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Course Validity <span>(in Days, e.g., 365)</span></label>
+                  <input type="number" id="validity-days" class="form-input" placeholder="365" required>
                 </div>
 
                 <!-- Syllabus -->

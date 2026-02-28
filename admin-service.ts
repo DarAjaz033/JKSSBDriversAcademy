@@ -40,6 +40,7 @@ export interface Course {
   duration: string;
   category?: string;
   paymentLink?: string;
+  validityDays?: number;
   rank?: number;
   thumbnailUrl?: string; // Legacy/unused
   thumbCssClass?: string;
@@ -471,6 +472,42 @@ export const createPurchase = async (purchase: Omit<Purchase, 'id' | 'purchasedA
     return { success: true, id: docRef.id };
   } catch (error: any) {
     return { success: false, error: error.message };
+  }
+};
+
+export const fetchUserEnrollments = async (userId: string) => {
+  try {
+    const q = query(
+      collection(db, 'enrollments'),
+      where('userId', '==', userId),
+      where('status', '==', 'active')
+    );
+    const querySnapshot = await getDocs(q);
+    const enrolledIds: string[] = [];
+
+    // Filter out expired enrollments dynamically
+    const now = new Date();
+
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      let isValid = true;
+
+      // Check expiration
+      if (data.expiresAt) {
+        const expiryDate = data.expiresAt.toDate ? data.expiresAt.toDate() : new Date(data.expiresAt);
+        if (now > expiryDate) {
+          isValid = false;
+        }
+      }
+
+      if (isValid && data.courseId) {
+        enrolledIds.push(data.courseId);
+      }
+    });
+
+    return { success: true, enrolledIds };
+  } catch (error: any) {
+    return { success: false, error: error.message, enrolledIds: [] };
   }
 };
 

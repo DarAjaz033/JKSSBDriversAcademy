@@ -29,23 +29,23 @@
     })();
   </script>
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
+
+
+
+
+
+
+
 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
+
   <title>Manage Courses | Admin Panel</title>
   <link rel="icon" type="image/svg+xml" href="./assets/favicon-PcQ0y5Tl.svg">
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -325,13 +325,13 @@
       }
     }
   </style>
-    <script type="module" crossorigin src="./assets/admin-courses-Dl7xo1Rl.js"></script>
-    <link rel="modulepreload" crossorigin href="./assets/firebase-config-CsUtaHqz.js">
-    <link rel="modulepreload" crossorigin href="./assets/auth-service-BYs2Equ7.js">
-    <link rel="modulepreload" crossorigin href="./assets/admin-service-WdanE3z8.js">
-    <link rel="modulepreload" crossorigin href="./assets/admin-toast-8NJD7knF.js">
-    <link rel="stylesheet" crossorigin href="./assets/styles-DQE1rE4p.css">
-  </head>
+  <script type="module" crossorigin src="./assets/admin-courses-CbSWO2eu.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/firebase-config-D0UifA0H.js">
+  <link rel="modulepreload" crossorigin href="./assets/auth-service-By807CDz.js">
+  <link rel="modulepreload" crossorigin href="./assets/admin-service-BQGa3a-U.js">
+  <link rel="modulepreload" crossorigin href="./assets/admin-toast-8NJD7knF.js">
+  <link rel="stylesheet" crossorigin href="./assets/styles-ClAEePMd.css">
+</head>
 
 <body>
   <div class="admin-container">
@@ -398,23 +398,31 @@
                     required />
                 </div>
 
-                <!-- Price + Duration -->
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <!-- Price, Old Price + Duration -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
                   <div class="form-group">
                     <label class="form-label">Price (₹)</label>
                     <input type="number" id="price" class="form-input" required min="0" />
                   </div>
                   <div class="form-group">
-                    <label class="form-label">Duration</label>
-                    <input type="text" id="duration" class="form-input" placeholder="6 months" required />
+                    <label class="form-label">Old Price (₹)</label>
+                    <input type="number" id="old-price" class="form-input" min="0" placeholder="e.g. 1999" />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Duration <span>(e.g., "12 Weeks")</span></label>
+                    <input type="text" id="duration" class="form-input" required>
                   </div>
                 </div>
 
-                <!-- Payment Link -->
                 <div class="form-group">
-                  <label class="form-label">Payment Link</label>
-                  <input type="url" id="payment-link" class="form-input" placeholder="https://rzp.io/l/..." />
-                  <p class="hint">URL that opens when student clicks "Buy Now"</p>
+                  <label class="form-label">Payment Link <span>(Cashfree Link)</span></label>
+                  <input type="url" id="payment-link" class="form-input" placeholder="https://payments.cashfree.com/..."
+                    required>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Course Validity <span>(in Days, e.g., 365)</span></label>
+                  <input type="number" id="validity-days" class="form-input" placeholder="365" required>
                 </div>
 
                 <!-- Syllabus -->
@@ -438,6 +446,72 @@
                     <i data-lucide="plus" width="16" height="16" style="vertical-align:middle;margin-right:4px;"></i>
                     Add point
                   </button>
+                </div>
+
+                <!-- Thumbnail Customization -->
+                <div style="margin-top:2rem; padding-top:1.5rem; border-top:1px solid #E2E8F0;">
+                  <h3 style="font-size:1.1rem; color:#1E293B; margin-bottom:1rem;">Thumbnail Customization</h3>
+
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div class="form-group">
+                      <label class="form-label">Gradient Theme</label>
+                      <select id="thumb-css-class" class="form-input">
+                        <option value="thumb-fullcourse">Full Course (Orange/Red)</option>
+                        <option value="thumb-part1">Part I (Teal/Blue)</option>
+                        <option value="thumb-part2">Part II (Emerald/Green)</option>
+                        <option value="thumb-part3">Part III (Purple/Blue)</option>
+                        <option value="thumb-mvact">MV Act Book (Blue/Indigo)</option>
+                        <option value="thumb-oldpapers">Old Papers (Slate/Gray)</option>
+                        <option value="thumb-mcqbook">MCQ Book (Amber/Orange)</option>
+                      </select>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">Top Badge Text</label>
+                      <input type="text" id="thumb-badge" class="form-input" placeholder="e.g. POPULAR (optional)" />
+                    </div>
+                  </div>
+
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div class="form-group">
+                      <label class="form-label">Badge Style</label>
+                      <select id="thumb-badge-style" class="form-input">
+                        <option value="badge-pop">Popular (Purple)</option>
+                        <option value="badge-val">Best Value (Amber)</option>
+                        <option value="badge-new">New (Emerald)</option>
+                      </select>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">Top Small Label</label>
+                      <input type="text" id="thumb-top-label" class="form-input"
+                        placeholder="e.g. JKSSB DRIVER FULL COURSE" />
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label">Main Heading</label>
+                    <input type="text" id="thumb-main-heading" class="form-input" placeholder="e.g. FULL<br>COURSE" />
+                    <p class="hint">Use &lt;br&gt; for line breaks.</p>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label">Subheading / Emoji</label>
+                    <input type="text" id="thumb-sub-heading" class="form-input"
+                      placeholder="e.g. ALL 3 PARTS INCLUDED or 🚦 🛑" />
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label">Part Tags <span>(Comma separated)</span></label>
+                    <input type="text" id="thumb-part-tags" class="form-input"
+                      placeholder="e.g. Part I, Part II, Part III" />
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label">Bottom Caption</label>
+                    <input type="text" id="thumb-bottom-caption" class="form-input"
+                      placeholder="e.g. Notes, Videos + MCQ Book" />
+                  </div>
                 </div>
 
                 <div style="display:flex;gap:1rem;margin-top:1.5rem;">

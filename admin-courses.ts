@@ -121,6 +121,7 @@ class AdminCoursesPage {
       oldPrice: (document.getElementById('old-price') as HTMLInputElement).value ? parseInt((document.getElementById('old-price') as HTMLInputElement).value) : undefined,
       duration: (document.getElementById('duration') as HTMLInputElement).value.trim(),
       paymentLink,
+      validityDays: (document.getElementById('validity-days') as HTMLInputElement).value ? parseInt((document.getElementById('validity-days') as HTMLInputElement).value) : undefined,
       thumbCssClass: (document.getElementById('thumb-css-class') as HTMLSelectElement).value,
       thumbBadge: (document.getElementById('thumb-badge') as HTMLInputElement).value.trim(),
       thumbBadgeStyle: (document.getElementById('thumb-badge-style') as HTMLSelectElement).value,
@@ -312,6 +313,7 @@ class AdminCoursesPage {
     (document.getElementById('old-price') as HTMLInputElement).value = course.oldPrice ? course.oldPrice.toString() : '';
     (document.getElementById('duration') as HTMLInputElement).value = course.duration;
     (document.getElementById('payment-link') as HTMLInputElement).value = course.paymentLink ?? '';
+    (document.getElementById('validity-days') as HTMLInputElement).value = course.validityDays ? course.validityDays.toString() : '';
     (document.getElementById('syllabus') as HTMLTextAreaElement).value = course.syllabus ?? '';
     (document.getElementById('thumb-css-class') as HTMLSelectElement).value = course.thumbCssClass ?? 'thumb-fullcourse';
     (document.getElementById('thumb-badge') as HTMLInputElement).value = course.thumbBadge ?? '';
