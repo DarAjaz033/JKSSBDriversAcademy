@@ -1,4 +1,4 @@
-export default function handler(req: any, res: any) {
+module.exports = function handler(req: any, res: any) {
   // 1. Set CORS headers just in case
   try {
     if (typeof res.setHeader === 'function') {
