@@ -100,10 +100,15 @@ class CoursePurchasePage {
     const purchaseBtn = document.getElementById('purchase-btn') as HTMLButtonElement;
 
     if (this.course.paymentLink) {
-      // Redirect to the live Cashfree payment link
-      purchaseBtn.disabled = true;
-      purchaseBtn.textContent = 'Redirecting to Secure Checkout...';
-      window.location.href = this.course.paymentLink;
+      // Redirect to the live Cashfree payment link in a new tab like WhatsApp
+      purchaseBtn.textContent = 'Opening Secure Checkout...';
+      window.open(this.course.paymentLink, '_blank');
+
+      // Reset button state after a short delay since they are in a new tab
+      setTimeout(() => {
+        purchaseBtn.disabled = false;
+        purchaseBtn.textContent = 'Purchase Course';
+      }, 2000);
     } else {
       purchaseBtn.disabled = true;
       purchaseBtn.textContent = 'Processing...';
