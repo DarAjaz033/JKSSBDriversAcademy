@@ -1,18 +1,16 @@
-import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, query, where, getDocs, addDoc, serverTimestamp } from 'firebase/firestore';
-
-// Initialize Firebase App
-const firebaseConfig = {
-    apiKey: process.env.FIREBASE_API_KEY || "AIzaSyAxRsJwYHIV3rVqJgjGf_ZwqmMF3TGwooM",
-    authDomain: process.env.FIREBASE_AUTH_DOMAIN || "jkssbdriversacd.firebaseapp.com",
-    projectId: process.env.FIREBASE_PROJECT_ID || "jkssbdriversacd",
-    storageBucket: process.env.FIREBASE_STORAGE_BUCKET || "jkssbdriversacd.firebasestorage.app",
-    messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID || "723957920242",
-    appId: process.env.FIREBASE_APP_ID || "1:723957920242:web:825bc69a22161871107b6b"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+// Define helper function to reply safely safely with redirects
+function redirectSafe(res: any, url: string) {
+    try {
+        if (typeof res.redirect === 'function') {
+            return res.redirect(url);
+        } else {
+            res.writeHead(302, { Location: url });
+            return res.end();
+        }
+    } catch (e) {
+        console.error('Failed to redirect', e);
+    }
+}
 
 // Helper to verify the actual order securely via Cashfree Orders API
 async function verifyCashfreeOrder(orderId: string): Promise<any> {
@@ -40,13 +38,12 @@ async function verifyCashfreeOrder(orderId: string): Promise<any> {
 export default async function handler(req: any, res: any) {
     // Client browser returns here after payment
     try {
-        const { order_id } = req.query;
+        const queryParams = req.query || {};
+        const order_id = queryParams.order_id || '';
 
         if (!order_id) {
             console.log('No order_id found in URL query.');
-            // Redirect them back to homepage safely if access directly
-            res.writeHead(302, { Location: '/' });
-            return res.end();
+            return redirectSafe(res, '/');
         }
 
         console.log(`Verifying Order for Return Handler: ${order_id}`);
@@ -54,19 +51,33 @@ export default async function handler(req: any, res: any) {
 
         if (verifiedOrder.order_status !== 'PAID') {
             console.log(`Order ${order_id} is not PAID. Status: ${verifiedOrder.order_status}`);
-            res.writeHead(302, { Location: '/' });
-            return res.end();
+            return redirectSafe(res, '/');
         }
 
         console.log('✅ Cashfree API verified order as PAID on Return Handler.');
 
-        const userEmail = verifiedOrder.customer_details?.customer_email;
-        const userPhone = verifiedOrder.customer_details?.customer_phone;
-        let targetPhone = userPhone?.replace(/^(\+?91)/, ''); // Nomarlize phone
+        const userEmail = verifiedOrder.customer_details?.customer_email || '';
+        const userPhone = verifiedOrder.customer_details?.customer_phone || '';
+        let targetPhone = userPhone?.replace(/^(\+?91)/, ''); // Normalize phone
 
         // Get Form ID from nested tags if present or fallback
-        // Cashfree orders endpoint sometimes includes order_tags or order_meta
         const formId = verifiedOrder.order_tags?.form_id || verifiedOrder.order_tags?.code || '';
+
+        // Lazy load firebase to prevent global initialization crashes during routing ping
+        const { initializeApp } = await import('firebase/app');
+        const { getFirestore, collection, query, where, getDocs, addDoc, serverTimestamp } = await import('firebase/firestore');
+
+        const firebaseConfig = {
+            apiKey: process.env.FIREBASE_API_KEY || "AIzaSyAxRsJwYHIV3rVqJgjGf_ZwqmMF3TGwooM",
+            authDomain: process.env.FIREBASE_AUTH_DOMAIN || "jkssbdriversacd.firebaseapp.com",
+            projectId: process.env.FIREBASE_PROJECT_ID || "jkssbdriversacd",
+            storageBucket: process.env.FIREBASE_STORAGE_BUCKET || "jkssbdriversacd.firebasestorage.app",
+            messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID || "723957920242",
+            appId: process.env.FIREBASE_APP_ID || "1:723957920242:web:825bc69a22161871107b6b"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
         // 1. Find Course by formId using paymentLink
         const coursesRef = collection(db, 'courses');
@@ -103,7 +114,7 @@ export default async function handler(req: any, res: any) {
             }
         }
 
-        // 3. Store Enrollment (If user and course found... if not, skip as webhook might have caught it or it's malformed)
+        // 3. Store Enrollment
         if (matchedCourse && userSnapshot && !userSnapshot.empty) {
             const matchedUser = userSnapshot.docs[0];
 
@@ -133,11 +144,9 @@ export default async function handler(req: any, res: any) {
         }
 
         // Safely redirect student into their courses portal
-        res.writeHead(302, { Location: '/payment-success.html' });
-        return res.end();
+        return redirectSafe(res, '/payment-success.html');
     } catch (error) {
         console.error('Error in Return URL handler:', error);
-        res.writeHead(302, { Location: '/' });
-        return res.end();
+        return redirectSafe(res, '/');
     }
 }
